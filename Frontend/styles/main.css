@@ -1,0 +1,154 @@
+/* =====================================================
+   RESET BÁSICO
+===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Playfair Display', serif;
+  background-color: #f8f9fa;
+  color: #e5e7eb;
+}
+
+/* =====================================================
+   HEADER GENERAL
+===================================================== */
+.header {
+  width: 100%;
+  background-color: #b30000;
+  color: #e5e7eb;
+}
+
+/* =====================================================
+   TOP BAR (ACCESO ADMIN)
+===================================================== */
+.top-bar {
+  background-color: #7a0000;
+  padding: 6px 20px;
+  text-align: right;
+  border-bottom: 1px solid #7a0000;
+}
+
+.admin-link {
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.admin-link:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   HEADER PRINCIPAL (LOGOS + TÍTULO)
+===================================================== */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+
+.logo {
+  height: 80px;
+  object-fit: contain;
+}
+
+.logo-right {
+  height: 70px;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+}
+
+.header-title h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #e5e7eb;
+}
+
+/* =====================================================
+   NAV PRINCIPAL
+===================================================== */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 14px 20px;
+  background-color: #7a0000;
+  border-top: 1px solid #7a0000;
+}
+
+.nav a {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 6px 4px;
+  transition: border-bottom 0.2s ease;
+}
+
+.nav a:hover {
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* =====================================================
+   CONTENIDO PRINCIPAL (DINÁMICO)
+===================================================== */
+.contenido {
+  min-height: 60vh;
+  background-color: #ffffff;
+  color: #020617;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+.footer {
+  background-color: #b30000;
+  color: #e5e7eb;
+  border-top: 1px solid #b30000;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 900px) {
+  .header-top {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .logo,
+  .logo-right {
+    height: 60px;
+  }
+
+  .header-title h1 {
+    font-size: 1.4rem;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .contenido {
+    padding: 30px 20px;
+  }
+}

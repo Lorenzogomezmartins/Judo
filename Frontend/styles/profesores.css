@@ -1,0 +1,128 @@
+/* =========================
+   SECCIÓN PROFESORES
+========================= */
+.profesores {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 25px;
+  text-align: center;
+}
+
+/* TÍTULO */
+.profesores h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* SUBTÍTULO */
+.profesores-subtitle {
+  max-width: 700px;
+  margin: 0 auto 45px;
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* =========================
+   GRID
+========================= */
+.profesores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 35px;
+}
+
+/* =========================
+   CARD PROFESOR
+========================= */
+.profesor-card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profesor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.12);
+}
+
+/* IMAGEN */
+.profesor-card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+
+/* NOMBRE */
+.profesor-card h3 {
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 18px 15px 8px;
+  color: #111827;
+  text-align: center;
+}
+
+/* SEPARADOR BAJO EL NOMBRE */
+.profesor-card h3::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: #b91c1c;
+  margin: 8px auto 12px;
+  border-radius: 2px;
+}
+
+/* GRADO */
+.profesor-card .grado {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #b91c1c;
+  margin-bottom: 10px;
+}
+
+/* DESCRIPCIÓN */
+.profesor-card p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.6;
+  padding: 0 20px 22px;
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+  .profesores h2 {
+    font-size: 1.9rem;
+  }
+
+  .profesores-subtitle {
+    margin-bottom: 35px;
+  }
+
+  .profesor-card img {
+    height: 230px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .profesor-card img {
+    height: 210px;
+  }
+
+}

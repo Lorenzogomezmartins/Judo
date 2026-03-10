@@ -1,0 +1,104 @@
+/* ===============================
+   BASE RANKING
+================================ */
+
+.contenido {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* ===============================
+   TÍTULO
+================================ */
+
+.contenido h2 {
+  font-weight: bold;
+  color: #b30000;
+}
+
+/* ===============================
+   CONTROLES (BUSCADOR + BOTONES)
+================================ */
+
+#searchInput {
+  border: 1px solid #b30000;
+}
+
+#searchInput:focus {
+  border-color: #8f0000;
+  box-shadow: 0 0 0 0.2rem rgba(179, 0, 0, 0.25);
+}
+
+.btn-danger {
+  background-color: #b30000;
+  border-color: #b30000;
+}
+
+.btn-danger:hover {
+  background-color: #8f0000;
+  border-color: #8f0000;
+}
+
+.btn-outline-danger {
+  color: #b30000;
+  border-color: #b30000;
+}
+
+.btn-outline-danger:hover {
+  background-color: #b30000;
+  color: #ffffff;
+}
+
+/* ===============================
+   TABLA RANKING
+================================ */
+
+.table {
+  background-color: #ffffff;
+}
+
+.table thead th {
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: #f8eaea;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+/* ===============================
+   CUADRO SISTEMA DE PUNTAJES
+================================ */
+
+.card {
+  border: 1px solid #ddd;
+}
+
+.card-header {
+  background-color: #b30000 !important;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.card table td,
+.card table th {
+  font-size: 0.9rem;
+}
+
+.card table tbody tr:hover {
+  background-color: #f8eaea;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 991px) {
+  .card {
+    margin-bottom: 20px;
+  }
+}
