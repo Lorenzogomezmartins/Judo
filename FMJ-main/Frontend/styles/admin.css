@@ -1,0 +1,117 @@
+/* =======================================================
+   TABLA CLUBES ADMIN (VERSIÓN PRO MEJORADA)
+======================================================= */
+
+/* Contenedor tipo tabla */
+.clubes-listado {
+  border: 1px solid #dee2e6;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Cabecera */
+.clubes-header {
+  display: grid;
+  grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
+  background-color: #f8f9fa;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.clubes-header div {
+  padding: 16px 18px;
+  border-right: 1px solid #e9ecef;
+}
+
+.clubes-header div:last-child {
+  border-right: none;
+  text-align: center;
+}
+
+/* Filas */
+.club-admin-row {
+  display: grid;
+  grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
+  align-items: center;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f1f3f5;
+  transition: background 0.15s ease;
+  min-height: 85px;
+}
+
+.club-admin-row:last-child {
+  border-bottom: none;
+}
+
+.club-admin-row:hover {
+  background-color: #f9fafb;
+}
+
+.club-admin-row > div {
+  padding: 14px 18px;
+  border-right: 1px solid #f1f3f5;
+}
+
+.club-admin-row > div:last-child {
+  border-right: none;
+  text-align: center;
+}
+
+/* =========================
+   LOGO MÁS GRANDE
+========================= */
+
+.club-admin-logo {
+  width: 95px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.club-admin-logo img {
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: contain;
+  display: block;
+}
+
+/* =========================
+   COLUMNAS TEXTO
+========================= */
+
+.club-col {
+  font-size: 0.9rem;
+  color: #343a40;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Link web */
+.club-col a {
+  color: #0d6efd;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.club-col a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   ACCIONES MÁS CÓMODAS
+========================= */
+
+.club-admin-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.club-admin-actions .btn {
+  padding: 6px 12px;
+}

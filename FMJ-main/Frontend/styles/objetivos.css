@@ -1,0 +1,99 @@
+/* =========================
+   GRID OBJETIVOS
+========================= */
+.objetivos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  justify-items: center;
+}
+
+/* =========================
+   CARD OBJETIVO (GRANDE Y LIMPIA)
+========================= */
+.objetivo-card {
+  width: 100%;
+  max-width: 300px;
+  min-height: 280px;
+  background: #ffffff;
+  padding: 30px 26px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.objetivo-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   TÍTULO CARD (CREATIVO)
+========================= */
+.objetivo-card h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: #111827;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* =========================
+   TEXTO CARD (ELEGANTE)
+========================= */
+.objetivo-card p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #4b5563;
+}
+
+/* =========================
+   FRASE FINAL (CHICA Y SUTIL)
+========================= */
+.objetivos-cierre {
+  margin-top: 80px;
+  padding: 28px 30px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.objetivos-cierre p {
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #6b7280;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .objetivo-card {
+    max-width: 100%;
+    min-height: auto;
+  }
+
+  .objetivos-cierre p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .objetivo-card {
+    padding: 26px 22px;
+  }
+
+  .objetivos-cierre p {
+    font-size: 0.85rem;
+  }
+}
