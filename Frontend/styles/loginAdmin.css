@@ -1,0 +1,177 @@
+/* =====================================================
+   RESET
+===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   BODY
+===================================================== */
+body {
+  font-family: 'Playfair Display', serif;
+  background-color: #f8f9fa;
+  color: #020617;
+}
+
+/* =====================================================
+   HEADER LOGIN
+===================================================== */
+header {
+  width: 100%;
+  background-color: #b30000;
+  color: #e5e7eb;
+  padding: 20px 40px;
+}
+
+/* contenedor logos + titulo */
+header > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* logos*/
+header img {
+  height: 100px;
+  width: 150px;
+  object-fit: contain;
+}
+
+/* titulo */
+header h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 700;
+
+  /* ajuste visual */
+  transform: translateX(30px);
+}
+
+/* =====================================================
+   BOTON VOLVER
+===================================================== */
+header > div:last-child {
+  text-align: center;
+  margin-top: 12px;
+}
+
+header a {
+  text-decoration: none;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+header a:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   CONTENEDOR LOGIN
+===================================================== */
+main {
+  max-width: 480px;
+  margin: 70px auto;
+  background: #ffffff;
+  padding: 45px;
+
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* titulo login */
+main h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #020617;
+  font-size: 1.5rem;
+}
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* labels */
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* INPUTS PERFECTAMENTE SIMÉTRICOS */
+input {
+  width: 100%;
+  padding: 11px 12px;
+
+  border: 1px solid #000;
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+/* focus */
+input:focus {
+  outline: none;
+  border-color: #b30000;
+}
+
+/* =====================================================
+   BOTON
+===================================================== */
+button {
+  width: 100%; /* mismo ancho que inputs */
+  margin-top: 15px;
+  padding: 12px;
+
+  background-color: #b30000;
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background-color: #7a0000;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 768px) {
+
+  header {
+    padding: 20px;
+  }
+
+  header img {
+    height: 70px;
+    width: 70px;
+  }
+
+  header h1 {
+    font-size: 1.3rem;
+    transform: translateX(15px);
+  }
+
+  main {
+    margin: 40px 20px;
+    padding: 30px;
+  }
+
+}

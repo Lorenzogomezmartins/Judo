@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Acceso Administrador - FMJ</title>
+<link rel="stylesheet" href="../styles/loginAdmin.css">
+</head>
+
+<body>
+
+<header>
+
+  <div>
+
+    <!-- Logo izquierdo -->
+    <img src="../assets/Logos/Logo1.png" alt="Logo FMJ">
+
+    <!-- Título -->
+    <h1>Federación Metropolitana de Judo</h1>
+
+    <!-- Logo derecho -->
+    <img src="../assets/Logos/BuenosAires.png" alt="Logo Buenos Aires">
+
+  </div>
+
+  <div>
+    <a href="../pages/main.html">Volver al inicio</a>
+  </div>
+
+</header>
+
+
+<main>
+
+<h2>Acceso Administrador</h2>
+
+<form id="formAdmin">
+
+  <div>
+    <label for="nombre">Nombre</label>
+    <input 
+      type="text"
+      id="nombre"
+      name="nombre"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="apellido">Apellido</label>
+    <input 
+      type="text"
+      id="apellido"
+      name="apellido"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="email">Email</label>
+    <input 
+      type="email"
+      id="email"
+      name="email"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="password">Contraseña</label>
+    <input 
+      type="password"
+      id="password"
+      name="password"
+      required
+    >
+  </div>
+
+  <button type="submit">
+    Ingresar
+  </button>
+
+  <p id="errorLogin"></p>
+</form>
+
+</main>
+</body>
+</html>

@@ -9,14 +9,29 @@ const rutas = {
   cursos: "../partials/cursos.html",
   profesores: "../partials/profesores.html",
   patrocinadores: "../partials/patrocinadores.html",
-  objetivos: "../partials/objetivos.html"
+  objetivos: "../partials/objetivos.html",
+  loginAdmin: "../partials/loginAdmin.html"
 };
 
+
+/* ================= CARGAR VISTA ================= */
 
 async function cargarVista(vista) {
 
   const contenedor = document.getElementById("contenido");
   const ruta = rutas[vista] || rutas.home;
+
+  const header = document.querySelector("header");
+  const footer = document.querySelector("footer");
+
+  // Ocultar header y footer en login
+  if (vista === "loginAdmin") {
+    if (header) header.style.display = "none";
+    if (footer) footer.style.display = "none";
+  } else {
+    if (header) header.style.display = "block";
+    if (footer) footer.style.display = "block";
+  }
 
   try {
 
@@ -47,9 +62,14 @@ async function cargarVista(vista) {
       cargarClubes();
     }
 
-    // PROFESORES  ← NUEVO
+    // PROFESORES
     if (vista === "profesores" && typeof cargarProfesores === "function") {
       cargarProfesores();
+    }
+
+    // LOGIN ADMIN
+    if (vista === "loginAdmin" && typeof iniciarLoginAdmin === "function") {
+      iniciarLoginAdmin();
     }
 
   } catch (error) {
@@ -61,6 +81,7 @@ async function cargarVista(vista) {
         Error al cargar la sección.
       </div>
     `;
+
   }
 }
 
@@ -73,6 +94,7 @@ function router() {
   const vista = hash || "home";
 
   cargarVista(vista);
+
 }
 
 

@@ -2,6 +2,16 @@ const API_URL = "http://localhost:3000/api/clubes";
 const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
 const BACKEND_URL = "http://localhost:3000";
 
+// ============================
+// VERIFICAR LOGIN ADMIN
+// ============================
+
+const token = localStorage.getItem("tokenAdmin");
+
+if (!token) {
+  window.location.href = "../partials/loginAdmin.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarClubesAdmin();
   cargarPatrocinadoresAdmin();
@@ -710,7 +720,7 @@ async function eliminarProfesor(id) {
   }
 
 }
-
+/* EDITAR PROFESORES */
 async function editarProfesor(id) {
 
   console.log("Editar profesor:", id);
