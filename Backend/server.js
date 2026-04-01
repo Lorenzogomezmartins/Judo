@@ -16,24 +16,47 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+// CORS
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-//  Servir TODO el frontend
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+/* =========================
+   VERIFICACIÓN RÁPIDA
+========================= */
+
+app.get('/test', (req, res) => {
+  res.json({ mensaje: "Servidor funcionando correctamente" });
+});
+
+/* =========================
+   FRONTEND
+========================= */
+
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
-//  API
+/* =========================
+   API
+========================= */
+
 app.use('/api', apiRoutes);
 
-//  HOME = pages/main.html
+/* =========================
+   HOME
+========================= */
+
 app.get('/', (req, res) => {
   res.sendFile(
     path.join(__dirname, '../Frontend/pages/main.html')
   );
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
   console.log(`🟢 Servidor corriendo en http://localhost:${PORT}`);

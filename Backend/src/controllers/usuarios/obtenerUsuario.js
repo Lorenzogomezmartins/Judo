@@ -1,9 +1,9 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/obtenerUsuario.js
+import Usuario from '../../models/Usuario.js';
 
 const obtenerUsuario = async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.params.id)
-      .populate("historialTorneos.torneo");
+    const usuario = await Usuario.findById(req.params.id);
 
     if (!usuario) {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
@@ -12,7 +12,7 @@ const obtenerUsuario = async (req, res) => {
     res.json(usuario);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 

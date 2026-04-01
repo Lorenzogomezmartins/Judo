@@ -8,6 +8,8 @@ const usuarioSchema = new mongoose.Schema({
   email: { type: String, required: true },
   telefono: { type: String, required: true },
   sexo: { type: String, enum: ['masculino', 'femenino', 'otro'], required: true },
+  ft: { type: String }, 
+  peso: { type: Number, required: true },
   clasificacion: { type: String, enum: ['senior','cadete','junior','infantil-b'], required: true },
 
   // opcional: histórico de puntos

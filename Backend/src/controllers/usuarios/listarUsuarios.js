@@ -1,12 +1,13 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/listarUsuarios.js
+import Usuario from '../../models/Usuario.js';
 
 const listarUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.find().populate("historialTorneos.torneo");
+    const usuarios = await Usuario.find();
     res.json(usuarios);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 

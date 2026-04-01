@@ -1,4 +1,5 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/obtenerPuntos.js
+import Usuario from '../../models/Usuario.js';
 
 const obtenerPuntos = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ const obtenerPuntos = async (req, res) => {
     res.json({ puntos: puntosTotales });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 

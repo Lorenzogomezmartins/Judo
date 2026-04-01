@@ -1,4 +1,5 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/eliminarUsuario.js
+import Usuario from '../../models/Usuario.js';
 
 const eliminarUsuario = async (req, res) => {
   try {
@@ -11,7 +12,7 @@ const eliminarUsuario = async (req, res) => {
     res.json({ mensaje: "Usuario eliminado correctamente" });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 

@@ -1,6 +1,6 @@
-const API_URL = "http://localhost:3000/api/clubes";
-const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
-const BACKEND_URL = "http://localhost:3000";
+const API_URL = "http://localhost:4000/api/clubes";
+const API_PATROCINADORES = "http://localhost:4000/api/patrocinadores";
+const BACKEND_URL = "http://localhost:4000";
 
 // ============================
 // VERIFICAR LOGIN ADMIN
@@ -499,7 +499,7 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
 
   try {
 
-    const response = await fetch("http://localhost:3000/api/profesores");
+    const response = await fetch("http://localhost:4000/api/profesores");
     let profesores = await response.json();
 
     // FILTRAR POR NOMBRE O APELLIDO
@@ -524,7 +524,7 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
       const fotoUrl = profesor.foto
         ? (profesor.foto.startsWith("http") 
             ? profesor.foto 
-            : "http://localhost:3000/uploads/" + profesor.foto)
+            : "http://localhost:4000/uploads/" + profesor.foto)
         : "https://via.placeholder.com/80?text=Foto";
 
       const row = document.createElement("div");
@@ -621,7 +621,7 @@ async function guardarProfesor(e) {
 
     if (!id) {
 
-      const responseProfesores = await fetch("http://localhost:3000/api/profesores");
+      const responseProfesores = await fetch("http://localhost:4000/api/profesores");
       const profesores = await responseProfesores.json();
 
       const existe = profesores.find(p =>
@@ -655,8 +655,8 @@ async function guardarProfesor(e) {
     =============================== */
 
     const url = id
-      ? `http://localhost:3000/api/profesores/${id}`
-      : `http://localhost:3000/api/profesores`;
+      ? `http://localhost:4000/api/profesores/${id}`
+      : `http://localhost:4000/api/profesores`;
 
     const method = id ? "PUT" : "POST";
 
@@ -699,7 +699,7 @@ async function eliminarProfesor(id) {
 
   try {
 
-    const response = await fetch(`http://localhost:3000/api/profesores/${id}`, {
+    const response = await fetch(`http://localhost:4000/api/profesores/${id}`, {
       method: "DELETE"
     });
 
@@ -727,7 +727,7 @@ async function editarProfesor(id) {
 
   try {
 
-    const response = await fetch(`http://localhost:3000/api/profesores/${id}`);
+    const response = await fetch(`http://localhost:4000/api/profesores/${id}`);
     const profesor = await response.json();
 
     abrirFormularioProfesor();

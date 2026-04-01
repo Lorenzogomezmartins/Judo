@@ -1,8 +1,9 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/sumarPuntos.js
+import Usuario from '../../models/Usuario.js';
 
 const sumarPuntos = async (req, res) => {
   try {
-    const { puntos } = req.body;
+    const { puntos, torneoId, puesto } = req.body;
 
     const usuario = await Usuario.findById(req.params.id);
 
@@ -11,17 +12,17 @@ const sumarPuntos = async (req, res) => {
     }
 
     usuario.historialTorneos.push({
-      torneo: req.body.torneoId || null,
-      puesto: req.body.puesto || null,
-      puntos: puntos
+      torneo: torneoId || null,
+      puesto: puesto || null,
+      puntos: Math.abs(puntos)
     });
 
     await usuario.save();
 
-    res.json({ mensaje: "Puntos sumados correctamente" });
+    res.json({ mensaje: "Puntos sumados correctamente", usuario });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 

@@ -1,17 +1,29 @@
-import Usuario from "../../models/Usuario.js";
+// src/controllers/usuarios/crearUsuario.js
+import Usuario from '../../models/Usuario.js';
 
 const crearUsuario = async (req, res) => {
   try {
-    const nuevoUsuario = new Usuario(req.body);
-    await nuevoUsuario.save();
+    const { nombre, apellido, dni, email, telefono, sexo, peso, clasificacion } = req.body;
 
-    res.status(201).json({
-      mensaje: "Usuario creado correctamente",
-      usuario: nuevoUsuario
+    const usuario = new Usuario({
+      nombre,
+      apellido,
+      dni,
+      email,
+      telefono,
+      sexo,
+      peso,
+      clasificacion,
+      ft: req.file ? req.file.filename : null,
     });
 
+    await usuario.save();
+    res.status(201).json({
+      mensaje: "Usuario creado correctamente",
+      usuario
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ mensaje: error.message });
   }
 };
 
