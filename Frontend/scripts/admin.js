@@ -1,6 +1,7 @@
-const API_URL = "http://localhost:4000/api/clubes";
-const API_PATROCINADORES = "http://localhost:4000/api/patrocinadores";
-const BACKEND_URL = "http://localhost:4000";
+const API_URL = "http://localhost:3000/api/clubes";
+const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
+const API_TORNEOS = "http://localhost:3000/api/torneos";
+const BACKEND_URL = "http://localhost:3000";
 
 // ============================
 // VERIFICAR LOGIN ADMIN
@@ -16,57 +17,139 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarClubesAdmin();
   cargarPatrocinadoresAdmin();
   cargarProfesoresAdmin();
+  cargarTorneosAdmin();
 
-  // Botón Agregar Club
+  // ============================
+  // CLUBES
+  // ============================
   const btnNuevoClub = document.getElementById("btnNuevoClub");
-  btnNuevoClub.addEventListener("click", abrirFormulario);
+  if (btnNuevoClub) {
+    btnNuevoClub.addEventListener("click", abrirFormulario);
+  }
 
-  // Cancelar formulario
-  const btnCancelar = document.getElementById("btnCancelarClub");
-  btnCancelar.addEventListener("click", cerrarFormulario);
+  const btnCancelarClub = document.getElementById("btnCancelarClub");
+  if (btnCancelarClub) {
+    btnCancelarClub.addEventListener("click", cerrarFormulario);
+  }
 
-  // Enviar formulario
-  const form = document.getElementById("formClub");
-  form.addEventListener("submit", guardarClub);
+  const formClub = document.getElementById("formClub");
+  if (formClub) {
+    formClub.addEventListener("submit", guardarClub);
+  }
 
-  // Filtro por nombre
-  const filtro = document.getElementById("filtroClubes");
-  filtro.addEventListener("input", () => cargarClubesAdmin(filtro.value));
+  const filtroClubes = document.getElementById("filtroClubes");
+  if (filtroClubes) {
+    filtroClubes.addEventListener("input", () => {
+      cargarClubesAdmin(filtroClubes.value);
+    });
+  }
 
- 
+  // ============================
+  // PATROCINADORES
+  // ============================
+  const btnNuevoPatrocinador = document.getElementById("btnNuevoPatrocinador");
+  if (btnNuevoPatrocinador) {
+    btnNuevoPatrocinador.addEventListener("click", abrirFormularioPatrocinador);
+  }
 
-document.getElementById("btnNuevoPatrocinador")
-  .addEventListener("click", abrirFormularioPatrocinador);
+  const btnCancelarPatrocinador = document.getElementById("btnCancelarPatrocinador");
+  if (btnCancelarPatrocinador) {
+    btnCancelarPatrocinador.addEventListener("click", cerrarFormularioPatrocinador);
+  }
 
-document.getElementById("btnCancelarPatrocinador")
-  .addEventListener("click", cerrarFormularioPatrocinador);
+  const formPatrocinador = document.getElementById("formPatrocinador");
+  if (formPatrocinador) {
+    formPatrocinador.addEventListener("submit", guardarPatrocinador);
+  }
 
-document.getElementById("formPatrocinador")
-  .addEventListener("submit", guardarPatrocinador);
+  const filtroPatrocinadores = document.getElementById("filtroPatrocinadores");
+  if (filtroPatrocinadores) {
+    filtroPatrocinadores.addEventListener("input", (e) => {
+      cargarPatrocinadoresAdmin(e.target.value);
+    });
+  }
 
-document.getElementById("filtroPatrocinadores")
-  .addEventListener("input", e =>
-    cargarPatrocinadoresAdmin(e.target.value)
-  );
+  // ============================
+  // PROFESORES
+  // ============================
+  const btnNuevoProfesorr = document.getElementById("btnNuevoProfesorr");
+  if (btnNuevoProfesorr) {
+    btnNuevoProfesorr.addEventListener("click", abrirFormularioProfesor);
+  }
 
+  const btnCancelarProfesor = document.getElementById("btnCancelarProfesor");
+  if (btnCancelarProfesor) {
+    btnCancelarProfesor.addEventListener("click", cerrarFormularioProfesor);
+  }
+
+  const formProfesor = document.getElementById("formProfesor");
+  if (formProfesor) {
+    formProfesor.addEventListener("submit", guardarProfesor);
+  }
+
+  const filtroProfesores = document.getElementById("filtroProfesores");
+  if (filtroProfesores) {
+    filtroProfesores.addEventListener("input", (e) => {
+      cargarProfesoresAdmin(e.target.value);
+    });
+  }
+
+  // ============================
+  // TORNEOS
+  // ============================
+  const filtroTorneos = document.getElementById("filtroTorneos");
+  if (filtroTorneos) {
+    filtroTorneos.addEventListener("input", (e) => {
+      cargarTorneosAdmin(e.target.value);
+    });
+  }
 });
-/* ============================= 
-   PROFESORES EVENTOS
-============================= */
 
-document.getElementById("btnNuevoProfesorr")
-  .addEventListener("click", abrirFormularioProfesor);
 
-document.getElementById("btnCancelarProfesor")
-  .addEventListener("click", cerrarFormularioProfesor);
 
-document.getElementById("formProfesor")
-  .addEventListener("submit", guardarProfesor);
+// ============================
+// SEGURIDAD ADMIN
+// ============================
 
-document.getElementById("filtroProfesores")
-  .addEventListener("input", e =>
-    cargarProfesoresAdmin(e.target.value)
-  );
+function tokenExpirado(token) {
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payload = JSON.parse(atob(payloadBase64));
+    const ahora = Math.floor(Date.now() / 1000);
+
+    return payload.exp < ahora;
+  } catch (error) {
+    return true;
+  }
+}
+
+function obtenerTokenAdmin() {
+  return localStorage.getItem("tokenAdmin");
+}
+
+function redirigirLogin() {
+  localStorage.removeItem("tokenAdmin");
+  localStorage.removeItem("adminData");
+  window.location.href = "../partials/loginAdmin.html";
+}
+
+function protegerAdmin() {
+  const token = obtenerTokenAdmin();
+
+  if (!token || tokenExpirado(token)) {
+    redirigirLogin();
+    return false;
+  }
+
+  return true;
+}
+
+if (!protegerAdmin()) {
+  throw new Error("Acceso no autorizado");
+}
+
+
+
 /* ============================= 
    CLUBES
 ============================= */
@@ -499,7 +582,7 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
 
   try {
 
-    const response = await fetch("http://localhost:4000/api/profesores");
+    const response = await fetch("http://localhost:3000/api/profesores");
     let profesores = await response.json();
 
     // FILTRAR POR NOMBRE O APELLIDO
@@ -524,7 +607,7 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
       const fotoUrl = profesor.foto
         ? (profesor.foto.startsWith("http") 
             ? profesor.foto 
-            : "http://localhost:4000/uploads/" + profesor.foto)
+            : "http://localhost:3000/uploads/" + profesor.foto)
         : "https://via.placeholder.com/80?text=Foto";
 
       const row = document.createElement("div");
@@ -621,7 +704,7 @@ async function guardarProfesor(e) {
 
     if (!id) {
 
-      const responseProfesores = await fetch("http://localhost:4000/api/profesores");
+      const responseProfesores = await fetch("http://localhost:3000/api/profesores");
       const profesores = await responseProfesores.json();
 
       const existe = profesores.find(p =>
@@ -655,8 +738,8 @@ async function guardarProfesor(e) {
     =============================== */
 
     const url = id
-      ? `http://localhost:4000/api/profesores/${id}`
-      : `http://localhost:4000/api/profesores`;
+      ? `http://localhost:3000/api/profesores/${id}`
+      : `http://localhost:3000/api/profesores`;
 
     const method = id ? "PUT" : "POST";
 
@@ -699,7 +782,7 @@ async function eliminarProfesor(id) {
 
   try {
 
-    const response = await fetch(`http://localhost:4000/api/profesores/${id}`, {
+    const response = await fetch(`http://localhost:3000/api/profesores/${id}`, {
       method: "DELETE"
     });
 
@@ -727,7 +810,7 @@ async function editarProfesor(id) {
 
   try {
 
-    const response = await fetch(`http://localhost:4000/api/profesores/${id}`);
+    const response = await fetch(`http://localhost:3000/api/profesores/${id}`);
     const profesor = await response.json();
 
     abrirFormularioProfesor();
@@ -743,4 +826,308 @@ async function editarProfesor(id) {
 
   }
 
+}
+
+
+
+
+
+
+/* ============================= 
+   TORNEOS
+============================= */
+
+
+
+// BOTONES / EVENTOS TORNEOS
+const btnNuevoTorneo = document.getElementById("btnNuevoTorneo");
+if (btnNuevoTorneo) {
+  btnNuevoTorneo.addEventListener("click", abrirFormularioTorneo);
+}
+
+const btnCancelarTorneo = document.getElementById("btnCancelarTorneo");
+if (btnCancelarTorneo) {
+  btnCancelarTorneo.addEventListener("click", cerrarFormularioTorneo);
+}
+
+const formTorneo = document.getElementById("formTorneo");
+if (formTorneo) {
+  formTorneo.addEventListener("submit", guardarTorneo);
+}
+
+// CARGAR TORNEOS
+async function cargarTorneosAdmin(filtroNombre = "") {
+  const container = document.getElementById("torneosGrid");
+  if (!container) return;
+
+  container.innerHTML = "<p>Cargando torneos...</p>";
+
+  try {
+    const response = await fetch(API_TORNEOS);
+
+    if (!response.ok) {
+      throw new Error("No se pudieron obtener los torneos");
+    }
+
+    let torneos = await response.json();
+
+    if (!Array.isArray(torneos)) {
+      container.innerHTML = "<p>Error en el formato de torneos.</p>";
+      return;
+    }
+
+    if (filtroNombre) {
+      const texto = filtroNombre.toLowerCase().trim();
+      torneos = torneos.filter((t) =>
+        (t.nombre || "").toLowerCase().includes(texto)
+      );
+    }
+
+    if (!torneos.length) {
+      container.innerHTML = "<p>No hay torneos registrados.</p>";
+      return;
+    }
+
+    container.innerHTML = "";
+
+    torneos.forEach((torneo) => {
+      const primeraFoto =
+        Array.isArray(torneo.fotos) && torneo.fotos.length > 0
+          ? torneo.fotos[0]
+          : "";
+
+      const fotoUrl = primeraFoto
+        ? (primeraFoto.startsWith("http")
+            ? primeraFoto
+            : `${BACKEND_URL}${primeraFoto}`)
+        : "../assets/Logos/Logo1.png";
+
+      const row = document.createElement("div");
+      row.classList.add("club-admin-row");
+
+      row.innerHTML = `
+        <div class="club-admin-logo">
+          <img src="${fotoUrl}" alt="${torneo.nombre || "Torneo"}">
+        </div>
+
+        <div class="club-col">${torneo.nombre || "-"}</div>
+        <div class="club-col">${formatearFechaAdmin(torneo.fecha)}</div>
+        <div class="club-col">${torneo.direccion || "-"}</div>
+        <div class="club-col">${formatearCategoriasAdmin(torneo.categorias)}</div>
+
+        <div class="club-admin-actions d-flex gap-2 align-items-center">
+          <button 
+            class="btn btn-outline-primary btn-sm"
+            onclick="editarTorneo('${torneo._id}')">
+            <i class="bi bi-pencil"></i>
+          </button>
+
+          <button 
+            class="btn btn-outline-danger btn-sm" 
+            onclick="eliminarTorneo('${torneo._id}')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      `;
+
+      container.appendChild(row);
+    });
+
+  } catch (error) {
+    console.error("Error cargando torneos:", error);
+    container.innerHTML = "<p>Error al cargar torneos.</p>";
+  }
+}
+
+// ABRIR FORMULARIO
+function abrirFormularioTorneo() {
+  const container = document.getElementById("formTorneoContainer");
+  if (!container) return;
+
+  container.style.display = "block";
+  container.scrollIntoView({ behavior: "smooth" });
+
+  const form = document.getElementById("formTorneo");
+  if (form) form.reset();
+
+  document.getElementById("torneoId").value = "";
+}
+
+// CERRAR FORMULARIO
+function cerrarFormularioTorneo() {
+  const container = document.getElementById("formTorneoContainer");
+  if (!container) return;
+
+  container.style.display = "none";
+}
+
+// GUARDAR TORNEO (CREAR / EDITAR)
+async function guardarTorneo(e) {
+  e.preventDefault();
+
+  const id = document.getElementById("torneoId").value.trim();
+  const nombre = document.getElementById("torneoNombre").value.trim();
+  const fecha = document.getElementById("torneoFecha").value;
+  const direccion = document.getElementById("torneoDireccion").value.trim();
+  const categoriasTexto = document.getElementById("torneoCategorias").value.trim();
+  const reglas = document.getElementById("torneoReglas").value.trim();
+  const fotoInput = document.getElementById("torneoFoto");
+
+  if (!nombre || !fecha) {
+    alert("Nombre y fecha son obligatorios");
+    return;
+  }
+
+  const categorias = categoriasTexto
+    ? categoriasTexto.split(",").map(c => c.trim()).filter(Boolean)
+    : [];
+
+  try {
+    let response;
+
+    // =========================
+    // CREAR TORNEO -> POST JSON
+    // =========================
+    if (!id) {
+      response = await fetch(API_TORNEOS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nombre,
+          fecha,
+          direccion,
+          reglas,
+          categorias
+        })
+      });
+    } 
+    // =========================
+    // EDITAR TORNEO -> PUT
+    // =========================
+    else {
+      const hayFoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
+
+      if (hayFoto) {
+        const formData = new FormData();
+        formData.append("nombre", nombre);
+        formData.append("fecha", fecha);
+        formData.append("direccion", direccion);
+        formData.append("reglas", reglas);
+        formData.append("categorias", JSON.stringify(categorias));
+        formData.append("foto", fotoInput.files[0]);
+
+        response = await fetch(`${API_TORNEOS}/${id}`, {
+          method: "PUT",
+          body: formData
+        });
+      } else {
+        response = await fetch(`${API_TORNEOS}/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            nombre,
+            fecha,
+            direccion,
+            reglas,
+            categorias
+          })
+        });
+      }
+    }
+
+    const resultado = await response.json();
+    console.log("RESPUESTA BACKEND TORNEO:", resultado);
+
+    if (!response.ok) {
+      throw new Error(resultado.mensaje || resultado.error || "Error al guardar torneo");
+    }
+
+    alert(
+      id
+        ? "Torneo actualizado correctamente"
+        : "Torneo creado correctamente"
+    );
+
+    const form = document.getElementById("formTorneo");
+    if (form) form.reset();
+
+    document.getElementById("torneoId").value = "";
+
+    cerrarFormularioTorneo();
+    cargarTorneosAdmin();
+
+  } catch (error) {
+    console.error("Error guardando torneo:", error);
+    alert("Error: " + error.message);
+  }
+}
+
+// EDITAR TORNEO
+async function editarTorneo(id) {
+  try {
+    const response = await fetch(`${API_TORNEOS}/${id}`);
+
+    if (!response.ok) {
+      throw new Error("No se pudo obtener el torneo");
+    }
+
+    const torneo = await response.json();
+
+    abrirFormularioTorneo();
+
+    document.getElementById("torneoId").value = torneo._id || "";
+    document.getElementById("torneoNombre").value = torneo.nombre || "";
+    document.getElementById("torneoFecha").value = torneo.fecha
+      ? new Date(torneo.fecha).toISOString().split("T")[0]
+      : "";
+    document.getElementById("torneoDireccion").value = torneo.direccion || "";
+    document.getElementById("torneoCategorias").value = Array.isArray(torneo.categorias)
+      ? torneo.categorias.join(", ")
+      : (torneo.categorias || "");
+    document.getElementById("torneoReglas").value = torneo.reglas || "";
+
+  } catch (error) {
+    console.error("Error cargando torneo para editar:", error);
+    alert("No se pudo cargar el torneo");
+  }
+}
+
+// ELIMINAR TORNEO
+async function eliminarTorneo(id) {
+  if (!confirm("¿Seguro que querés eliminar este torneo?")) return;
+
+  try {
+    const response = await fetch(`${API_TORNEOS}/${id}`, {
+      method: "DELETE"
+    });
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      throw new Error(resultado.mensaje || resultado.error || "Error al eliminar torneo");
+    }
+
+    alert("Torneo eliminado correctamente");
+    cargarTorneosAdmin();
+
+  } catch (error) {
+    console.error("Error eliminando torneo:", error);
+    alert("No se pudo eliminar el torneo");
+  }
+}
+
+// HELPERS
+function formatearFechaAdmin(fecha) {
+  if (!fecha) return "-";
+  return new Date(fecha).toLocaleDateString("es-AR");
+}
+
+function formatearCategoriasAdmin(categorias) {
+  if (!categorias) return "-";
+  if (Array.isArray(categorias)) return categorias.join(", ");
+  return categorias;
 }

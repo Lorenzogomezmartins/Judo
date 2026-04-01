@@ -13,11 +13,9 @@ const rutas = {
   loginAdmin: "../partials/loginAdmin.html"
 };
 
-
 /* ================= CARGAR VISTA ================= */
 
 async function cargarVista(vista) {
-
   const contenedor = document.getElementById("contenido");
   const ruta = rutas[vista] || rutas.home;
 
@@ -34,7 +32,6 @@ async function cargarVista(vista) {
   }
 
   try {
-
     const response = await fetch(ruta);
 
     if (!response.ok) {
@@ -43,7 +40,6 @@ async function cargarVista(vista) {
 
     const html = await response.text();
     contenedor.innerHTML = html;
-
 
     /* ================= HOOKS POR SECCIÓN ================= */
 
@@ -72,8 +68,15 @@ async function cargarVista(vista) {
       iniciarLoginAdmin();
     }
 
-  } catch (error) {
+    // TORNEOS
+    if (
+      (vista === "torneos-actuales" || vista === "torneos-anteriores") &&
+      typeof initTorneos === "function"
+    ) {
+      initTorneos();
+    }
 
+  } catch (error) {
     console.error("Error cargando vista:", error);
 
     contenedor.innerHTML = `
@@ -81,22 +84,17 @@ async function cargarVista(vista) {
         Error al cargar la sección.
       </div>
     `;
-
   }
 }
-
 
 /* ================= ROUTER SPA ================= */
 
 function router() {
-
   const hash = window.location.hash.replace("#/", "");
   const vista = hash || "home";
 
   cargarVista(vista);
-
 }
-
 
 /* ================= EVENTOS ================= */
 
