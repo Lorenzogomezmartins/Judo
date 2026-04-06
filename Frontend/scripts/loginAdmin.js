@@ -1,50 +1,45 @@
-(() => {
-  const API_URL = "http://localhost:3000/api/Administradores/login";
+// ../scripts/loginAdmin.js
 
-  function iniciarLoginAdmin() {
-    const form = document.getElementById("formAdmin");
-    const errorLogin = document.getElementById("errorLogin");
+const API_URL = "http://localhost:4000/api/Administradores/login";
 
-    if (!form) return;
+export function iniciarLoginAdmin() {
+  const form = document.getElementById("formAdmin");
+  const errorLogin = document.getElementById("errorLogin");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  if (!form) return;
 
-      errorLogin.textContent = "";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    errorLogin.textContent = "";
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email,
-            password
-          })
-        });
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-        const data = await res.json();
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-        if (!res.ok) {
-          errorLogin.textContent = data.mensaje || "Credenciales incorrectas";
-          return;
-        }
+      const data = await res.json();
 
-        localStorage.setItem("tokenAdmin", data.token);
-        localStorage.setItem("adminData", JSON.stringify(data.admin));
-
-        window.location.href = "../pages/admin.html";
-
-      } catch (error) {
-        console.error(error);
-        errorLogin.textContent = "Error al conectar con el servidor";
+      if (!res.ok) {
+        errorLogin.textContent = data.mensaje || "Credenciales incorrectas";
+        return;
       }
-    });
-  }
 
-  window.iniciarLoginAdmin = iniciarLoginAdmin;
-})();
+      localStorage.setItem("tokenAdmin", data.token);
+      localStorage.setItem("adminData", JSON.stringify(data.admin));
+
+      window.location.href = "../pages/admin.html";
+
+    } catch (error) {
+      console.error(error);
+      errorLogin.textContent = "Error al conectar con el servidor";
+    }
+  });
+}

@@ -123,22 +123,22 @@
 ================================ */
 
 .event {
-  font-size: 12px;
-  padding: 4px 6px;
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  padding: 2px;
   border-radius: 4px;
-  margin-top: 6px;
-  text-align: center;
-  color: #ffffff;
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* PASADOS */
-.event.past {
-  background-color: #b30000;
+.event.red {
+  background-color: red;
 }
 
-/* PROXIMOS */
-.event.future {
-  background-color: #1f8f3a;
+.event.green {
+  background-color: green;
 }
 
 /* FERIADOS */

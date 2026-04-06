@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/torneos";
+const API_URL = "http://localhost:4000/api/torneos";
 
 let cacheTorneos = [];
 
@@ -217,7 +217,7 @@ function activarBuscador() {
   }
 }
 
-async function initTorneos() {
+export async function initTorneos() {
   try {
     const response = await fetch(API_URL);
 

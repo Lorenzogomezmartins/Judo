@@ -1,3 +1,14 @@
+// ================= IMPORTS =================
+
+import { initTorneos } from "./torneos.js";
+import { cargarClubes } from "./clubes.js";
+import { inicializarCalendario } from "./calendario.js";
+import { cargarProfesores } from "./profesores.js";
+import { cargarPatrocinadores } from "./patrocinadores.js";
+import { iniciarLoginAdmin } from "./loginAdmin.js";
+
+// ================= RUTAS =================
+
 const rutas = {
   home: "../partials/home.html",
   calendario: "../partials/calendario.html",
@@ -13,7 +24,7 @@ const rutas = {
   loginAdmin: "../partials/loginAdmin.html"
 };
 
-/* ================= CARGAR VISTA ================= */
+// ================= CARGAR VISTA =================
 
 async function cargarVista(vista) {
   const contenedor = document.getElementById("contenido");
@@ -22,72 +33,72 @@ async function cargarVista(vista) {
   const header = document.querySelector("header");
   const footer = document.querySelector("footer");
 
-  // Ocultar header y footer en login
+  // Layout (login sin header/footer)
   if (vista === "loginAdmin") {
-    if (header) header.style.display = "none";
-    if (footer) footer.style.display = "none";
+    header?.style.setProperty("display", "none");
+    footer?.style.setProperty("display", "none");
   } else {
-    if (header) header.style.display = "block";
-    if (footer) footer.style.display = "block";
+    header?.style.setProperty("display", "block");
+    footer?.style.setProperty("display", "block");
   }
 
   try {
     const response = await fetch(ruta);
 
     if (!response.ok) {
-      throw new Error("No se pudo cargar la vista");
+      throw new Error(`Error HTTP: ${response.status}`);
     }
 
     const html = await response.text();
     contenedor.innerHTML = html;
 
-    /* ================= HOOKS POR SECCIÓN ================= */
+    // ================= HOOKS POR VISTA =================
 
-    // CALENDARIO
-    if (vista === "calendario" && typeof inicializarCalendario === "function") {
-      inicializarCalendario();
-    }
+    switch (vista) {
 
-    // PATROCINADORES
-    if (vista === "patrocinadores" && typeof cargarPatrocinadores === "function") {
-      cargarPatrocinadores();
-    }
+      case "calendario":
+        await inicializarCalendario();
+        break;
 
-    // CLUBES
-    if (vista === "clubes" && typeof cargarClubes === "function") {
-      cargarClubes();
-    }
+      case "clubes":
+        await cargarClubes();
+        break;
 
-    // PROFESORES
-    if (vista === "profesores" && typeof cargarProfesores === "function") {
-      cargarProfesores();
-    }
+      case "profesores":
+        await cargarProfesores();
+        break;
 
-    // LOGIN ADMIN
-    if (vista === "loginAdmin" && typeof iniciarLoginAdmin === "function") {
-      iniciarLoginAdmin();
-    }
+      case "patrocinadores":
+        await cargarPatrocinadores();
+        break;
 
-    // TORNEOS
-    if (
-      (vista === "torneos-actuales" || vista === "torneos-anteriores") &&
-      typeof initTorneos === "function"
-    ) {
-      initTorneos();
+      case "loginAdmin":
+        await iniciarLoginAdmin();
+        break;
+
+      case "torneos-actuales":
+      case "torneos-anteriores":
+        await initTorneos();
+        break;
+
+      // home, ranking, cursos, objetivos → no necesitan lógica por ahora
+
+      default:
+        break;
     }
 
   } catch (error) {
     console.error("Error cargando vista:", error);
 
     contenedor.innerHTML = `
-      <div class="alert alert-danger">
-        Error al cargar la sección.
+      <div class="alert alert-danger text-center">
+        Error al cargar la sección
       </div>
     `;
   }
 }
 
-/* ================= ROUTER SPA ================= */
+// ================= ROUTER =================
 
 function router() {
   const hash = window.location.hash.replace("#/", "");
@@ -96,10 +107,7 @@ function router() {
   cargarVista(vista);
 }
 
-/* ================= EVENTOS ================= */
+// ================= EVENTOS =================
 
-// Vista inicial
-document.addEventListener("DOMContentLoaded", router);
-
-// Cambio de URL
+window.addEventListener("DOMContentLoaded", router);
 window.addEventListener("hashchange", router);

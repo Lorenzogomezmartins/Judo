@@ -1,6 +1,6 @@
-const API_URL = "http://localhost:3000/api/profesores";
+const API_URL = "http://localhost:4000/api/profesores";
 
-async function cargarProfesores() {
+export async function cargarProfesores() {
 
   const contenedor = document.getElementById("lista-profesores");
 
