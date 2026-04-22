@@ -1,23 +1,127 @@
-const API_URL = "http://localhost:4000/api/clubes";
-const API_PATROCINADORES = "http://localhost:4000/api/patrocinadores";
-const API_TORNEOS = "http://localhost:4000/api/torneos";
-const BACKEND_URL = "http://localhost:4000";
+const API_URL = "http://localhost:3000/api/clubes";
+const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
+const API_TORNEOS = "http://localhost:3000/api/torneos";
+const BACKEND_URL = "http://localhost:3000";
+const API_PROFESORES = "http://localhost:3000/api/profesores";
+const API_VERIFICAR_ADMIN = "http://localhost:3000/api/admin/verificar";
 
 // ============================
-// VERIFICAR LOGIN ADMIN
+// SEGURIDAD ADMIN
 // ============================
 
-const token = localStorage.getItem("tokenAdmin");
+function tokenExpirado(token) {
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payload = JSON.parse(atob(payloadBase64));
+    const ahora = Math.floor(Date.now() / 1000);
 
-if (!token) {
+    return payload.exp < ahora;
+  } catch (error) {
+    return true;
+  }
+}
+
+function obtenerTokenAdmin() {
+  return localStorage.getItem("tokenAdmin");
+}
+
+function limpiarSesionAdmin() {
+  localStorage.removeItem("tokenAdmin");
+  localStorage.removeItem("adminData");
+}
+
+function redirigirLogin() {
+  limpiarSesionAdmin();
   window.location.href = "../partials/loginAdmin.html";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function protegerAdmin() {
+  const token = obtenerTokenAdmin();
+
+  if (!token || tokenExpirado(token)) {
+    redirigirLogin();
+    return false;
+  }
+
+  return true;
+}
+
+function getAuthHeaders(extra = {}) {
+  const token = obtenerTokenAdmin();
+
+  return {
+    Authorization: `Bearer ${token}`,
+    ...extra
+  };
+}
+
+async function verificarAccesoAdminBackend() {
+  try {
+    const response = await fetch(API_VERIFICAR_ADMIN, {
+      method: "GET",
+      headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      redirigirLogin();
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error verificando acceso admin:", error);
+    redirigirLogin();
+    return false;
+  }
+}
+
+async function fetchProtegido(url, options = {}) {
+  const token = obtenerTokenAdmin();
+
+  if (!token || tokenExpirado(token)) {
+    redirigirLogin();
+    throw new Error("Sesión vencida");
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    redirigirLogin();
+    throw new Error("No autorizado");
+  }
+
+  return response;
+}
+
+if (!protegerAdmin()) {
+  throw new Error("Acceso no autorizado");
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const accesoValido = await verificarAccesoAdminBackend();
+  if (!accesoValido) return;
+
   cargarClubesAdmin();
   cargarPatrocinadoresAdmin();
   cargarProfesoresAdmin();
   cargarTorneosAdmin();
+
+  // ============================
+  // LOGOUT
+  // ============================
+  const btnLogout = document.querySelector(".navbar .btn.btn-outline-light");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", () => {
+      limpiarSesionAdmin();
+      window.location.href = "../partials/loginAdmin.html";
+    });
+  }
 
   // ============================
   // CLUBES
@@ -105,51 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
-
-// ============================
-// SEGURIDAD ADMIN
-// ============================
-
-function tokenExpirado(token) {
-  try {
-    const payloadBase64 = token.split(".")[1];
-    const payload = JSON.parse(atob(payloadBase64));
-    const ahora = Math.floor(Date.now() / 1000);
-
-    return payload.exp < ahora;
-  } catch (error) {
-    return true;
-  }
-}
-
-function obtenerTokenAdmin() {
-  return localStorage.getItem("tokenAdmin");
-}
-
-function redirigirLogin() {
-  localStorage.removeItem("tokenAdmin");
-  localStorage.removeItem("adminData");
-  window.location.href = "../partials/loginAdmin.html";
-}
-
-function protegerAdmin() {
-  const token = obtenerTokenAdmin();
-
-  if (!token || tokenExpirado(token)) {
-    redirigirLogin();
-    return false;
-  }
-
-  return true;
-}
-
-if (!protegerAdmin()) {
-  throw new Error("Acceso no autorizado");
-}
-
-
-
 /* ============================= 
    CLUBES
 ============================= */
@@ -178,7 +237,6 @@ async function cargarClubesAdmin(filtroNombre = "") {
     container.innerHTML = "";
 
     clubes.forEach(club => {
-
       const logoUrl = club.logo
         ? (club.logo.startsWith("http") ? club.logo : BACKEND_URL + club.logo)
         : "https://via.placeholder.com/80?text=Logo";
@@ -204,21 +262,18 @@ async function cargarClubesAdmin(filtroNombre = "") {
         </div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
+          <button 
+            class="btn btn-outline-primary btn-sm"
+            onclick="editarClub('${club._id}')">
+            <i class="bi bi-pencil"></i>
+          </button>
 
-  <button 
-    class="btn btn-outline-primary btn-sm"
-    onclick="editarClub('${club._id}')">
-    <i class="bi bi-pencil"></i>
-  </button>
-
-  <button 
-    class="btn btn-outline-danger btn-sm" 
-    onclick="eliminarClub('${club._id}')">
-    <i class="bi bi-trash"></i>
-  </button>
-
-</div>
-
+          <button 
+            class="btn btn-outline-danger btn-sm" 
+            onclick="eliminarClub('${club._id}')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
       `;
 
       container.appendChild(row);
@@ -235,7 +290,7 @@ async function eliminarClub(id) {
   if (!confirm("¿Seguro que querés eliminar este club?")) return;
 
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetchProtegido(`${API_URL}/${id}`, {
       method: "DELETE"
     });
 
@@ -252,6 +307,7 @@ async function eliminarClub(id) {
     alert("No se pudo eliminar el club.");
   }
 }
+
 /* CARGAR CLUBES*/
 function abrirFormulario() {
   const container = document.getElementById("formClubContainer");
@@ -291,12 +347,12 @@ async function guardarClub(e) {
     let response;
 
     if (id) {
-      response = await fetch(`${API_URL}/${id}`, {
+      response = await fetchProtegido(`${API_URL}/${id}`, {
         method: "PUT",
         body: formData
       });
     } else {
-      response = await fetch(API_URL, {
+      response = await fetchProtegido(API_URL, {
         method: "POST",
         body: formData
       });
@@ -322,7 +378,6 @@ async function guardarClub(e) {
   }
 }
 
-
 /* EDITAR CLUBES*/
 async function editarClub(id) {
   try {
@@ -337,10 +392,7 @@ async function editarClub(id) {
 
     abrirFormulario();
 
-    // Guardamos el ID oculto
     document.getElementById("clubId").value = club._id;
-
-    // Cargamos datos
     document.getElementById("clubNombre").value = club.nombre || "";
     document.getElementById("clubTelefono").value = club.telefono || "";
     document.getElementById("clubDireccion").value = club.direccion || "";
@@ -365,7 +417,6 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
     const response = await fetch(API_PATROCINADORES);
     let patrocinadores = await response.json();
 
-    // Filtrar por nombre si hay texto
     if (filtroNombre) {
       const texto = filtroNombre.toLowerCase();
       patrocinadores = patrocinadores.filter(p =>
@@ -381,7 +432,6 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
     container.innerHTML = "";
 
     patrocinadores.forEach(patrocinador => {
-
       const logoUrl = patrocinador.logo
         ? (patrocinador.logo.startsWith("http")
             ? patrocinador.logo
@@ -396,7 +446,7 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
         : null;
 
       const row = document.createElement("div");
-      row.classList.add("club-admin-row"); // usamos la misma clase que clubes
+      row.classList.add("club-admin-row");
 
       row.innerHTML = `
         <div class="club-admin-logo">
@@ -412,7 +462,6 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
         </div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
-
           <button 
             class="btn btn-outline-primary btn-sm"
             onclick="editarPatrocinador('${patrocinador._id}')">
@@ -424,7 +473,6 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
             onclick="eliminarPatrocinador('${patrocinador._id}')">
             <i class="bi bi-trash"></i>
           </button>
-
         </div>
       `;
 
@@ -483,14 +531,13 @@ formPatrocinador.addEventListener("submit", async (e) => {
   }
 
   try {
-
     const url = id
       ? `${API_PATROCINADORES}/${id}`
       : API_PATROCINADORES;
 
     const method = id ? "PUT" : "POST";
 
-    const response = await fetch(url, {
+    const response = await fetchProtegido(url, {
       method: method,
       body: formData
     });
@@ -499,9 +546,10 @@ formPatrocinador.addEventListener("submit", async (e) => {
       throw new Error("Error al guardar patrocinador");
     }
 
-    alert(id
-      ? "Patrocinador actualizado correctamente"
-      : "Patrocinador creado correctamente"
+    alert(
+      id
+        ? "Patrocinador actualizado correctamente"
+        : "Patrocinador creado correctamente"
     );
 
     formContainer.style.display = "none";
@@ -526,13 +574,12 @@ if (inputFiltroPatrocinadores) {
 
 /* ELIMINAR PATROCINADORES*/
 async function eliminarPatrocinador(id) {
-
   if (!confirm("¿Seguro que querés eliminar este patrocinador?")) {
     return;
   }
 
   try {
-    const response = await fetch(`${API_PATROCINADORES}/${id}`, {
+    const response = await fetchProtegido(`${API_PATROCINADORES}/${id}`, {
       method: "DELETE"
     });
 
@@ -541,8 +588,7 @@ async function eliminarPatrocinador(id) {
     }
 
     alert("Patrocinador eliminado correctamente");
-
-    cargarPatrocinadoresAdmin(); // refrescar lista
+    cargarPatrocinadoresAdmin();
 
   } catch (error) {
     console.error("Error eliminando:", error);
@@ -569,23 +615,93 @@ async function editarPatrocinador(id) {
   }
 }
 
+function abrirFormularioPatrocinador() {
+  if (!formContainer || !formPatrocinador) return;
+
+  formContainer.style.display = "block";
+  formPatrocinador.reset();
+  document.getElementById("patrocinadorId").value = "";
+}
+
+function cerrarFormularioPatrocinador() {
+  if (!formContainer || !formPatrocinador) return;
+
+  formContainer.style.display = "none";
+  formPatrocinador.reset();
+  document.getElementById("patrocinadorId").value = "";
+}
+
+async function guardarPatrocinador(e) {
+  e.preventDefault();
+
+  const id = document.getElementById("patrocinadorId").value.trim();
+  const nombre = document.getElementById("patrocinadorNombre").value.trim();
+  const contacto = document.getElementById("patrocinadorContacto").value.trim();
+  const sitioWeb = document.getElementById("patrocinadorWeb").value.trim();
+  const logoFile = document.getElementById("patrocinadorLogo").files[0];
+
+  if (!nombre) {
+    alert("El nombre es obligatorio");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("nombre", nombre);
+  formData.append("contacto", contacto);
+  formData.append("sitioWeb", sitioWeb);
+
+  if (logoFile) {
+    formData.append("logo", logoFile);
+  }
+
+  try {
+    const url = id
+      ? `${API_PATROCINADORES}/${id}`
+      : API_PATROCINADORES;
+
+    const method = id ? "PUT" : "POST";
+
+    const response = await fetchProtegido(url, {
+      method,
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al guardar patrocinador");
+    }
+
+    alert(
+      id
+        ? "Patrocinador actualizado correctamente"
+        : "Patrocinador creado correctamente"
+    );
+
+    formContainer.style.display = "none";
+    formPatrocinador.reset();
+    document.getElementById("patrocinadorId").value = "";
+
+    cargarPatrocinadoresAdmin();
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error al guardar patrocinador");
+  }
+}
+
 /* ============================= 
    PROFESORES
 ============================= */
 /* CARGAR PROFESORES */
 async function cargarProfesoresAdmin(filtroNombre = "") {
-
   const container = document.getElementById("profesoresGrid");
   if (!container) return;
 
   container.innerHTML = "<p>Cargando profesores...</p>";
 
   try {
-
-    const response = await fetch("http://localhost:4000/api/profesores");
+    const response = await fetch(API_PROFESORES);
     let profesores = await response.json();
 
-    // FILTRAR POR NOMBRE O APELLIDO
     if (filtroNombre) {
       const texto = filtroNombre.toLowerCase();
 
@@ -603,18 +719,16 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
     container.innerHTML = "";
 
     profesores.forEach(profesor => {
-
       const fotoUrl = profesor.foto
-        ? (profesor.foto.startsWith("http") 
-            ? profesor.foto 
-            : "http://localhost:4000/uploads/" + profesor.foto)
+        ? (profesor.foto.startsWith("http")
+            ? profesor.foto
+            : "http://localhost:3000/uploads/" + profesor.foto)
         : "https://via.placeholder.com/80?text=Foto";
 
       const row = document.createElement("div");
       row.classList.add("club-admin-row");
 
       row.innerHTML = `
-
         <div class="club-admin-logo">
           <img src="${fotoUrl}" alt="${profesor.nombre}">
         </div>
@@ -632,7 +746,6 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
         </div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
-
           <button 
             class="btn btn-outline-primary btn-sm"
             onclick="editarProfesor('${profesor._id}')">
@@ -644,45 +757,33 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
             onclick="eliminarProfesor('${profesor._id}')">
             <i class="bi bi-trash"></i>
           </button>
-
         </div>
-
       `;
 
       container.appendChild(row);
-
     });
 
   } catch (error) {
-
     console.error("Error cargando profesores:", error);
     container.innerHTML = "<p>Error al cargar profesores.</p>";
-
   }
 }
 
 /* AGREGAR PROFESORES */
 function abrirFormularioProfesor() {
-
   const container = document.getElementById("formProfesorContainer");
 
   container.style.display = "block";
-
   document.getElementById("formProfesor").reset();
-
   document.getElementById("profesorId").value = "";
-
 }
+
 function cerrarFormularioProfesor() {
-
   const container = document.getElementById("formProfesorContainer");
-
   container.style.display = "none";
-
 }
 
 async function guardarProfesor(e) {
-
   e.preventDefault();
 
   const id = document.getElementById("profesorId").value.trim();
@@ -697,14 +798,8 @@ async function guardarProfesor(e) {
   }
 
   try {
-
-    /* ===============================
-       VERIFICAR DUPLICADOS SOLO SI CREA
-    =============================== */
-
     if (!id) {
-
-      const responseProfesores = await fetch("http://localhost:4000/api/profesores");
+      const responseProfesores = await fetch(API_PROFESORES);
       const profesores = await responseProfesores.json();
 
       const existe = profesores.find(p =>
@@ -716,12 +811,7 @@ async function guardarProfesor(e) {
         alert("Ya existe un profesor con ese nombre y apellido");
         return;
       }
-
     }
-
-    /* ===============================
-       ARMAR FORM DATA
-    =============================== */
 
     const formData = new FormData();
 
@@ -733,17 +823,13 @@ async function guardarProfesor(e) {
       formData.append("foto", fotoInput.files[0]);
     }
 
-    /* ===============================
-       CREAR O ACTUALIZAR
-    =============================== */
-
     const url = id
-      ? `http://localhost:4000/api/profesores/${id}`
-      : `http://localhost:4000/api/profesores`;
+      ? `${API_PROFESORES}/${id}`
+      : API_PROFESORES;
 
     const method = id ? "PUT" : "POST";
 
-    const response = await fetch(url, {
+    const response = await fetchProtegido(url, {
       method: method,
       body: formData
     });
@@ -766,23 +852,17 @@ async function guardarProfesor(e) {
     cargarProfesoresAdmin();
 
   } catch (error) {
-
     console.error("Error:", error);
-
     alert("Error al guardar profesor");
-
   }
-
 }
 
 /* ELIMINAR PROFESORES */
 async function eliminarProfesor(id) {
-
   if (!confirm("¿Seguro que querés eliminar este profesor?")) return;
 
   try {
-
-    const response = await fetch(`http://localhost:4000/api/profesores/${id}`, {
+    const response = await fetchProtegido(`${API_PROFESORES}/${id}`, {
       method: "DELETE"
     });
 
@@ -791,26 +871,20 @@ async function eliminarProfesor(id) {
     }
 
     alert("Profesor eliminado correctamente");
-
     cargarProfesoresAdmin();
 
   } catch (error) {
-
     console.error("Error:", error);
-
     alert("No se pudo eliminar el profesor");
-
   }
-
 }
+
 /* EDITAR PROFESORES */
 async function editarProfesor(id) {
-
   console.log("Editar profesor:", id);
 
   try {
-
-    const response = await fetch(`http://localhost:4000/api/profesores/${id}`);
+    const response = await fetch(`${API_PROFESORES}/${id}`);
     const profesor = await response.json();
 
     abrirFormularioProfesor();
@@ -821,23 +895,13 @@ async function editarProfesor(id) {
     document.getElementById("profesorDescripcion").value = profesor.descripcion || "";
 
   } catch (error) {
-
     console.error("Error cargando profesor:", error);
-
   }
-
 }
-
-
-
-
-
 
 /* ============================= 
    TORNEOS
 ============================= */
-
-
 
 // BOTONES / EVENTOS TORNEOS
 const btnNuevoTorneo = document.getElementById("btnNuevoTorneo");
@@ -985,13 +1049,11 @@ async function guardarTorneo(e) {
   try {
     let response;
 
-    // =========================
-    // CREAR TORNEO -> POST JSON
-    // =========================
     if (!id) {
-      response = await fetch(API_TORNEOS, {
+      response = await fetchProtegido(API_TORNEOS, {
         method: "POST",
         headers: {
+          ...getAuthHeaders(),
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -1002,11 +1064,7 @@ async function guardarTorneo(e) {
           categorias
         })
       });
-    } 
-    // =========================
-    // EDITAR TORNEO -> PUT
-    // =========================
-    else {
+    } else {
       const hayFoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
 
       if (hayFoto) {
@@ -1018,14 +1076,15 @@ async function guardarTorneo(e) {
         formData.append("categorias", JSON.stringify(categorias));
         formData.append("foto", fotoInput.files[0]);
 
-        response = await fetch(`${API_TORNEOS}/${id}`, {
+        response = await fetchProtegido(`${API_TORNEOS}/${id}`, {
           method: "PUT",
           body: formData
         });
       } else {
-        response = await fetch(`${API_TORNEOS}/${id}`, {
+        response = await fetchProtegido(`${API_TORNEOS}/${id}`, {
           method: "PUT",
           headers: {
+            ...getAuthHeaders(),
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -1101,7 +1160,7 @@ async function eliminarTorneo(id) {
   if (!confirm("¿Seguro que querés eliminar este torneo?")) return;
 
   try {
-    const response = await fetch(`${API_TORNEOS}/${id}`, {
+    const response = await fetchProtegido(`${API_TORNEOS}/${id}`, {
       method: "DELETE"
     });
 

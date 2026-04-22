@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:4000/api/torneos";
+const API_URL = "http://localhost:3000/api/torneos";
 
 let cacheTorneos = [];
 

@@ -21,7 +21,8 @@ const rutas = {
   profesores: "../partials/profesores.html",
   patrocinadores: "../partials/patrocinadores.html",
   objetivos: "../partials/objetivos.html",
-  loginAdmin: "../partials/loginAdmin.html"
+  loginAdmin: "../partials/loginAdmin.html",
+  sistema: "../partials/sistema.html"
 };
 
 // ================= CARGAR VISTA =================
@@ -55,7 +56,6 @@ async function cargarVista(vista) {
     // ================= HOOKS POR VISTA =================
 
     switch (vista) {
-
       case "calendario":
         await inicializarCalendario();
         break;
@@ -81,8 +81,7 @@ async function cargarVista(vista) {
         await initTorneos();
         break;
 
-      // home, ranking, cursos, objetivos → no necesitan lógica por ahora
-
+      // home, ranking, cursos, objetivos, sistema
       default:
         break;
     }

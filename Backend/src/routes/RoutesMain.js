@@ -5,6 +5,7 @@ import clubRoutes from './club.routes.js';
 import AdminRoutes from './Admin.routes.js';
 import usuarioRoutes from './usuario.routes.js';
 import TorneosRoutes from './torneo.routes.js';
+import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
@@ -22,6 +23,14 @@ router.use('/clubes', clubRoutes);
 router.use('/Administradores', AdminRoutes);
 router.use('/usuarios', usuarioRoutes);
 router.use('/torneos', TorneosRoutes);
+
+// Ruta de prueba protegida
+router.get('/admin/verificar', authMiddleware, adminOnly, (req, res) => {
+  res.status(200).json({
+    mensaje: 'Acceso autorizado',
+    user: req.user
+  });
+});
 
 console.log('✅ Rutas montadas: /patrocinadores');
 console.log('✅ Rutas montadas: /profesores');
