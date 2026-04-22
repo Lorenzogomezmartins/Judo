@@ -16,16 +16,26 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
-<nav class="navbar navbar-dark bg-dark px-4">
-  <span class="navbar-brand mb-0 h1">FMJ · Panel Administrador</span>
-  <button class="btn btn-outline-light">
-    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-  </button>
+<!-- ================= NAVBAR ================= -->
+<nav class="fmj-navbar">
+  <div class="fmj-navbar-left">
+    <div class="fmj-navbar-logo">
+      <img src="../assets/Logos/Logo1.png" alt="FMJ Logo" class="logo">
+    </div>
+    <div class="fmj-navbar-texto">
+      <h1>FMJ · Panel Administrador</h1>
+      <p>Federación Metropolitana de Judo</p>
+    </div>
+  </div>
+  <div class="fmj-navbar-actions">
+    <button class="btn btn-outline-light">
+      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </button>
+  </div>
 </nav>
 
 <!-- ================= DASHBOARD ================= -->
-<section class="container my-4">
+<section class="container-fluid my-4">
   <div class="card shadow-sm">
     <div class="card-body text-center">
       <h3 class="mb-2">Panel de Administración</h3>
@@ -89,6 +99,7 @@
 
 <!-- ===================================================== -->
 <!-- ================= PATROCINADORES ==================== -->
+<!-- 5 columnas: Logo | Nombre | Contacto | Web | Acciones -->
 <!-- ===================================================== -->
 
 <div class="tab-pane fade" id="patrocinadores">

@@ -1,331 +1,303 @@
 /* =======================================================
-   HEADER ADMIN CLUBES
+NAVBAR FMJ (NUEVO)
+======================================================= */
+
+.fmj-navbar {
+background: linear-gradient(135deg, #b30000, #8f0000);
+padding: 16px 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+flex-wrap: wrap;
+box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+}
+
+.fmj-navbar-left {
+display: flex;
+align-items: center;
+gap: 18px;
+min-width: 0;
+}
+
+.fmj-navbar-logo {
+width: 85px;
+height: 85px;
+border-radius: 14px;
+background-color: rgba(255, 255, 255, 0.12);
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 4px;
+backdrop-filter: blur(4px);
+}
+
+.fmj-navbar-logo img {
+max-width: 100%;
+max-height: 100%;
+object-fit: contain;
+}
+
+.fmj-navbar-texto h1 {
+margin: 0;
+font-size: 1.45rem;
+font-weight: 700;
+color: #ffffff;
+}
+
+.fmj-navbar-texto p {
+margin: 3px 0 0;
+font-size: 0.88rem;
+color: rgba(255, 255, 255, 0.80);
+}
+
+.fmj-navbar-actions {
+display: flex;
+align-items: center;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.fmj-navbar-actions .btn {
+border-radius: 10px;
+padding: 9px 16px;
+font-weight: 600;
+border: none;
+transition: all 0.2s ease;
+}
+
+.fmj-navbar-actions .btn-outline-light {
+border: 1px solid rgba(255, 255, 255, 0.7);
+color: #ffffff;
+background: transparent;
+}
+
+.fmj-navbar-actions .btn-outline-light:hover {
+background-color: rgba(255, 255, 255, 0.15);
+color: #ffffff;
+}
+
+.nav-tabs {
+  display: flex;
+  width: 100%;
+}
+
+.nav-tabs .nav-item {
+  flex: 1;
+}
+
+.nav-tabs .nav-link {
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* =======================================================
+HEADER ADMIN CLUBES (ORIGINAL)
 ======================================================= */
 
 .header-clubes-admin {
-  background: linear-gradient(135deg, #b30000, #8f0000);
-  border-radius: 18px;
-  padding: 22px 28px;
-  margin-bottom: 28px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-  color: #ffffff;
+background: linear-gradient(135deg, #b30000, #8f0000);
+border-radius: 18px;
+padding: 22px 28px;
+margin-bottom: 28px;
+box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+color: #ffffff;
 }
 
 .header-clubes-admin-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+flex-wrap: wrap;
 }
 
 .header-clubes-admin-left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  min-width: 0;
+display: flex;
+align-items: center;
+gap: 18px;
+min-width: 0;
 }
 
 .header-clubes-admin-logo {
-  width: 78px;
-  height: 78px;
-  border-radius: 14px;
-  background-color: rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  backdrop-filter: blur(4px);
+width: 78px;
+height: 78px;
+border-radius: 14px;
+background-color: rgba(255, 255, 255, 0.12);
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 8px;
+backdrop-filter: blur(4px);
 }
 
 .header-clubes-admin-logo img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.header-clubes-admin-texto {
-  min-width: 0;
+max-width: 100%;
+max-height: 100%;
+object-fit: contain;
 }
 
 .header-clubes-admin-texto h1,
 .header-clubes-admin-texto h2 {
-  margin: 0;
-  font-size: 1.9rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.2;
+margin: 0;
+font-size: 1.9rem;
+font-weight: 700;
+color: #ffffff;
+line-height: 1.2;
 }
 
 .header-clubes-admin-texto p {
-  margin: 6px 0 0;
-  font-size: 0.98rem;
-  color: rgba(255, 255, 255, 0.88);
+margin: 6px 0 0;
+font-size: 0.98rem;
+color: rgba(255, 255, 255, 0.88);
 }
 
 .header-clubes-admin-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.header-clubes-admin-actions .btn {
-  border-radius: 10px;
-  padding: 9px 16px;
-  font-weight: 600;
-  border: none;
-  transition: all 0.2s ease;
-}
-
-.header-clubes-admin-actions .btn-light {
-  background-color: #ffffff;
-  color: #9e0000;
-}
-
-.header-clubes-admin-actions .btn-light:hover {
-  background-color: #f3f4f6;
-  color: #7f0000;
-}
-
-.header-clubes-admin-actions .btn-outline-light {
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  color: #ffffff;
-  background: transparent;
-}
-
-.header-clubes-admin-actions .btn-outline-light:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+display: flex;
+gap: 12px;
 }
 
 /* =======================================================
-   TABLA CLUBES ADMIN - ESTILO UNIFICADO
+TABLA CLUBES (ORIGINAL)
 ======================================================= */
 
 .clubes-listado {
-  border: 1px solid #d6d9de;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+border: 1px solid #d6d9de;
+border-radius: 16px;
+overflow: hidden;
+background: #ffffff;
+box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* =========================
-   CABECERA
-========================= */
-
 .clubes-header {
-  display: grid;
-  grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
-  background: linear-gradient(90deg, #b30000, #9e0000);
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 0.92rem;
-  border-bottom: 1px solid #8a0000;
+display: grid;
+grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
+background: linear-gradient(90deg, #b30000, #9e0000);
+color: #ffffff;
+font-weight: 700;
+font-size: 0.92rem;
 }
 
 .clubes-header div {
-  padding: 16px 18px;
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
-  display: flex;
-  align-items: center;
+padding: 16px 18px;
 }
-
-.clubes-header div:last-child {
-  border-right: none;
-  justify-content: center;
-  text-align: center;
-}
-
-/* =========================
-   FILAS
-========================= */
 
 .club-admin-row {
-  display: grid;
-  grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
-  align-items: center;
-  font-size: 0.92rem;
-  color: #1e293b;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eceff3;
-  transition: all 0.2s ease;
-  min-height: 88px;
-}
-
-.club-admin-row:last-child {
-  border-bottom: none;
+display: grid;
+grid-template-columns: 110px 1.6fr 1fr 1.6fr 1.2fr 140px;
+align-items: center;
+font-size: 0.92rem;
+background-color: #ffffff;
+border-bottom: 1px solid #eceff3;
+min-height: 88px;
 }
 
 .club-admin-row:hover {
-  background-color: #fff5f5;
+background-color: #fff5f5;
 }
 
 .club-admin-row > div {
-  padding: 14px 18px;
-  border-right: 1px solid #f1f3f5;
-  display: flex;
-  align-items: center;
-}
-
-.club-admin-row > div:last-child {
-  border-right: none;
-  justify-content: center;
-  text-align: center;
-}
-
-/* =========================
-   LOGO
-========================= */
-
-.club-admin-logo {
-  width: 95px;
-  height: 85px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.club-admin-logo img {
-  max-width: 80px;
-  max-height: 80px;
-  object-fit: contain;
-  display: block;
-  border-radius: 10px;
-  background-color: #ffffff;
-  padding: 4px;
-}
-
-/* =========================
-   TEXTO COLUMNAS
-========================= */
-
-.club-col {
-  font-size: 0.92rem;
-  color: #334155;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.club-col strong {
-  color: #111827;
-  font-weight: 700;
-}
-
-.club-col a {
-  color: #b30000;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease;
-}
-
-.club-col a:hover {
-  color: #7f0000;
-  text-decoration: underline;
-}
-
-/* =========================
-   ACCIONES
-========================= */
-
-.club-admin-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.club-admin-actions .btn {
-  padding: 7px 14px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.club-admin-actions .btn-warning {
-  background-color: #9e0000;
-  border-color: #9e0000;
-  color: #ffffff;
-}
-
-.club-admin-actions .btn-warning:hover {
-  background-color: #7f0000;
-  border-color: #7f0000;
-  color: #ffffff;
-}
-
-.club-admin-actions .btn-danger {
-  background-color: #dc2626;
-  border-color: #dc2626;
-}
-
-.club-admin-actions .btn-danger:hover {
-  background-color: #b91c1c;
-  border-color: #b91c1c;
+padding: 14px 18px;
 }
 
 /* =======================================================
-   RESPONSIVE
+LOGO
 ======================================================= */
 
-@media (max-width: 992px) {
-  .header-clubes-admin {
-    padding: 20px;
-  }
-
-  .header-clubes-admin-texto h1,
-  .header-clubes-admin-texto h2 {
-    font-size: 1.55rem;
-  }
-
-  .clubes-header,
-  .club-admin-row {
-    grid-template-columns: 90px 1.4fr 1fr 1.4fr 1fr 130px;
-  }
-
-  .clubes-header div,
-  .club-admin-row > div {
-    padding: 12px 14px;
-    font-size: 0.85rem;
-  }
-
-  .club-admin-logo {
-    width: 80px;
-    height: 72px;
-  }
-
-  .club-admin-logo img {
-    max-width: 65px;
-    max-height: 65px;
-  }
+.club-admin-logo {
+width: 95px;
+height: 85px;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
+.club-admin-logo img {
+max-width: 80px;
+max-height: 80px;
+object-fit: contain;
+border-radius: 10px;
+background-color: #ffffff;
+padding: 4px;
+}
+
+/* =======================================================
+TEXTO
+======================================================= */
+
+.club-col {
+font-size: 0.92rem;
+color: #334155;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.club-col strong {
+color: #111827;
+}
+
+.club-col a {
+color: #b30000;
+text-decoration: none;
+}
+
+.club-col a:hover {
+color: #7f0000;
+text-decoration: underline;
+}
+
+/* =======================================================
+ACCIONES
+======================================================= */
+
+.club-admin-actions {
+display: flex;
+justify-content: center;
+gap: 10px;
+}
+
+.club-admin-actions .btn {
+padding: 7px 14px;
+border-radius: 10px;
+font-size: 0.85rem;
+}
+
+/* =======================================================
+RESPONSIVE
+======================================================= */
+
 @media (max-width: 768px) {
-  .header-clubes-admin-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.fmj-navbar {
+flex-direction: column;
+align-items: flex-start;
+}
 
-  .header-clubes-admin-left {
-    width: 100%;
-  }
+.clubes-listado {
+overflow-x: auto;
+}
 
-  .header-clubes-admin-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
+.clubes-header,
+.club-admin-row {
+min-width: 760px;
+}
 
-  .clubes-listado {
-    border-radius: 14px;
-    overflow-x: auto;
-  }
+.nav-tabs {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
 
-  .clubes-header,
-  .club-admin-row {
-    min-width: 760px;
-  }
+.nav-tabs .nav-item {
+  flex: 0 0 auto;
+}
+
+.nav-tabs .nav-link {
+  white-space: nowrap;
+}
+.card-body {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  flex: 0 0 auto
+}
 }

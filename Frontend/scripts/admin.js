@@ -1,9 +1,9 @@
-const API_URL = "http://localhost:3000/api/clubes";
-const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
-const API_TORNEOS = "http://localhost:3000/api/torneos";
-const BACKEND_URL = "http://localhost:3000";
-const API_PROFESORES = "http://localhost:3000/api/profesores";
-const API_VERIFICAR_ADMIN = "http://localhost:3000/api/admin/verificar";
+const API_URL = "http://localhost:4000/api/clubes";
+const API_PATROCINADORES = "http://localhost:4000/api/patrocinadores";
+const API_TORNEOS = "http://localhost:4000/api/torneos";
+const BACKEND_URL = "http://localhost:4000";
+const API_PROFESORES = "http://localhost:4000/api/profesores";
+const API_VERIFICAR_ADMIN = "http://localhost:4000/api/admin/verificar";
 
 // ============================
 // SEGURIDAD ADMIN
@@ -722,7 +722,7 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
       const fotoUrl = profesor.foto
         ? (profesor.foto.startsWith("http")
             ? profesor.foto
-            : "http://localhost:3000/uploads/" + profesor.foto)
+            : "http://localhost:4000/uploads/" + profesor.foto)
         : "https://via.placeholder.com/80?text=Foto";
 
       const row = document.createElement("div");
