@@ -1,12 +1,12 @@
 // src/routes/inscripcion.routes.js
 import { Router } from 'express';
 
-import { importarInscripcionesDesdeSheets } from '../controllers/inscripciones/importarInscripciones.controller.js';
-import { listarInscripciones } from '../controllers/inscripciones/listarInscripciones.controller.js';
-import { obtenerInscripcionPorId } from '../controllers/inscripciones/obtenerInscripcion.controller.js';
-import { actualizarInscripcion } from '../controllers/inscripciones/actualizarInscripcion.controller.js';
-import { aprobarInscripcion } from '../controllers/inscripciones/aprobarInscripcion.controller.js';
-import { rechazarInscripcion } from '../controllers/inscripciones/rechazarInscripcion.controller.js';
+import { importarInscripcionesDesdeSheets } from '../controllers/Inscripciones/importarInscripciones.controller.js';
+import { listarInscripciones } from '../controllers/Inscripciones/listarInscripciones.controller.js';
+import { obtenerInscripcionPorId } from '../controllers/Inscripciones/obtenerInscripcion.controller.js';
+import { actualizarInscripcion } from '../controllers/Inscripciones/actualizarInscripcion.controller.js';
+import { aprobarInscripcion } from '../controllers/Inscripciones/aprobarInscripcion.controller.js';
+import { rechazarInscripcion } from '../controllers/Inscripciones/rechazarInscripcion.controller.js';
 
 const router = Router();
 
