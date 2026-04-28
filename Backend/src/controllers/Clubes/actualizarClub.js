@@ -1,4 +1,4 @@
-import Club from '../../models/Club.js';
+import Club from '../../models/club.js';
 
 const actualizarClub = async (req, res) => {
   try {
