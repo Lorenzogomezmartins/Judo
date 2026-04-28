@@ -6,6 +6,7 @@ import { inicializarCalendario } from "./calendario.js";
 import { cargarProfesores } from "./profesores.js";
 import { cargarPatrocinadores } from "./patrocinadores.js";
 import { iniciarLoginAdmin } from "./loginAdmin.js";
+import { cargarRankingUsuarios } from "./usuarios.js";
 
 // ================= RUTAS =================
 
@@ -55,37 +56,39 @@ async function cargarVista(vista) {
 
     // ================= HOOKS POR VISTA =================
 
-    switch (vista) {
-      case "calendario":
-        await inicializarCalendario();
-        break;
+ switch (vista) {
+  case "calendario":
+    await inicializarCalendario();
+    break;
 
-      case "clubes":
-        await cargarClubes();
-        break;
+  case "clubes":
+    await cargarClubes();
+    break;
 
-      case "profesores":
-        await cargarProfesores();
-        break;
+  case "profesores":
+    await cargarProfesores();
+    break;
 
-      case "patrocinadores":
-        await cargarPatrocinadores();
-        break;
+  case "patrocinadores":
+    await cargarPatrocinadores();
+    break;
 
-      case "loginAdmin":
-        await iniciarLoginAdmin();
-        break;
+  case "loginAdmin":
+    await iniciarLoginAdmin();
+    break;
 
-      case "torneos-actuales":
-      case "torneos-anteriores":
-        await initTorneos();
-        break;
+  case "ranking":
+    await cargarRankingUsuarios();
+    break;
 
-      // home, ranking, cursos, objetivos, sistema
-      default:
-        break;
-    }
+  case "torneos-actuales":
+  case "torneos-anteriores":
+    await initTorneos();
+    break;
 
+  default:
+    break;
+}
   } catch (error) {
     console.error("Error cargando vista:", error);
 

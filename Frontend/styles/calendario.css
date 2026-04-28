@@ -236,6 +236,50 @@
   font-size: 18px;
 }
 
+.torneo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.torneo-modal-overlay.hidden {
+  display: none !important;
+}
+
+.torneo-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 520px;
+  padding: 25px;
+  border-radius: 18px;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.torneo-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 15px;
+}
+
+.info-item {
+  margin-bottom: 10px;
+}
+
 /* ===============================
    RESPONSIVE
 ================================ */

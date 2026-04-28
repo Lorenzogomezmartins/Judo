@@ -3,13 +3,13 @@ export async function cargarPatrocinadores() {
   if (!grid) return;
 
   try {
-    const res = await fetch("http://localhost:4000/api/patrocinadores");
+    const res = await fetch("http://localhost:3000/api/patrocinadores");
     const patrocinadores = await res.json();
 
     grid.innerHTML = "";
 
     patrocinadores.forEach(p => {
-      const logoUrl = `http://localhost:4000${p.logo}`;
+      const logoUrl = `http://localhost:3000${p.logo}`;
 
       grid.innerHTML += `
         <div class="sponsor-item">

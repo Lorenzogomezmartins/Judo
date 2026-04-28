@@ -1,428 +1,457 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Administrador - FMJ</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
-
-  <!-- CSS Admin -->
   <link rel="stylesheet" href="../styles/admin.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
 <nav class="fmj-navbar">
+
+  <!-- IZQUIERDA -->
   <div class="fmj-navbar-left">
     <div class="fmj-navbar-logo">
-      <img src="../assets/Logos/Logo1.png" alt="FMJ Logo" class="logo">
-    </div>
-    <div class="fmj-navbar-texto">
-      <h1>FMJ · Panel Administrador</h1>
-      <p>Federación Metropolitana de Judo</p>
+      <img src="../assets/Logos/Logo1.png" alt="Logo FMJ">
     </div>
   </div>
+
+  <!-- CENTRO -->
+  <div class="fmj-navbar-center">
+    <h1>FMJ · Panel Administrador</h1>
+    <p>Federación Metropolitana de Judo</p>
+  </div>
+
+  <!-- DERECHA -->
   <div class="fmj-navbar-actions">
-    <button class="btn btn-outline-light">
-      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </button>
-  </div>
+  <button
+    class="btn btn-outline-light"
+    id="btnLogout"
+    onclick="window.location.href='../pages/main.html'"
+  >
+    <i class="bi bi-box-arrow-right"></i>
+    Cerrar sesión
+  </button>
+</div>
+
 </nav>
 
-<!-- ================= DASHBOARD ================= -->
-<section class="container-fluid my-4">
-  <div class="card shadow-sm">
-    <div class="card-body text-center">
-      <h3 class="mb-2">Panel de Administración</h3>
-      <p class="text-muted mb-0">
-        Desde este panel podrás gestionar toda la información visible en el sitio público
-        de la Federación Metropolitana de Judo.
-      </p>
-    </div>
-  </div>
-</section>
+<main class="container mt-4 mb-5">
 
-<div class="container">
-
-<ul class="nav nav-tabs mb-3" role="tablist">
-  <li class="nav-item">
-    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dashboard">
-      <i class="bi bi-house"></i> Dashboard
-    </button>
-  </li>
-
-  <li class="nav-item">
-    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#patrocinadores">
-      <i class="bi bi-stars"></i> Patrocinadores
-    </button>
-  </li>
-
-  <li class="nav-item">
-    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#clubes">
-      <i class="bi bi-building"></i> Clubes
-    </button>
-  </li>
-
-  <li class="nav-item">
-    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profesores">
-      <i class="bi bi-person-badge"></i> Profesores
-    </button>
-  </li>
-
-  <li class="nav-item">
-    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#torneos">
-      <i class="bi bi-trophy"></i> Torneos
-    </button>
-  </li>
-</ul>
-
-<div class="tab-content">
-
-<!-- ================= DASHBOARD ================= -->
-<div class="tab-pane fade show active" id="dashboard">
-  <div class="card p-4 shadow-sm">
-    <h4>Funciones disponibles</h4>
-    <ul>
-      <li>👤 Gestión de usuarios</li>
-      <li>🥋 Profesores</li>
-      <li>🏆 Torneos</li>
-      <li>🤝 Patrocinadores</li>
-      <li>🏢 Clubes</li>
-    </ul>
-  </div>
-</div>
-
-<!-- ===================================================== -->
-<!-- ================= PATROCINADORES ==================== -->
-<!-- 5 columnas: Logo | Nombre | Contacto | Web | Acciones -->
-<!-- ===================================================== -->
-
-<div class="tab-pane fade" id="patrocinadores">
-  <div class="card p-4 shadow-sm">
-
-    <h4 class="mb-4">Gestión de Patrocinadores</h4>
-
-    <!-- FILTRO + BOTÓN -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <input type="text" id="filtroPatrocinadores" class="form-control w-50" placeholder="Filtrar por nombre...">
-      <button class="btn btn-success" id="btnNuevoPatrocinador">
-        <i class="bi bi-plus-lg"></i> Agregar Patrocinador
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dashboard" type="button">
+        Dashboard
       </button>
-    </div>
+    </li>
 
-    <!-- FORMULARIO -->
-    <div class="card border p-4 mb-4" id="formPatrocinadorContainer" style="display:none;">
-      <h5 class="mb-3">Formulario Patrocinador</h5>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#inscripciones" type="button">
+        Inscripciones
+      </button>
+    </li>
 
-      <form id="formPatrocinador" enctype="multipart/form-data">
-        <input type="hidden" id="patrocinadorId">
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#clubes" type="button">
+        Clubes
+      </button>
+    </li>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label>Nombre</label>
-            <input type="text" id="patrocinadorNombre" class="form-control" required>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#patrocinadores" type="button">
+        Patrocinadores
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profesores" type="button">
+        Profesores
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#torneos" type="button">
+        Torneos
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <section class="tab-pane fade show active" id="dashboard">
+      <div class="card p-4 shadow-sm">
+        <h4>Panel de Administración</h4>
+        <p class="mb-0">
+          Gestioná clubes, patrocinadores, profesores, torneos e inscripciones.
+        </p>
+      </div>
+    </section>
+
+    <!-- INSCRIPCIONES -->
+    <section class="tab-pane fade" id="inscripciones">
+      <div class="card p-4 shadow-sm">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="mb-1">Inscripciones</h4>
+            <p class="text-muted mb-0">
+              Importá desde Google Sheets, revisá pendientes, editá datos y aprobá usuarios.
+            </p>
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label>Logo</label>
-            <input type="file" id="patrocinadorLogo" class="form-control" accept="image/*">
+          <button id="btnImportarInscripciones" class="btn btn-primary">
+            <i class="bi bi-cloud-download"></i> Importar desde Google Sheets
+          </button>
+        </div>
+
+        <div class="d-flex gap-2 align-items-center mb-3">
+          <label for="filtroEstadoInscripciones" class="form-label mb-0">
+            Estado:
+          </label>
+
+          <select id="filtroEstadoInscripciones" class="form-select w-auto">
+            <option value="pendiente" selected>Pendientes</option>
+            <option value="aprobado">Aprobadas</option>
+            <option value="rechazado">Rechazadas</option>
+            <option value="duplicado">Duplicadas</option>
+            <option value="">Todas</option>
+          </select>
+        </div>
+
+        <div class="clubes-header">
+          <div>Nombre</div>
+          <div>DNI</div>
+          <div>Email</div>
+          <div>Clasificación</div>
+          <div>Estado</div>
+          <div>Acciones</div>
+        </div>
+
+        <div id="inscripcionesGrid" class="clubes-listado">
+          <p>Cargando inscripciones...</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CLUBES -->
+    <section class="tab-pane fade" id="clubes">
+      <div class="card p-4 shadow-sm">
+        <h4 class="mb-4">Gestión de Clubes</h4>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input type="text" id="filtroClubes" class="form-control w-50" placeholder="Filtrar por nombre...">
+
+          <button class="btn btn-success" id="btnNuevoClub">
+            <i class="bi bi-plus-lg"></i> Agregar Club
+          </button>
+        </div>
+
+        <div class="card border p-4 mb-4" id="formClubContainer" style="display:none;">
+          <h5 class="mb-3">Formulario Club</h5>
+
+          <form id="formClub" enctype="multipart/form-data">
+            <input type="hidden" id="clubId">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input type="text" id="clubNombre" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Logo</label>
+                <input type="file" id="clubLogo" class="form-control" accept="image/*">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Teléfono</label>
+                <input type="text" id="clubTelefono" class="form-control">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Dirección</label>
+                <input type="text" id="clubDireccion" class="form-control">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Sitio Web</label>
+                <input type="text" id="clubWeb" class="form-control">
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="button" class="btn btn-secondary" id="btnCancelarClub">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="clubes-header">
+          <div>Logo</div>
+          <div>Nombre</div>
+          <div>Teléfono</div>
+          <div>Dirección</div>
+          <div>Web</div>
+          <div>Acciones</div>
+        </div>
+
+        <div id="clubesGrid" class="clubes-listado"></div>
+      </div>
+    </section>
+
+    <!-- PATROCINADORES -->
+    <section class="tab-pane fade" id="patrocinadores">
+      <div class="card p-4 shadow-sm">
+        <h4 class="mb-4">Gestión de Patrocinadores</h4>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input type="text" id="filtroPatrocinadores" class="form-control w-50" placeholder="Filtrar por nombre...">
+
+          <button class="btn btn-success" id="btnNuevoPatrocinador">
+            <i class="bi bi-plus-lg"></i> Agregar Patrocinador
+          </button>
+        </div>
+
+        <div class="card border p-4 mb-4" id="formPatrocinadorContainer" style="display:none;">
+          <h5 class="mb-3">Formulario Patrocinador</h5>
+
+          <form id="formPatrocinador" enctype="multipart/form-data">
+            <input type="hidden" id="patrocinadorId">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input type="text" id="patrocinadorNombre" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Logo</label>
+                <input type="file" id="patrocinadorLogo" class="form-control" accept="image/*">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Contacto</label>
+                <input type="text" id="patrocinadorContacto" class="form-control">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Sitio Web</label>
+                <input type="text" id="patrocinadorWeb" class="form-control">
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="button" class="btn btn-secondary" id="btnCancelarPatrocinador">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="clubes-header">
+          <div>Logo</div>
+          <div>Nombre</div>
+          <div>Contacto</div>
+          <div>Web</div>
+          <div>Acciones</div>
+        </div>
+
+        <div id="patrocinadoresGrid" class="clubes-listado"></div>
+      </div>
+    </section>
+
+    <!-- PROFESORES -->
+    <section class="tab-pane fade" id="profesores">
+      <div class="card p-4 shadow-sm">
+        <h4 class="mb-4">Gestión de Profesores</h4>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input type="text" id="filtroProfesores" class="form-control w-50" placeholder="Filtrar por nombre...">
+
+          <button class="btn btn-success" id="btnNuevoProfesorr">
+            <i class="bi bi-plus-lg"></i> Agregar Profesor
+          </button>
+        </div>
+
+        <div class="card border p-4 mb-4" id="formProfesorContainer" style="display:none;">
+          <h5 class="mb-3">Formulario Profesor</h5>
+
+          <form id="formProfesor" enctype="multipart/form-data">
+            <input type="hidden" id="profesorId">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input type="text" id="profesorNombre" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Apellido</label>
+                <input type="text" id="profesorApellido" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Foto</label>
+                <input type="file" id="profesorFoto" class="form-control" accept="image/*">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Descripción</label>
+                <input type="text" id="profesorDescripcion" class="form-control">
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="button" class="btn btn-secondary" id="btnCancelarProfesor">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="clubes-header">
+          <div>Foto</div>
+          <div>Nombre</div>
+          <div>Apellido</div>
+          <div>Descripción</div>
+          <div>Acciones</div>
+        </div>
+
+        <div id="profesoresGrid" class="clubes-listado"></div>
+      </div>
+    </section>
+
+    <!-- TORNEOS -->
+    <section class="tab-pane fade" id="torneos">
+      <div class="card p-4 shadow-sm">
+        <h4 class="mb-4">Gestión de Torneos</h4>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input type="text" id="filtroTorneos" class="form-control w-50" placeholder="Filtrar por nombre...">
+
+          <button class="btn btn-success" id="btnNuevoTorneo">
+            <i class="bi bi-plus-lg"></i> Agregar Torneo
+          </button>
+        </div>
+
+        <div class="card border p-4 mb-4" id="formTorneoContainer" style="display:none;">
+          <h5 class="mb-3">Formulario Torneo</h5>
+
+          <form id="formTorneo" enctype="multipart/form-data">
+            <input type="hidden" id="torneoId">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Nombre</label>
+                <input type="text" id="torneoNombre" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Fecha</label>
+                <input type="date" id="torneoFecha" class="form-control" required>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Foto principal</label>
+                <input type="file" id="torneoFoto" class="form-control" accept="image/*">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Dirección</label>
+                <input type="text" id="torneoDireccion" class="form-control">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Categorías</label>
+                <input type="text" id="torneoCategorias" class="form-control" placeholder="Ej: Senior, Junior, Infantil">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Reglas</label>
+                <input type="text" id="torneoReglas" class="form-control">
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Guardar</button>
+              <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="clubes-header">
+          <div>Foto</div>
+          <div>Nombre</div>
+          <div>Fecha</div>
+          <div>Dirección</div>
+          <div>Categorías</div>
+          <div>Acciones</div>
+        </div>
+
+        <div id="torneosGrid" class="clubes-listado"></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- MODAL EDITAR PUNTOS -->
+<div class="modal fade" id="modalEditarInscripcion" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+
+      <form id="formEditarInscripcion">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square"></i> Editar puntos
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="editInscripcionId">
+
+          <p class="text-muted mb-3">
+            Revisá el puntaje declarado por el judoka. Si no corresponde, corregilo antes de aprobar.
+          </p>
+
+          <div class="mb-3">
+            <label class="form-label">Judoka</label>
+            <input type="text" id="editNombreCompleto" class="form-control" disabled>
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label>Contacto</label>
-            <input type="text" id="patrocinadorContacto" class="form-control">
+          <div class="mb-3">
+            <label class="form-label">DNI</label>
+            <input type="text" id="editDni" class="form-control" disabled>
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label>Sitio Web</label>
-            <input type="text" id="patrocinadorWeb" class="form-control">
+          <div class="mb-3">
+            <label class="form-label">Puntos validados</label>
+            <input type="number" id="editPuntos" class="form-control" min="0" required>
           </div>
         </div>
 
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary">
-            Guardar
-          </button>
-          <button type="button" class="btn btn-secondary" id="btnCancelarPatrocinador">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Guardar puntos
           </button>
         </div>
       </form>
-    </div>
 
-    <div class="clubes-header">
-      <div>Logo</div>
-      <div>Nombre</div>
-      <div>Contacto</div>
-      <div>Web</div>
-      <div>Acciones</div>
     </div>
-
-    <!-- LISTADO -->
-    <div id="patrocinadoresGrid" class="clubes-listado mb-4">
-      <!-- Se llena con JS -->
-    </div>
-
   </div>
 </div>
-
-<!-- ===================================================== -->
-<!-- ===================== CLUBES ======================== -->
-<!-- ===================================================== -->
-
-<div class="tab-pane fade" id="clubes">
-  <div class="card p-4 shadow-sm">
-
-    <h4 class="mb-4">Gestión de Clubes</h4>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <input type="text" id="filtroClubes" class="form-control w-50" placeholder="Filtrar por nombre...">
-      <button class="btn btn-success" id="btnNuevoClub">
-        <i class="bi bi-plus-lg"></i> Agregar Club
-      </button>
     </div>
-
-    <div class="card border p-4 mb-4" id="formClubContainer" style="display:none;">
-      <h5 class="mb-3">Formulario Club</h5>
-
-      <form id="formClub" enctype="multipart/form-data">
-        <input type="hidden" id="clubId">
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label>Nombre</label>
-            <input type="text" id="clubNombre" class="form-control" required>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Logo</label>
-            <input type="file" id="clubLogo" class="form-control" accept="image/*">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Teléfono</label>
-            <input type="text" id="clubTelefono" class="form-control">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Dirección</label>
-            <input type="text" id="clubDireccion" class="form-control">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Sitio Web</label>
-            <input type="text" id="clubWeb" class="form-control">
-          </div>
-        </div>
-
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary">
-            Guardar
-          </button>
-          <button type="button" class="btn btn-secondary" id="btnCancelarClub">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <div class="clubes-header">
-      <div>Logo</div>
-      <div>Nombre</div>
-      <div>Teléfono</div>
-      <div>Dirección</div>
-      <div>Web</div>
-      <div>Acciones</div>
-    </div>
-
-    <div id="clubesGrid" class="clubes-listado mb-4">
-    </div>
-
   </div>
-</div>
-
-<!-- ===================================================== -->
-<!-- ===================== PROFESORES ==================== -->
-<!-- ===================================================== -->
-
-<div class="tab-pane fade" id="profesores">
-  <div class="card p-4 shadow-sm">
-
-    <h4 class="mb-4">Gestión de Profesores</h4>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <input type="text" id="filtroProfesores" class="form-control w-50" placeholder="Filtrar por nombre...">
-
-      <button class="btn btn-success" id="btnNuevoProfesorr">
-        <i class="bi bi-plus-lg"></i> Agregar Profesor
-      </button>
-    </div>
-
-    <!-- ================= FORMULARIO ================= -->
-
-    <div class="card border p-4 mb-4" id="formProfesorContainer" style="display:none;">
-      <h5 class="mb-3">Formulario Profesor</h5>
-
-      <form id="formProfesor" enctype="multipart/form-data">
-
-        <input type="hidden" id="profesorId">
-
-        <div class="row">
-
-          <div class="col-md-6 mb-3">
-            <label>Nombre</label>
-            <input type="text" id="profesorNombre" class="form-control" required>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Apellido</label>
-            <input type="text" id="profesorApellido" class="form-control" required>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Foto</label>
-            <input type="file" id="profesorFoto" class="form-control" accept="image/*">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Descripción</label>
-            <input type="text" id="profesorDescripcion" class="form-control">
-          </div>
-
-        </div>
-
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary">
-            Guardar
-          </button>
-
-          <button type="button" class="btn btn-secondary" id="btnCancelarProfesor">
-            Cancelar
-          </button>
-        </div>
-
-      </form>
-
-    </div>
-
-    <!-- ================= HEADER LISTADO ================= -->
-
-    <div class="clubes-header">
-      <div>Foto</div>
-      <div>Nombre</div>
-      <div>Apellido</div>
-      <div>Descripción</div>
-      <div>Acciones</div>
-    </div>
-
-    <!-- ================= LISTADO ================= -->
-
-    <div id="profesoresGrid" class="clubes-listado mb-4">
-      <!-- Se llena con JS -->
-    </div>
-
-  </div>
-</div>
-
-<!-- ===================================================== -->
-<!-- ====================== TORNEOS ====================== -->
-<!-- ===================================================== -->
-
-<div class="tab-pane fade" id="torneos">
-  <div class="card p-4 shadow-sm">
-
-    <h4 class="mb-4">Gestión de Torneos</h4>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <input type="text" id="filtroTorneos" class="form-control w-50" placeholder="Filtrar por nombre...">
-
-      <button class="btn btn-success" id="btnNuevoTorneo">
-        <i class="bi bi-plus-lg"></i> Agregar Torneo
-      </button>
-    </div>
-
-    <!-- ================= FORMULARIO ================= -->
-
-    <div class="card border p-4 mb-4" id="formTorneoContainer" style="display:none;">
-      <h5 class="mb-3">Formulario Torneo</h5>
-
-      <form id="formTorneo" enctype="multipart/form-data">
-
-        <input type="hidden" id="torneoId">
-
-        <div class="row">
-
-          <div class="col-md-6 mb-3">
-            <label>Nombre</label>
-            <input type="text" id="torneoNombre" class="form-control" required>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Fecha</label>
-            <input type="date" id="torneoFecha" class="form-control" required>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Foto principal</label>
-            <input type="file" id="torneoFoto" class="form-control" accept="image/*">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Dirección</label>
-            <input type="text" id="torneoDireccion" class="form-control">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Categorías</label>
-            <input type="text" id="torneoCategorias" class="form-control" placeholder="Ej: Senior, Junior, Infantil">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label>Reglas</label>
-            <input type="text" id="torneoReglas" class="form-control">
-          </div>
-
-        </div>
-
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary">
-            Guardar
-          </button>
-
-          <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">
-            Cancelar
-          </button>
-        </div>
-
-      </form>
-    </div>
-
-    <!-- ================= HEADER LISTADO ================= -->
-
-    <div class="clubes-header">
-      <div>Foto</div>
-      <div>Nombre</div>
-      <div>Fecha</div>
-      <div>Dirección</div>
-      <div>Categorías</div>
-      <div>Acciones</div>
-    </div>
-
-    <!-- ================= LISTADO ================= -->
-
-    <div id="torneosGrid" class="clubes-listado mb-4">
-      <!-- Se llena con JS -->
-    </div>
-
-  </div>
-</div>
-
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

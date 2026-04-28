@@ -1,6 +1,6 @@
 <section class="calendar-wrapper">
 
-  <!-- CALENDARIO -->
+  <!-- ================= CALENDARIO ================= -->
   <section class="calendar-container">
 
     <!-- CONTROLES -->
@@ -10,7 +10,7 @@
       <button id="nextMonth">▶</button>
     </div>
 
-    <!-- DIAS DE LA SEMANA -->
+    <!-- DIAS -->
     <div class="weekdays">
       <div>Lun</div>
       <div>Mar</div>
@@ -21,13 +21,14 @@
       <div>Dom</div>
     </div>
 
-    <!-- DIAS -->
+    <!-- CALENDARIO -->
     <div id="calendarDays" class="days"></div>
 
   </section>
 
-  <!-- LEYENDA -->
+  <!-- ================= LEYENDA ================= -->
   <aside class="calendar-legend">
+
     <h3>Referencias</h3>
 
     <div class="legend-item">
@@ -37,18 +38,57 @@
 
     <div class="legend-item">
       <span class="legend-color green"></span>
-      <span>Torneos / eventos próximos</span>
+      <span>Torneos próximos</span>
     </div>
 
   </aside>
 
 </section>
 
-<!-- MODAL -->
-<div id="eventModal" class="modal hidden">
-  <div class="modal-content">
-    <span id="closeModal">✖</span>
-    <h3 id="eventTitle"></h3>
-    <p id="eventInfo"></p>
+<!-- =========================
+     MODAL DETALLE TORNEO
+========================= -->
+<div id="eventModal" class="torneo-modal-overlay hidden">
+
+  <div class="torneo-modal">
+
+    <!-- CERRAR -->
+    <span id="closeModal" class="close-modal">
+      ✖
+    </span>
+
+    <!-- IMAGEN -->
+    <img
+      id="eventImage"
+      class="torneo-image"
+      src=""
+      alt="Imagen torneo"
+      style="display: none;"
+    >
+
+    <!-- TITULO -->
+    <h2 id="eventTitle"></h2>
+
+    <!-- INFO -->
+    <div class="torneo-info">
+
+      <div class="info-item">
+        <strong>📅 Fecha:</strong>
+        <span id="eventFecha"></span>
+      </div>
+
+      <div class="info-item">
+        <strong>📍 Lugar:</strong>
+        <span id="eventDireccion"></span>
+      </div>
+
+      <div class="info-item">
+        <strong>🥋 Categorías:</strong>
+        <span id="eventCategorias"></span>
+      </div>
+
+    </div>
+
   </div>
+
 </div>
