@@ -1,11 +1,11 @@
 // src/routes/profesor.routes.js
 import { Router } from 'express';
 
-import crearProfesor from '../controllers/profesores/crearProfesor.js';
-import listarProfesores from '../controllers/profesores/listarProfesores.js';
-import obtenerProfesor from '../controllers/profesores/obtenerProfesor.js';
-import actualizarProfesor from '../controllers/profesores/actualizarProfesor.js';
-import eliminarProfesor from '../controllers/profesores/eliminarProfesor.js';
+import crearProfesor from '../controllers/Profesores/crearProfesor.js';
+import listarProfesores from '../controllers/Profesores/listarProfesores.js';
+import obtenerProfesor from '../controllers/Profesores/obtenerProfesor.js';
+import actualizarProfesor from '../controllers/Profesores/actualizarProfesor.js';
+import eliminarProfesor from '../controllers/Profesores/eliminarProfesor.js';
 
 import { uploadFotoProfesor } from '../middlewares/uploadFotoProfesor.js';
 import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
