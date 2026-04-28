@@ -1,6 +1,6 @@
 // src/controllers/inscripciones/aprobarInscripcion.controller.js
 import InscripcionUsuario from '../../models/InscripcionUsuario.js';
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 import { descargarArchivoDrive } from '../../config/google.js';
 import { subirBufferACloudinary } from '../../config/cloudinary.js';
 import { validarInscripcion } from './helpersInscripciones.js';
