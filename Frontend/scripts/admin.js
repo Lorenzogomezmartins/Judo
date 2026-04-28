@@ -1,10 +1,10 @@
-const API_URL = "http://localhost:3000/api/clubes";
-const API_PATROCINADORES = "http://localhost:3000/api/patrocinadores";
-const API_TORNEOS = "http://localhost:3000/api/torneos";
-const BACKEND_URL = "http://localhost:3000";
-const API_PROFESORES = "http://localhost:3000/api/profesores";
-const API_VERIFICAR_ADMIN = "http://localhost:3000/api/admin/verificar";
-const API_INSCRIPCIONES = "http://localhost:3000/api/inscripciones";
+const API_URL = "/api/clubes";
+const API_PATROCINADORES = "/api/patrocinadores";
+const API_TORNEOS = "/api/torneos";
+const BACKEND_URL = "";
+const API_PROFESORES = "/api/profesores";
+const API_VERIFICAR_ADMIN = "/api/admin/verificar";
+const API_INSCRIPCIONES = "/api/inscripciones";
 
 // ============================
 // SEGURIDAD ADMIN

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/profesores";
+const API_URL = "/api/profesores";
 
 export async function cargarProfesores() {
 

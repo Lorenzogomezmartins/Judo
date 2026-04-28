@@ -1,4 +1,4 @@
-const API_USUARIOS = "http://localhost:3000/api/usuarios";
+const API_USUARIOS = "/api/usuarios";
 
 let rankingUsuarios = [];
 
@@ -28,6 +28,8 @@ export async function cargarRankingUsuarios() {
       puntos: obtenerPuntosUsuario(usuario),
     }));
 
+    cargarFiltroCategorias();
+
     ordenarRanking("desc");
     inicializarEventosRanking();
 
@@ -44,8 +46,26 @@ export async function cargarRankingUsuarios() {
 
 function inicializarEventosRanking() {
   document.getElementById("searchInput")?.addEventListener("input", filtrarRanking);
+
+  document.getElementById("filtroCategoria")?.addEventListener("change", filtrarRanking);
+
   document.getElementById("sortDesc")?.addEventListener("click", () => ordenarRanking("desc"));
+
   document.getElementById("sortAsc")?.addEventListener("click", () => ordenarRanking("asc"));
+}
+
+function cargarFiltroCategorias() {
+  const select = document.getElementById("filtroCategoria");
+
+  if (!select) return;
+
+  select.innerHTML = `
+    <option value="">Todas</option>
+    <option value="senior">Senior</option>
+    <option value="cadete">Cadete</option>
+    <option value="junior">Junior</option>
+    <option value="infantil-b">Infantil B</option>
+  `;
 }
 
 function obtenerPuntosUsuario(usuario) {
@@ -132,18 +152,30 @@ function obtenerFotoUsuario(usuario) {
 }
 
 function filtrarRanking() {
-  const texto = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+  const texto =
+    document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+
+  const categoriaSeleccionada =
+    document.getElementById("filtroCategoria")?.value || "";
 
   const filtrados = rankingUsuarios.filter((usuario) => {
-    const nombreCompleto = `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
+    const nombreCompleto =
+      `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
+
     const dni = String(usuario.dni || "").toLowerCase();
+
     const email = String(usuario.email || "").toLowerCase();
 
-    return (
+    const coincideTexto =
       nombreCompleto.includes(texto) ||
       dni.includes(texto) ||
-      email.includes(texto)
-    );
+      email.includes(texto);
+
+    const coincideCategoria =
+      !categoriaSeleccionada ||
+      usuario.clasificacion === categoriaSeleccionada;
+
+    return coincideTexto && coincideCategoria;
   });
 
   renderRanking(filtrados);
@@ -167,12 +199,16 @@ function formatearClasificacion(clasificacion = "") {
   switch (clasificacion) {
     case "senior":
       return "Senior";
+
     case "cadete":
       return "Cadete";
+
     case "junior":
       return "Junior";
+
     case "infantil-b":
       return "Infantil B";
+
     default:
       return "-";
   }

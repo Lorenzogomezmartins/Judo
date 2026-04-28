@@ -1,27 +1,64 @@
-<section class="contenido container mt-5">
-  <a href="#/torneos" class="btn btn-outline-secondary mb-4">
-    ← Volver a Torneos
-  </a>
+<section class="contenido container my-5">
 
-  <h2 class="text-center mb-4">Torneos Finalizados</h2>
-
-  <!-- BUSCADOR -->
-  <div class="row justify-content-center mb-5">
-    <div class="col-md-6">
-      <input
-        type="text"
-        id="buscadorTorneosAnteriores"
-        class="form-control form-control-lg"
-        placeholder="Buscar torneo por nombre, año o sede..."
-      />
-    </div>
+  <!-- BOTÓN VOLVER -->
+  <div class="mb-4">
+    <a href="#/torneos" class="btn btn-outline-secondary">
+      ← Volver a Torneos
+    </a>
   </div>
 
-  <!-- CARRUSEL -->
-  <section class="carousel-container mb-5">
-    <h4 class="text-center mb-3">Últimos Torneos Realizados</h4>
+  <!-- HEADER -->
+  <header class="text-center mb-5">
+    <span class="badge bg-danger-subtle text-danger mb-3 px-3 py-2">
+      Historial de competencias
+    </span>
 
-    <div id="carouselTorneos" class="carousel slide shadow" data-bs-ride="carousel">
+    <h2 class="fw-bold mb-2">
+      Torneos Finalizados
+    </h2>
+
+    <p class="text-muted mb-0">
+      Consultá los torneos realizados, sus fechas, sedes y categorías.
+    </p>
+  </header>
+
+  <!-- BUSCADOR -->
+  <section class="row justify-content-center mb-5">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="input-group input-group-lg shadow-sm">
+        <span class="input-group-text bg-white">
+          🔎
+        </span>
+
+        <input
+          type="text"
+          id="buscadorTorneosAnteriores"
+          class="form-control"
+          placeholder="Buscar por nombre, año, sede o categoría..."
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- CARRUSEL -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h4 class="fw-bold mb-1">
+          Últimos Torneos Realizados
+        </h4>
+
+        <p class="text-muted mb-0">
+          Un repaso por los eventos más recientes.
+        </p>
+      </div>
+    </div>
+
+    <div
+      id="carouselTorneos"
+      class="carousel slide shadow rounded-4 overflow-hidden"
+      data-bs-ride="carousel"
+    >
       <div id="carouselTorneosInner" class="carousel-inner">
         <!-- Acá se insertan los slides dinámicamente -->
       </div>
@@ -31,6 +68,7 @@
         type="button"
         data-bs-target="#carouselTorneos"
         data-bs-slide="prev"
+        aria-label="Torneo anterior"
       >
         <span class="carousel-control-prev-icon"></span>
       </button>
@@ -40,6 +78,7 @@
         type="button"
         data-bs-target="#carouselTorneos"
         data-bs-slide="next"
+        aria-label="Torneo siguiente"
       >
         <span class="carousel-control-next-icon"></span>
       </button>
@@ -47,7 +86,22 @@
   </section>
 
   <!-- LISTADO -->
-  <div id="listaTorneosAnteriores" class="row g-4">
-    <!-- Acá se insertan las cards dinámicamente -->
-  </div>
+  <section>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h4 class="fw-bold mb-1">
+          Todos los torneos finalizados
+        </h4>
+
+        <p class="text-muted mb-0">
+          Listado completo de competencias ya realizadas.
+        </p>
+      </div>
+    </div>
+
+    <div id="listaTorneosAnteriores" class="row g-4">
+      <!-- Acá se insertan las cards dinámicamente -->
+    </div>
+  </section>
+
 </section>

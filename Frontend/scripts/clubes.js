@@ -3,7 +3,7 @@ export async function cargarClubes() {
   if (!grid) return;
 
   try {
-    const res = await fetch("http://localhost:3000/api/clubes");
+    const res = await fetch("/api/clubes");
     const clubes = await res.json();
 
     grid.innerHTML = "";

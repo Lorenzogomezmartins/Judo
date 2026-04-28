@@ -8,26 +8,63 @@
 }
 
 /* ===============================
-   TÍTULO
+   HEADER
 ================================ */
 
 .contenido h2 {
-  font-weight: bold;
+  font-weight: 800;
   color: #b30000;
 }
 
+.contenido .badge {
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+}
+
 /* ===============================
-   CONTROLES (BUSCADOR + BOTONES)
+   CARDS / CONTENEDORES
 ================================ */
 
-#searchInput {
-  border: 1px solid #b30000;
+.card {
+  border: 1px solid #eeeeee;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#searchInput:focus {
-  border-color: #8f0000;
-  box-shadow: 0 0 0 0.2rem rgba(179, 0, 0, 0.25);
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
 }
+
+.rounded-4 {
+  border-radius: 18px !important;
+}
+
+/* ===============================
+   FILTROS
+================================ */
+
+#searchInput,
+#filtroCategoria {
+  border: 1px solid #d8d8d8;
+}
+
+#searchInput:focus,
+#filtroCategoria:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 0 0.2rem rgba(179, 0, 0, 0.18);
+}
+
+.input-group-text {
+  border-color: #d8d8d8;
+}
+
+.form-label {
+  color: #333333;
+}
+
+/* ===============================
+   BOTONES
+================================ */
 
 .btn-danger {
   background-color: #b30000;
@@ -46,6 +83,7 @@
 
 .btn-outline-danger:hover {
   background-color: #b30000;
+  border-color: #b30000;
   color: #ffffff;
 }
 
@@ -59,10 +97,8 @@
 
 .table thead th {
   vertical-align: middle;
-}
-
-.table tbody tr:hover {
-  background-color: #f8eaea;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
 }
 
 .table td,
@@ -70,69 +106,29 @@
   vertical-align: middle;
 }
 
-/* ===============================
-   CUADRO SISTEMA DE PUNTAJES
-================================ */
-
-.card {
-  border: 1px solid #ddd;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.table tbody tr {
+  transition: background-color 0.2s ease;
 }
 
-/* efecto leve hover para que se vea más moderno */
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-
-.card-header {
-  background-color: #b30000 !important;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
-
-.card table td,
-.card table th {
-  font-size: 0.9rem;
-}
-
-.card table tbody tr:hover {
+.table tbody tr:hover {
   background-color: #f8eaea;
 }
 
+#rankingBody td {
+  font-size: 0.95rem;
+}
+
 /* ===============================
-   LINK SISTEMA AVANZADO (PRO)
+   FOTO JUDOKA
 ================================ */
 
-.link-sistema {
-  display: inline-block;
-  margin-top: 5px;
-  font-size: 0.85rem;
-  color: #777;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* hover elegante */
-.link-sistema:hover {
-  color: #b30000;
-}
-
-/* subrayado animado */
-.link-sistema::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0%;
-  height: 1px;
-  background-color: #b30000;
-  transition: width 0.3s ease;
-}
-
-.link-sistema:hover::after {
-  width: 100%;
+.ranking-foto,
+#rankingBody img {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #eeeeee;
 }
 
 /* ===============================
@@ -142,5 +138,35 @@
 @media (max-width: 991px) {
   .card {
     margin-bottom: 20px;
+  }
+
+  .table {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .contenido {
+    padding-inline: 14px;
+  }
+
+  .contenido h2 {
+    font-size: 1.7rem;
+  }
+
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  .table thead th,
+  .table td {
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .ranking-foto,
+  #rankingBody img {
+    width: 44px;
+    height: 44px;
   }
 }

@@ -1,65 +1,108 @@
-<section class="contenido container mt-5">
+<section class="contenido container my-5">
 
-  <h2 class="text-center mb-1">Ranking Oficial</h2>
+  <!-- HEADER -->
+  <header class="text-center mb-5">
+    <span class="badge bg-danger-subtle text-danger mb-3 px-3 py-2">
+      Ranking competitivo
+    </span>
 
-  <p class="text-center mb-4">
-    Para información avanzada sobre gestión de torneos, 
-    <a href="../partials/sistema.html" class="link-sistema">
-      consultá el sistema oficial
-    </a>.
-  </p>
+    <h2 class="fw-bold mb-2">
+      Ranking Oficial
+    </h2>
 
-  <div class="row mb-4 align-items-center">
-    <div class="col-md-6 mb-2">
-      <input
-        type="text"
-        id="searchInput"
-        class="form-control"
-        placeholder="Buscar judoka por nombre o DNI..."
-      >
-    </div>
+    <p class="text-muted mb-0">
+      Consultá la posición, categoría, peso y puntaje actual de cada judoka.
+    </p>
+  </header>
 
-    <div class="col-md-6 mb-2 text-md-end">
-      <button id="sortDesc" class="btn btn-danger me-2">
-        Mayor puntaje
-      </button>
-      <button id="sortAsc" class="btn btn-outline-danger">
-        Menor puntaje
-      </button>
-    </div>
-  </div>
+  <!-- FILTROS -->
+  <section class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
 
-  <div class="row">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div>
+          <h5 class="fw-bold mb-1">
+            Filtros del ranking
+          </h5>
 
-    <div class="col-lg-3 mb-4">
-      <div class="card shadow-sm">
-        <div class="card-header bg-danger text-white text-center">
-          Sistema de Puntajes
-        </div>
-
-        <div class="card-body p-0">
-          <table class="table table-bordered mb-0 text-center">
-            <thead class="table-light">
-              <tr>
-                <th>Puesto</th>
-                <th>Puntos</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr><td>1°</td><td>400 pts</td></tr>
-              <tr><td>2°</td><td>300 pts</td></tr>
-              <tr><td>3°</td><td>200 pts</td></tr>
-              <tr><td>Participación</td><td>100 pts</td></tr>
-            </tbody>
-          </table>
+          <p class="text-muted mb-0">
+            Buscá judokas y ordená el listado según su puntaje.
+          </p>
         </div>
       </div>
-    </div>
 
-    <div class="col-lg-9">
+      <div class="row g-3 align-items-end">
+
+        <!-- BUSCADOR -->
+        <div class="col-12 col-lg-5">
+          <label for="searchInput" class="form-label fw-semibold">
+            Buscar judoka
+          </label>
+
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              🔎
+            </span>
+
+            <input
+              type="text"
+              id="searchInput"
+              class="form-control"
+              placeholder="Nombre o DNI..."
+            >
+          </div>
+        </div>
+
+        <!-- FILTRO CATEGORÍA -->
+        <div class="col-12 col-lg-3">
+          <label for="filtroCategoria" class="form-label fw-semibold">
+            Categoría
+          </label>
+
+          <select id="filtroCategoria" class="form-select">
+            <option value="">Todas</option>
+          </select>
+        </div>
+
+        <!-- ORDENAMIENTO -->
+        <div class="col-12 col-lg-4">
+          <label class="form-label fw-semibold">
+            Ordenar por puntos
+          </label>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <button id="sortDesc" class="btn btn-danger flex-fill">
+              Mayor puntaje
+            </button>
+
+            <button id="sortAsc" class="btn btn-outline-danger flex-fill">
+              Menor puntaje
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLA RANKING -->
+  <section class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-4 border-bottom">
+        <div>
+          <h5 class="fw-bold mb-1">
+            Listado de judokas
+          </h5>
+
+          <p class="text-muted mb-0">
+            Ranking actualizado según los puntos cargados.
+          </p>
+        </div>
+      </div>
+
       <div class="table-responsive">
-        <table class="table table-striped table-bordered text-center align-middle">
+        <table class="table table-hover text-center align-middle mb-0">
           <thead class="table-dark">
             <tr>
               <th>Posición</th>
@@ -73,13 +116,15 @@
 
           <tbody id="rankingBody">
             <tr>
-              <td colspan="6">Cargando ranking...</td>
+              <td colspan="6" class="py-4 text-muted">
+                Cargando ranking...
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
 
-  </div>
+    </div>
+  </section>
 
 </section>

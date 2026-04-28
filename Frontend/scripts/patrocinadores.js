@@ -3,7 +3,7 @@ export async function cargarPatrocinadores() {
   if (!grid) return;
 
   try {
-    const res = await fetch("http://localhost:3000/api/patrocinadores");
+    const res = await fetch("/api/patrocinadores");
     const patrocinadores = await res.json();
 
     grid.innerHTML = "";

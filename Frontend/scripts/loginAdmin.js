@@ -1,6 +1,6 @@
 // ../scripts/loginAdmin.js
 
-const API_URL = "http://localhost:3000/api/Administradores/login";
+const API_URL = "/api/Administradores/login";
 
 export function iniciarLoginAdmin() {
   const form = document.getElementById("formAdmin");
