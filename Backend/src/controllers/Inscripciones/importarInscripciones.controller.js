@@ -1,6 +1,6 @@
 // src/controllers/inscripciones/importarInscripciones.controller.js
 import InscripcionUsuario from '../../models/InscripcionUsuario.js';
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 import { obtenerFilasInscripciones } from '../../config/google.js';
 import { mapearFila, validarInscripcion } from './helpersInscripciones.js';
 
