@@ -1,5 +1,5 @@
 import Torneo from '../../models/Torneo.js';
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const desinscribirseTorneo = async (req, res) => {
   try {

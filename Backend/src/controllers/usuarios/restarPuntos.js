@@ -1,5 +1,5 @@
 // src/controllers/usuarios/restarPuntos.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const restarPuntos = async (req, res) => {
   try {

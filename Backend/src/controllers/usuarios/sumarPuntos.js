@@ -1,5 +1,5 @@
 // src/controllers/usuarios/sumarPuntos.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const sumarPuntos = async (req, res) => {
   try {

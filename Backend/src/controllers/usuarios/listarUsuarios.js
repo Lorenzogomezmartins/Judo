@@ -1,5 +1,5 @@
 // src/controllers/usuarios/listarUsuarios.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const listarUsuarios = async (req, res) => {
   try {

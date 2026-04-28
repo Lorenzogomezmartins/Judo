@@ -1,5 +1,5 @@
 // src/controllers/usuarios/eliminarUsuario.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const eliminarUsuario = async (req, res) => {
   try {

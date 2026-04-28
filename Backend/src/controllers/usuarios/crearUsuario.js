@@ -1,5 +1,5 @@
 // src/controllers/usuarios/crearUsuario.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const crearUsuario = async (req, res) => {
   try {

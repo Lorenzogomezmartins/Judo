@@ -1,5 +1,5 @@
 // src/controllers/usuarios/obtenerPuntos.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const obtenerPuntos = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 // src/controllers/usuarios/obtenerUsuario.js
-import Usuario from '../../models/Usuario.js';
+import Usuario from '../../models/usuario.js';
 
 const obtenerUsuario = async (req, res) => {
   try {
