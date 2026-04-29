@@ -254,7 +254,7 @@ async function cargarClubesAdmin(filtroNombre = "") {
   const logoUrl = club.logo
     ? (club.logo.startsWith("http")
         ? club.logo
-        : `/assets/clubes/${club.logo}`)
+        : `/uploads/clubes/${club.logo}`)
     : "https://via.placeholder.com/80?text=Logo";
 
       const webOriginal = club.sitioWeb || "";
@@ -448,11 +448,11 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
     container.innerHTML = "";
 
     patrocinadores.forEach(patrocinador => {
-      const logoUrl = patrocinador.logo
-  ? (patrocinador.logo.startsWith("http")
-      ? patrocinador.logo
-      : `/assets/Patrocinadores/${patrocinador.logo}`)
-  : "https://via.placeholder.com/80?text=Logo";
+  const logoUrl = patrocinador.logo
+    ? (patrocinador.logo.startsWith("http")
+        ? patrocinador.logo
+        : `/uploads/patrocinadores/${patrocinador.logo}`)
+    : "https://via.placeholder.com/80?text=Logo";
 
       const webOriginal = patrocinador.sitioWeb || "";
       const webUrl = webOriginal
@@ -735,11 +735,11 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
     container.innerHTML = "";
 
     profesores.forEach(profesor => {
-      const fotoUrl = profesor.foto
-  ? (profesor.foto.startsWith("http")
-      ? profesor.foto
-      : `/assets/Profesores/${profesor.foto}`)
-  : "https://via.placeholder.com/80?text=Foto";
+  const fotoUrl = profesor.foto
+    ? (profesor.foto.startsWith("http")
+        ? profesor.foto
+        : `/uploads/profesores/${profesor.foto}`)
+    : "https://via.placeholder.com/80?text=Foto";
 
       const row = document.createElement("div");
       row.classList.add("club-admin-row");

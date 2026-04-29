@@ -9,9 +9,9 @@ export async function cargarClubes() {
     grid.innerHTML = "";
 
     clubes.forEach(c => {
-      const logoUrl = c.logo
-  ? `/assets/clubes/${c.logo}`
-  : "/assets/imagenes/default.png";
+  const logoUrl = c.logo
+    ? `/uploads/clubes/${c.logo}`
+    : "/assets/imagenes/default.png";
 
       const club = document.createElement("div");
       club.className = "club-logo-container";

@@ -26,6 +26,14 @@ app.use(cors({
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* =========================
+   IMÁGENES SUBIDAS
+========================= */
+
+// Si tu carpeta uploads está al mismo nivel que server.js
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 /* =========================
    VERIFICACIÓN RÁPIDA
 ========================= */

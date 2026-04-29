@@ -9,9 +9,9 @@ export async function cargarPatrocinadores() {
     grid.innerHTML = "";
 
     patrocinadores.forEach(p => {
-     const logoUrl = p.logo
-  ? `/assets/Patrocinadores/${p.logo}`
-  : "/assets/imagenes/default.png";
+  const logoUrl = p.logo
+    ? `/uploads/patrocinadores/${p.logo}`
+    : "/assets/imagenes/default.png";
 
       grid.innerHTML += `
         <div class="sponsor-item">
