@@ -1215,23 +1215,48 @@ async function importarInscripcionesSheets() {
 
     const resultado = await response.json();
 
+    console.log("RESULTADO IMPORTACION:", resultado);
+
     if (!response.ok) {
-      throw new Error(resultado.mensaje || resultado.error || "Error importando inscripciones");
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error importando inscripciones"
+      );
     }
+
+    const erroresTexto =
+      resultado.errores && resultado.errores.length > 0
+        ? resultado.errores
+            .map((e) => `Fila ${e.fila}: ${e.error}`)
+            .join("\n")
+        : "Sin errores";
 
     alert(
       `${resultado.mensaje}\n\n` +
-      `Creadas: ${resultado.creadas}\n` +
-      `Duplicadas: ${resultado.duplicadas}\n` +
-      `Errores: ${resultado.errores?.length || 0}`
+      `Creadas: ${resultado.creadas ?? 0}\n` +
+      `Duplicadas: ${resultado.duplicadas ?? 0}\n` +
+      `Actualizadas: ${resultado.actualizadas ?? 0}\n` +
+      `Errores: ${resultado.errores?.length || 0}\n\n` +
+      `Detalle:\n${erroresTexto}`
     );
 
-    const filtro = document.getElementById("filtroEstadoInscripciones")?.value || "pendiente";
-    cargarInscripcionesAdmin(filtro);
+    // Después de importar, fuerzo a mostrar pendientes
+    const filtroEstado = document.getElementById("filtroEstadoInscripciones");
+
+    if (filtroEstado) {
+      filtroEstado.value = "pendiente";
+    }
+
+    await cargarInscripcionesAdmin("pendiente");
 
   } catch (error) {
     console.error("Error importando inscripciones:", error);
-    alert("Error importando inscripciones: " + error.message);
+
+    alert(
+      "Error importando inscripciones:\n\n" +
+      error.message
+    );
   }
 }
 
