@@ -1,69 +1,36 @@
 const API_TORNEOS = "/api/torneos";
 
-let monthYear;
-let calendarDays;
-let modal;
-let closeModal;
-
-let eventTitle;
-let eventFecha;
-let eventDireccion;
-let eventCategorias;
-let eventImage;
-
-let currentDate;
-let events = {};
-
-// ================= INIT =================
+let currentDate = new Date();
+let eventos = {};
 
 export async function inicializarCalendario() {
-  monthYear = document.getElementById("monthYear");
-  calendarDays = document.getElementById("calendarDays");
+  await obtenerEventosDesdeTorneos();
 
-  modal = document.getElementById("eventModal");
-  closeModal = document.getElementById("closeModal");
+  renderCalendar();
 
-  eventTitle = document.getElementById("eventTitle");
-  eventFecha = document.getElementById("eventFecha");
-  eventDireccion = document.getElementById("eventDireccion");
-  eventCategorias = document.getElementById("eventCategorias");
-  eventImage = document.getElementById("eventImage");
+  const prevBtn = document.getElementById("prevMonth");
+  const nextBtn = document.getElementById("nextMonth");
 
-  if (!monthYear || !calendarDays || !modal) {
-    console.error("Calendario: elementos no encontrados");
-    return;
-  }
-
-  currentDate = new Date();
-
-  events = await obtenerEventosDesdeTorneos();
-
-  document.getElementById("prevMonth")?.addEventListener("click", () => {
+  prevBtn?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
   });
 
-  document.getElementById("nextMonth")?.addEventListener("click", () => {
+  nextBtn?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
   });
 
-  closeModal?.addEventListener("click", cerrarModal);
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      cerrarModal();
-    }
-  });
-
-  renderCalendar();
+  inicializarModal();
 }
 
-// ================= FETCH TORNEOS =================
+/* =========================
+   OBTENER TORNEOS
+========================= */
 
 async function obtenerEventosDesdeTorneos() {
   try {
-    const response = await fetch(API_URL_TORNEOS);
+    const response = await fetch(API_TORNEOS);
 
     if (!response.ok) {
       throw new Error("Error al obtener torneos");
@@ -71,151 +38,158 @@ async function obtenerEventosDesdeTorneos() {
 
     const torneos = await response.json();
 
-    const eventosMap = {};
+    eventos = {};
 
     torneos.forEach((torneo) => {
+      if (!torneo.fecha) return;
+
       const fecha = new Date(torneo.fecha);
 
-      const year = fecha.getUTCFullYear();
-      const month = fecha.getUTCMonth() + 1;
-      const day = fecha.getUTCDate();
+      const key = `${fecha.getFullYear()}-${fecha.getMonth()}-${fecha.getDate()}`;
 
-      const key = `${year}-${month}-${day}`;
-
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-
-      const fechaEvento = new Date(
-        fecha.getUTCFullYear(),
-        fecha.getUTCMonth(),
-        fecha.getUTCDate()
-      );
-
-      fechaEvento.setHours(0, 0, 0, 0);
-
-      const esPasado = fechaEvento < hoy;
-
-      if (!eventosMap[key]) {
-        eventosMap[key] = [];
+      if (!eventos[key]) {
+        eventos[key] = [];
       }
 
-      eventosMap[key].push({
-        ...torneo,
-        tipo: esPasado ? "pasado" : "proximo",
-      });
+      eventos[key].push(torneo);
     });
 
-    return eventosMap;
-
   } catch (error) {
-    console.error("Error calendario:", error);
-    return {};
+    console.error("Error cargando torneos:", error);
   }
 }
 
-// ================= RENDER CALENDARIO =================
+/* =========================
+   RENDER CALENDARIO
+========================= */
 
 function renderCalendar() {
+  const monthYear = document.getElementById("monthYear");
+  const calendarDays = document.getElementById("calendarDays");
+
+  if (!monthYear || !calendarDays) return;
+
   calendarDays.innerHTML = "";
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  monthYear.textContent = currentDate.toLocaleDateString("es-ES", {
+  const monthName = currentDate.toLocaleString("es-ES", {
     month: "long",
-    year: "numeric",
   });
 
-  const firstDay = new Date(year, month, 1).getDay() || 7;
+  monthYear.textContent = `${monthName} ${year}`;
+
+  const firstDay = new Date(year, month, 1);
+  let startDay = firstDay.getDay();
+
+  startDay = startDay === 0 ? 6 : startDay - 1;
+
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  for (let i = 1; i < firstDay; i++) {
-    calendarDays.innerHTML += `<div></div>`;
+  for (let i = 0; i < startDay; i++) {
+    calendarDays.innerHTML += `<div class="empty-day"></div>`;
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateKey = `${year}-${month + 1}-${day}`;
+    const key = `${year}-${month}-${day}`;
 
-    let eventHTML = "";
+    const eventosDia = eventos[key] || [];
 
-    if (events[dateKey]) {
-      eventHTML = events[dateKey]
-        .map((torneo, index) => {
-          let clase = "event";
+    const dayDiv = document.createElement("div");
+    dayDiv.classList.add("calendar-day");
 
-          if (torneo.tipo === "pasado") clase += " red";
-          if (torneo.tipo === "proximo") clase += " green";
-
-          return `
-            <div
-              class="${clase}"
-              data-date="${dateKey}"
-              data-index="${index}"
-            >
-              ${torneo.nombre}
-            </div>
-          `;
-        })
-        .join("");
-    }
-
-    calendarDays.innerHTML += `
-      <div class="day">
-        <div class="day-number">${day}</div>
-        ${eventHTML}
-      </div>
+    dayDiv.innerHTML = `
+      <span class="day-number">${day}</span>
     `;
-  }
 
-  document.querySelectorAll(".event").forEach((eventEl) => {
-    eventEl.addEventListener("click", (e) => {
-      e.stopPropagation();
+    eventosDia.forEach((torneo, index) => {
+      const fechaEvento = new Date(torneo.fecha);
+      const hoy = new Date();
 
-      const dateKey = eventEl.dataset.date;
-      const index = Number(eventEl.dataset.index);
+      hoy.setHours(0, 0, 0, 0);
+      fechaEvento.setHours(0, 0, 0, 0);
 
-      abrirModal(dateKey, index);
+      const esPasado = fechaEvento < hoy;
+
+      const eventoDiv = document.createElement("div");
+
+      eventoDiv.classList.add(
+        "calendar-event",
+        esPasado ? "past-event" : "future-event"
+      );
+
+      eventoDiv.textContent = torneo.nombre;
+
+      eventoDiv.addEventListener("click", (e) => {
+        e.stopPropagation();
+        abrirModal(torneo);
+      });
+
+      dayDiv.appendChild(eventoDiv);
     });
+
+    calendarDays.appendChild(dayDiv);
+  }
+}
+
+/* =========================
+   MODAL
+========================= */
+
+function inicializarModal() {
+  const closeBtn = document.getElementById("closeModal");
+  const modal = document.getElementById("eventModal");
+
+  closeBtn?.addEventListener("click", cerrarModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      cerrarModal();
+    }
   });
 }
 
-// ================= MODAL =================
+function abrirModal(torneo) {
+  const modal = document.getElementById("eventModal");
 
-function abrirModal(dateKey, index = 0) {
-  if (!events[dateKey] || !events[dateKey][index]) {
-    return;
-  }
+  const title = document.getElementById("eventTitle");
+  const fecha = document.getElementById("eventFecha");
+  const direccion = document.getElementById("eventDireccion");
+  const categorias = document.getElementById("eventCategorias");
+  const image = document.getElementById("eventImage");
 
-  const torneo = events[dateKey][index];
+  if (!modal) return;
 
-  eventTitle.textContent = torneo.nombre || "Torneo";
+  title.textContent = torneo.nombre || "Torneo";
 
-  eventFecha.textContent = torneo.fecha
-    ? new Date(torneo.fecha).toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      })
+  fecha.textContent = torneo.fecha
+    ? new Date(torneo.fecha).toLocaleDateString("es-AR")
     : "-";
 
-  eventDireccion.textContent = torneo.direccion || "A confirmar";
+  direccion.textContent = torneo.direccion || "-";
 
-  eventCategorias.textContent =
-    Array.isArray(torneo.categorias) && torneo.categorias.length
-      ? torneo.categorias.join(", ")
-      : "No informadas";
+  categorias.textContent = Array.isArray(torneo.categorias)
+    ? torneo.categorias.join(", ")
+    : torneo.categorias || "-";
 
-  if (Array.isArray(torneo.fotos) && torneo.fotos.length > 0) {
-    eventImage.src = torneo.fotos[0];
-    eventImage.style.display = "block";
+  const foto =
+    Array.isArray(torneo.fotos) && torneo.fotos.length > 0
+      ? torneo.fotos[0]
+      : "";
+
+  if (foto) {
+    image.src = foto;
+    image.style.display = "block";
   } else {
-    eventImage.src = "";
-    eventImage.style.display = "none";
+    image.style.display = "none";
   }
 
   modal.classList.remove("hidden");
 }
 
 function cerrarModal() {
-  modal.classList.add("hidden");
+  const modal = document.getElementById("eventModal");
+
+  modal?.classList.add("hidden");
 }
