@@ -5,28 +5,20 @@ let eventos = {};
 
 export async function inicializarCalendario() {
   await obtenerEventosDesdeTorneos();
-
   renderCalendar();
 
-  const prevBtn = document.getElementById("prevMonth");
-  const nextBtn = document.getElementById("nextMonth");
-
-  prevBtn?.addEventListener("click", () => {
+  document.getElementById("prevMonth")?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
   });
 
-  nextBtn?.addEventListener("click", () => {
+  document.getElementById("nextMonth")?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
   });
 
   inicializarModal();
 }
-
-/* =========================
-   OBTENER TORNEOS
-========================= */
 
 async function obtenerEventosDesdeTorneos() {
   try {
@@ -37,7 +29,6 @@ async function obtenerEventosDesdeTorneos() {
     }
 
     const torneos = await response.json();
-
     eventos = {};
 
     torneos.forEach((torneo) => {
@@ -45,7 +36,11 @@ async function obtenerEventosDesdeTorneos() {
 
       const fecha = new Date(torneo.fecha);
 
-      const key = `${fecha.getFullYear()}-${fecha.getMonth()}-${fecha.getDate()}`;
+      const year = fecha.getUTCFullYear();
+      const month = fecha.getUTCMonth();
+      const day = fecha.getUTCDate();
+
+      const key = `${year}-${month}-${day}`;
 
       if (!eventos[key]) {
         eventos[key] = [];
@@ -53,15 +48,10 @@ async function obtenerEventosDesdeTorneos() {
 
       eventos[key].push(torneo);
     });
-
   } catch (error) {
     console.error("Error cargando torneos:", error);
   }
 }
-
-/* =========================
-   RENDER CALENDARIO
-========================= */
 
 function renderCalendar() {
   const monthYear = document.getElementById("monthYear");
@@ -74,15 +64,13 @@ function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const monthName = currentDate.toLocaleString("es-ES", {
+  monthYear.textContent = currentDate.toLocaleString("es-ES", {
     month: "long",
+    year: "numeric",
   });
-
-  monthYear.textContent = `${monthName} ${year}`;
 
   const firstDay = new Date(year, month, 1);
   let startDay = firstDay.getDay();
-
   startDay = startDay === 0 ? 6 : startDay - 1;
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -93,17 +81,16 @@ function renderCalendar() {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const key = `${year}-${month}-${day}`;
-
     const eventosDia = eventos[key] || [];
 
     const dayDiv = document.createElement("div");
-    dayDiv.classList.add("calendar-day");
+    dayDiv.classList.add("day");
 
     dayDiv.innerHTML = `
-      <span class="day-number">${day}</span>
+      <div class="day-number">${day}</div>
     `;
 
-    eventosDia.forEach((torneo, index) => {
+    eventosDia.forEach((torneo) => {
       const fechaEvento = new Date(torneo.fecha);
       const hoy = new Date();
 
@@ -113,13 +100,9 @@ function renderCalendar() {
       const esPasado = fechaEvento < hoy;
 
       const eventoDiv = document.createElement("div");
+      eventoDiv.classList.add("event", esPasado ? "red" : "green");
 
-      eventoDiv.classList.add(
-        "calendar-event",
-        esPasado ? "past-event" : "future-event"
-      );
-
-      eventoDiv.textContent = torneo.nombre;
+      eventoDiv.textContent = torneo.nombre || "Torneo";
 
       eventoDiv.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -132,10 +115,6 @@ function renderCalendar() {
     calendarDays.appendChild(dayDiv);
   }
 }
-
-/* =========================
-   MODAL
-========================= */
 
 function inicializarModal() {
   const closeBtn = document.getElementById("closeModal");
@@ -152,7 +131,6 @@ function inicializarModal() {
 
 function abrirModal(torneo) {
   const modal = document.getElementById("eventModal");
-
   const title = document.getElementById("eventTitle");
   const fecha = document.getElementById("eventFecha");
   const direccion = document.getElementById("eventDireccion");
@@ -182,6 +160,7 @@ function abrirModal(torneo) {
     image.src = foto;
     image.style.display = "block";
   } else {
+    image.src = "";
     image.style.display = "none";
   }
 
@@ -189,7 +168,5 @@ function abrirModal(torneo) {
 }
 
 function cerrarModal() {
-  const modal = document.getElementById("eventModal");
-
-  modal?.classList.add("hidden");
+  document.getElementById("eventModal")?.classList.add("hidden");
 }
