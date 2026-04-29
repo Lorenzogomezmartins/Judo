@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 // ruta al Frontend real
 const uploadPath = path.resolve(
   __dirname,
-  "../../../Frontend/assets/clubes"
+  "../../../Frontend/assets/Clubes"
 );
 
 // crear carpeta si no existe

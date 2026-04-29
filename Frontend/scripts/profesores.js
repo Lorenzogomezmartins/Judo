@@ -25,8 +25,8 @@ export async function cargarProfesores() {
 
       // imagen por defecto si no hay foto
       const foto = profesor.foto
-        ? `/assets/Profesores/${profesor.foto}`
-        : "/assets/imagenes/default.png";
+        ? `http://localhost:3000/uploads/${profesor.foto}`
+        : "../assets/placeholder-profesor.jpg";
 
       const card = `
         <div class="profesor-card">

@@ -10,7 +10,7 @@ export async function cargarClubes() {
 
     clubes.forEach(c => {
   const logoUrl = c.logo
-    ? `/uploads/clubes/${c.logo}`
+    ? `/assets/Clubes/${c.logo}`
     : "/assets/imagenes/default.png";
 
       const club = document.createElement("div");

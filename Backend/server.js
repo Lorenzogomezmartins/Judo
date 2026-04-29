@@ -28,11 +28,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* =========================
-   IMÁGENES SUBIDAS
+   FRONTEND / ASSETS
+   Sirve todo lo que está dentro de Frontend
+   Ej: /assets/clubes/foto.jpg
 ========================= */
 
-// Si tu carpeta uploads está al mismo nivel que server.js
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, '../Frontend')));
 
 /* =========================
    VERIFICACIÓN RÁPIDA
@@ -41,12 +42,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/test', (req, res) => {
   res.json({ mensaje: "Servidor funcionando correctamente" });
 });
-
-/* =========================
-   FRONTEND
-========================= */
-
-app.use(express.static(path.join(__dirname, '../Frontend')));
 
 /* =========================
    API

@@ -10,7 +10,7 @@ export async function cargarPatrocinadores() {
 
     patrocinadores.forEach(p => {
   const logoUrl = p.logo
-    ? `/uploads/patrocinadores/${p.logo}`
+    ? `/assets/Patrocinadores/${p.logo}`
     : "/assets/imagenes/default.png";
 
       grid.innerHTML += `
