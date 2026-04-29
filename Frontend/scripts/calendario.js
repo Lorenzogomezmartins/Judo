@@ -1,4 +1,4 @@
-const API_URL_TORNEOS = "http://localhost:3000/api/torneos";
+const API_TORNEOS = "/api/torneos";
 
 let monthYear;
 let calendarDays;
