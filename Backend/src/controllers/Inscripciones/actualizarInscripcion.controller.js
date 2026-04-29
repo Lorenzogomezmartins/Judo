@@ -1,5 +1,7 @@
 // src/controllers/inscripciones/actualizarInscripcion.controller.js
 import InscripcionUsuario from '../../models/InscripcionUsuario.js';
+import Usuario from '../../models/usuario.js';
+
 import {
   normalizarTexto,
   normalizarTextoMinuscula,
@@ -84,6 +86,25 @@ export async function actualizarInscripcion(req, res) {
       return res.status(404).json({
         mensaje: 'Inscripción no encontrada',
       });
+    }
+
+    // Si la inscripción ya fue aprobada y existe como usuario,
+    // también actualizamos el puntaje del usuario para que impacte en el ranking.
+    if (datosActualizados.Puntos !== undefined) {
+      await Usuario.findOneAndUpdate(
+        {
+          $or: [
+            { dni: inscripcion.dni },
+            { email: inscripcion.email },
+          ],
+        },
+        {
+          Puntos: datosActualizados.Puntos,
+        },
+        {
+          new: true,
+        }
+      );
     }
 
     return res.status(200).json({

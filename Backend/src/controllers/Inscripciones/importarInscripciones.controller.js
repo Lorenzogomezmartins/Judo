@@ -71,12 +71,11 @@ export async function importarInscripcionesDesdeSheets(req, res) {
         vistosEnEstaImportacion.add(claveDuplicado);
 
         const existeInscripcion = await InscripcionUsuario.findOne({
-          $or: [
-            { dni: inscripcionMapeada.dni },
-            { email: inscripcionMapeada.email },
-            { filaGoogleSheet: numeroFilaReal },
-          ],
-        });
+  $or: [
+    { dni: inscripcionMapeada.dni },
+    { email: inscripcionMapeada.email },
+  ],
+});
 
         const existeUsuario = await Usuario.findOne({
           $or: [

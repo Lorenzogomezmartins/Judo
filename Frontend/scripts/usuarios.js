@@ -23,12 +23,19 @@ export async function cargarRankingUsuarios() {
       throw new Error("Error al obtener usuarios");
     }
 
+    if (!Array.isArray(usuarios)) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">Error en el formato de usuarios.</td>
+        </tr>
+      `;
+      return;
+    }
+
     rankingUsuarios = usuarios.map((usuario) => ({
       ...usuario,
       puntos: obtenerPuntosUsuario(usuario),
     }));
-
-    cargarFiltroCategorias();
 
     ordenarRanking("desc");
     inicializarEventosRanking();
@@ -38,59 +45,83 @@ export async function cargarRankingUsuarios() {
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">Error al cargar el ranking.</td>
+        <td colspan="6">Error al cargar ranking.</td>
       </tr>
     `;
   }
 }
 
-function inicializarEventosRanking() {
-  document.getElementById("searchInput")?.addEventListener("input", filtrarRanking);
-
-  document.getElementById("filtroCategoria")?.addEventListener("change", filtrarRanking);
-
-  document.getElementById("sortDesc")?.addEventListener("click", () => ordenarRanking("desc"));
-
-  document.getElementById("sortAsc")?.addEventListener("click", () => ordenarRanking("asc"));
-}
-
-function cargarFiltroCategorias() {
-  const select = document.getElementById("filtroCategoria");
-
-  if (!select) return;
-
-  select.innerHTML = `
-    <option value="">Todas</option>
-    <option value="senior">Senior</option>
-    <option value="cadete">Cadete</option>
-    <option value="junior">Junior</option>
-    <option value="infantil-b">Infantil B</option>
-  `;
-}
-
 function obtenerPuntosUsuario(usuario) {
-  const puntosDirectos =
-    usuario.Puntos ??
-    usuario.puntos ??
-    usuario.puntaje ??
-    null;
+  return Number(usuario.Puntos ?? usuario.puntos ?? 0);
+}
 
-  if (puntosDirectos !== null && puntosDirectos !== undefined) {
-    return Number(puntosDirectos) || 0;
+function inicializarEventosRanking() {
+  const filtroRanking = document.getElementById("filtroRanking");
+  const ordenRanking = document.getElementById("ordenRanking");
+
+  if (filtroRanking) {
+    filtroRanking.addEventListener("input", () => {
+      aplicarFiltrosRanking();
+    });
   }
 
-  return calcularPuntos(usuario.historialTorneos);
+  if (ordenRanking) {
+    ordenRanking.addEventListener("change", () => {
+      aplicarFiltrosRanking();
+    });
+  }
 }
 
-function calcularPuntos(historialTorneos = []) {
-  if (!Array.isArray(historialTorneos)) return 0;
+function aplicarFiltrosRanking() {
+  const filtroRanking = document.getElementById("filtroRanking");
+  const ordenRanking = document.getElementById("ordenRanking");
 
-  return historialTorneos.reduce((total, item) => {
-    return total + Number(item.puntos || 0);
-  }, 0);
+  const texto = filtroRanking
+    ? filtroRanking.value.toLowerCase().trim()
+    : "";
+
+  const orden = ordenRanking
+    ? ordenRanking.value
+    : "desc";
+
+  let usuariosFiltrados = [...rankingUsuarios];
+
+  if (texto) {
+    usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
+      const nombreCompleto = `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
+      const dni = String(usuario.dni || "").toLowerCase();
+      const email = String(usuario.email || "").toLowerCase();
+      const clasificacion = String(usuario.clasificacion || "").toLowerCase();
+
+      return (
+        nombreCompleto.includes(texto) ||
+        dni.includes(texto) ||
+        email.includes(texto) ||
+        clasificacion.includes(texto)
+      );
+    });
+  }
+
+  usuariosFiltrados.sort((a, b) => {
+    return orden === "asc"
+      ? a.puntos - b.puntos
+      : b.puntos - a.puntos;
+  });
+
+  renderizarRanking(usuariosFiltrados);
 }
 
-function renderRanking(usuarios) {
+function ordenarRanking(orden = "desc") {
+  rankingUsuarios.sort((a, b) => {
+    return orden === "asc"
+      ? a.puntos - b.puntos
+      : b.puntos - a.puntos;
+  });
+
+  renderizarRanking(rankingUsuarios);
+}
+
+function renderizarRanking(usuarios) {
   const tbody = document.getElementById("rankingBody");
 
   if (!tbody) return;
@@ -98,7 +129,7 @@ function renderRanking(usuarios) {
   if (!usuarios.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">No hay judokas aprobados para mostrar.</td>
+        <td colspan="6">No hay usuarios para mostrar.</td>
       </tr>
     `;
     return;
@@ -107,109 +138,17 @@ function renderRanking(usuarios) {
   tbody.innerHTML = "";
 
   usuarios.forEach((usuario, index) => {
-    const nombreCompleto = `${usuario.nombre || ""} ${usuario.apellido || ""}`.trim();
-    const fotoUrl = obtenerFotoUsuario(usuario);
-    const puntos = obtenerPuntosUsuario(usuario);
+    const fila = document.createElement("tr");
 
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
+    fila.innerHTML = `
       <td>${index + 1}</td>
-
-      <td>
-        <img
-          src="${fotoUrl}"
-          alt="${nombreCompleto || "Judoka"}"
-          style="width: 52px; height: 52px; object-fit: cover; border-radius: 50%; border: 2px solid #dc3545;"
-          onerror="this.src='../assets/Logos/Logo1.png'"
-        >
-      </td>
-
-      <td>
-        <strong>${nombreCompleto || "-"}</strong>
-        <br>
-        <small class="text-muted">DNI: ${usuario.dni || "-"}</small>
-      </td>
-
-      <td>${formatearClasificacion(usuario.clasificacion)}</td>
-      <td>${usuario.peso ? `${usuario.peso} kg` : "-"}</td>
-      <td><strong>${puntos}</strong></td>
+      <td>${usuario.nombre || "-"}</td>
+      <td>${usuario.apellido || "-"}</td>
+      <td>${usuario.dni || "-"}</td>
+      <td>${usuario.clasificacion || "-"}</td>
+      <td>${usuario.puntos}</td>
     `;
 
-    tbody.appendChild(tr);
+    tbody.appendChild(fila);
   });
-}
-
-function obtenerFotoUsuario(usuario) {
-  return (
-    usuario.ft ||
-    usuario.foto ||
-    usuario.imagen ||
-    usuario.fotoUrl ||
-    usuario.foto_url ||
-    "../assets/Logos/Logo1.png"
-  );
-}
-
-function filtrarRanking() {
-  const texto =
-    document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
-
-  const categoriaSeleccionada =
-    document.getElementById("filtroCategoria")?.value || "";
-
-  const filtrados = rankingUsuarios.filter((usuario) => {
-    const nombreCompleto =
-      `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
-
-    const dni = String(usuario.dni || "").toLowerCase();
-
-    const email = String(usuario.email || "").toLowerCase();
-
-    const coincideTexto =
-      nombreCompleto.includes(texto) ||
-      dni.includes(texto) ||
-      email.includes(texto);
-
-    const coincideCategoria =
-      !categoriaSeleccionada ||
-      usuario.clasificacion === categoriaSeleccionada;
-
-    return coincideTexto && coincideCategoria;
-  });
-
-  renderRanking(filtrados);
-}
-
-function ordenarRanking(tipo) {
-  const copia = [...rankingUsuarios];
-
-  copia.sort((a, b) => {
-    const puntosA = obtenerPuntosUsuario(a);
-    const puntosB = obtenerPuntosUsuario(b);
-
-    return tipo === "asc" ? puntosA - puntosB : puntosB - puntosA;
-  });
-
-  rankingUsuarios = copia;
-  renderRanking(rankingUsuarios);
-}
-
-function formatearClasificacion(clasificacion = "") {
-  switch (clasificacion) {
-    case "senior":
-      return "Senior";
-
-    case "cadete":
-      return "Cadete";
-
-    case "junior":
-      return "Junior";
-
-    case "infantil-b":
-      return "Infantil B";
-
-    default:
-      return "-";
-  }
 }
