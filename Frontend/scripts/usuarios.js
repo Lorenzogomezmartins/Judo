@@ -1,6 +1,7 @@
 const API_USUARIOS = "/api/usuarios";
 
 let rankingUsuarios = [];
+let ordenActual = "desc";
 
 export async function cargarRankingUsuarios() {
   const tbody = document.getElementById("rankingBody");
@@ -16,8 +17,6 @@ export async function cargarRankingUsuarios() {
   try {
     const response = await fetch(API_USUARIOS);
     const usuarios = await response.json();
-
-    console.log("USUARIOS RANKING:", usuarios);
 
     if (!response.ok) {
       throw new Error("Error al obtener usuarios");
@@ -37,8 +36,9 @@ export async function cargarRankingUsuarios() {
       puntos: obtenerPuntosUsuario(usuario),
     }));
 
-    ordenarRanking("desc");
+    cargarCategoriasRanking();
     inicializarEventosRanking();
+    aplicarFiltrosRanking();
 
   } catch (error) {
     console.error("Error cargando ranking:", error);
@@ -55,70 +55,106 @@ function obtenerPuntosUsuario(usuario) {
   return Number(usuario.Puntos ?? usuario.puntos ?? 0);
 }
 
+function obtenerFotoUsuario(usuario) {
+  return usuario.ft || "/assets/imagenes/default.png";
+}
+
+function cargarCategoriasRanking() {
+  const filtroCategoria = document.getElementById("filtroCategoria");
+
+  if (!filtroCategoria) return;
+
+  const categorias = [
+    "senior",
+    "cadete",
+    "junior",
+    "infantil-b",
+  ];
+
+  filtroCategoria.innerHTML = `
+    <option value="">Todas</option>
+  `;
+
+  categorias.forEach((categoria) => {
+    filtroCategoria.innerHTML += `
+      <option value="${categoria}">
+        ${categoria}
+      </option>
+    `;
+  });
+}
+
 function inicializarEventosRanking() {
-  const filtroRanking = document.getElementById("filtroRanking");
-  const ordenRanking = document.getElementById("ordenRanking");
+  const searchInput = document.getElementById("searchInput");
+  const filtroCategoria = document.getElementById("filtroCategoria");
+  const sortDesc = document.getElementById("sortDesc");
+  const sortAsc = document.getElementById("sortAsc");
 
-  if (filtroRanking) {
-    filtroRanking.addEventListener("input", () => {
-      aplicarFiltrosRanking();
-    });
-  }
+  searchInput?.addEventListener("input", aplicarFiltrosRanking);
 
-  if (ordenRanking) {
-    ordenRanking.addEventListener("change", () => {
-      aplicarFiltrosRanking();
-    });
-  }
+  filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
+
+  sortDesc?.addEventListener("click", () => {
+    ordenActual = "desc";
+    aplicarFiltrosRanking();
+  });
+
+  sortAsc?.addEventListener("click", () => {
+    ordenActual = "asc";
+    aplicarFiltrosRanking();
+  });
 }
 
 function aplicarFiltrosRanking() {
-  const filtroRanking = document.getElementById("filtroRanking");
-  const ordenRanking = document.getElementById("ordenRanking");
+  const searchInput = document.getElementById("searchInput");
+  const filtroCategoria = document.getElementById("filtroCategoria");
 
-  const texto = filtroRanking
-    ? filtroRanking.value.toLowerCase().trim()
+  const texto = searchInput
+    ? searchInput.value.toLowerCase().trim()
     : "";
 
-  const orden = ordenRanking
-    ? ordenRanking.value
-    : "desc";
+  const categoria = filtroCategoria
+    ? filtroCategoria.value
+    : "";
 
   let usuariosFiltrados = [...rankingUsuarios];
 
+  // BUSCADOR
   if (texto) {
     usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
-      const nombreCompleto = `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
+      const nombre = String(usuario.nombre || "").toLowerCase();
+
+      const apellido = String(usuario.apellido || "").toLowerCase();
+
+      const nombreCompleto =
+        `${nombre} ${apellido}`.trim();
+
       const dni = String(usuario.dni || "").toLowerCase();
-      const email = String(usuario.email || "").toLowerCase();
-      const clasificacion = String(usuario.clasificacion || "").toLowerCase();
 
       return (
+        nombre.includes(texto) ||
+        apellido.includes(texto) ||
         nombreCompleto.includes(texto) ||
-        dni.includes(texto) ||
-        email.includes(texto) ||
-        clasificacion.includes(texto)
+        dni.includes(texto)
       );
     });
   }
 
+  // CATEGORÍA
+  if (categoria) {
+    usuariosFiltrados = usuariosFiltrados.filter(
+      (usuario) => usuario.clasificacion === categoria
+    );
+  }
+
+  // ORDEN
   usuariosFiltrados.sort((a, b) => {
-    return orden === "asc"
+    return ordenActual === "asc"
       ? a.puntos - b.puntos
       : b.puntos - a.puntos;
   });
 
   renderizarRanking(usuariosFiltrados);
-}
-
-function ordenarRanking(orden = "desc") {
-  rankingUsuarios.sort((a, b) => {
-    return orden === "asc"
-      ? a.puntos - b.puntos
-      : b.puntos - a.puntos;
-  });
-
-  renderizarRanking(rankingUsuarios);
 }
 
 function renderizarRanking(usuarios) {
@@ -129,7 +165,9 @@ function renderizarRanking(usuarios) {
   if (!usuarios.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">No hay usuarios para mostrar.</td>
+        <td colspan="6">
+          No hay usuarios para mostrar.
+        </td>
       </tr>
     `;
     return;
@@ -140,13 +178,44 @@ function renderizarRanking(usuarios) {
   usuarios.forEach((usuario, index) => {
     const fila = document.createElement("tr");
 
+    const foto = obtenerFotoUsuario(usuario);
+
     fila.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${usuario.nombre || "-"}</td>
-      <td>${usuario.apellido || "-"}</td>
-      <td>${usuario.dni || "-"}</td>
-      <td>${usuario.clasificacion || "-"}</td>
-      <td>${usuario.puntos}</td>
+      <td class="fw-bold">
+        ${index + 1}
+      </td>
+
+      <td>
+        <img
+          src="${foto}"
+          alt="${usuario.nombre || "Usuario"}"
+          class="ranking-foto"
+          style="
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #b30000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          "
+        >
+      </td>
+
+      <td class="fw-semibold">
+        ${usuario.nombre || "-"} ${usuario.apellido || "-"}
+      </td>
+
+      <td>
+        ${usuario.clasificacion || "-"}
+      </td>
+
+      <td>
+        ${usuario.peso || "-"} kg
+      </td>
+
+      <td class="fw-bold text-danger">
+        ${usuario.puntos}
+      </td>
     `;
 
     tbody.appendChild(fila);

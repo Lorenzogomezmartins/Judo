@@ -1,331 +1,313 @@
-/* ===============================
-   SISTEMA JUDOSHIAI
-================================ */
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
+/* =====================================================
+   CONTENEDOR GENERAL
+===================================================== */
 
 .sistema {
-  min-height: 100vh;
-  padding: 0 0 45px;
-  background: #f8f9fa;
-  font-family: 'Playfair Display', serif;
+  padding: 70px 0;
+  background:
+    linear-gradient(
+      180deg,
+      #f8f9fa 0%,
+      #ffffff 100%
+    );
 }
 
 .sistema-container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 12px;
+  max-width: 1200px;
 }
 
-/* ===============================
+/* =====================================================
    HEADER
-================================ */
+===================================================== */
 
 .sistema-header {
-  width: 100%;
-  margin: 0 0 26px;
-
-  display: grid;
-  grid-template-columns: 120px 1fr 190px;
+  display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
 
-  background: linear-gradient(135deg, #b30000, #8f0000);
-  color: #ffffff;
+  margin-bottom: 45px;
 
-  padding: 22px 48px;
+  padding: 30px 35px;
 
-  border-bottom: 6px solid #6f0000;
-  box-shadow: 0 12px 30px rgba(179, 0, 0, 0.28);
+  border-radius: 24px;
 
-  box-sizing: border-box;
-  overflow: hidden;
+  background:
+    linear-gradient(
+      135deg,
+      #b30000 0%,
+      #7a0000 100%
+    );
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.12);
 }
 
 .sistema-logo {
-  justify-self: start;
-  width: 72px;
-  height: 72px;
+  width: 95px;
+  height: 95px;
   object-fit: contain;
-  background: #ffffff;
-  padding: 9px;
-  border-radius: 50%;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+
+  background: rgba(255,255,255,0.12);
+
+  border-radius: 18px;
+
+  padding: 10px;
 }
 
 .sistema-header-texto {
-  text-align: center;
-  justify-self: center;
-  width: 100%;
-  max-width: 760px;
-  padding: 0 12px;
+  flex: 1;
+  min-width: 260px;
 }
 
 .titulo-sistema {
-  margin: 0 0 7px;
-  font-size: 1.9rem;
+  color: white;
+
+  font-size: 2.2rem;
   font-weight: 800;
-  line-height: 1.25;
-  color: #ffffff;
+
+  margin-bottom: 10px;
+
+  letter-spacing: 0.5px;
 }
 
 .sistema-subtitulo {
-  margin: 0;
-  font-size: 1.04rem;
-  line-height: 1.6;
-  color: #f3f4f6;
+  color: rgba(255,255,255,0.92);
+
+  font-size: 1.05rem;
+  line-height: 1.7;
+
+  margin-bottom: 0;
+
+  font-weight: 500;
 }
 
 .sistema-btn-volver {
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 155px;
-  background: #ffffff;
-  color: #9e0000;
-  border: 1px solid #ffffff;
-  border-radius: 12px;
-  padding: 11px 16px;
-  font-size: 1rem;
-  font-weight: 800;
-  text-decoration: none;
-  transition: 0.2s ease;
-  white-space: nowrap;
+  background: white;
+  color: #b30000 !important;
+
+  border-radius: 14px;
+
+  padding: 12px 22px;
+
+  font-weight: 700;
+
+  border: none;
+
+  transition: all 0.25s ease;
 }
 
 .sistema-btn-volver:hover {
-  background: #6f0000;
-  color: #ffffff;
-  border-color: #6f0000;
+  transform: translateY(-2px);
+
+  background: #f3f4f6;
+
+  color: #7a0000 !important;
 }
 
-/* ===============================
-   CARDS
-================================ */
+/* =====================================================
+   TARJETAS
+===================================================== */
 
 .sistema-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 22px 24px;
-  margin-bottom: 18px;
-  text-align: center;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-  border: 1px solid #eadada;
-  border-top: 4px solid #b30000;
+  background: white;
+
+  border-radius: 24px;
+
+  padding: 32px;
+
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.07);
+
+  margin-bottom: 28px;
+
+  border: 1px solid #ececec;
+}
+
+.sistema-card h4,
+.sistema-card h5 {
+  color: #111827;
+
+  font-weight: 800;
+
+  margin-bottom: 14px;
+
+  letter-spacing: 0.3px;
 }
 
 .sistema-card h4 {
-  margin: 0 0 11px;
-  font-size: 1.34rem;
-  font-weight: 800;
-  color: #9e0000;
+  font-size: 1.6rem;
 }
 
 .sistema-card h5 {
-  margin: 0 0 9px;
-  font-size: 1.08rem;
-  font-weight: 800;
-  color: #9e0000;
+  font-size: 1.2rem;
 }
 
 .sistema-card p {
-  margin: 0;
-  font-size: 0.98rem;
-  line-height: 1.7;
-  color: #333333;
+  color: #374151;
+
+  font-size: 1.03rem;
+
+  line-height: 1.9;
+
+  margin-bottom: 0;
+
+  font-weight: 500;
 }
 
-/* ===============================
-   INTRO
-================================ */
-
-.sistema-card-principal {
-  max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
-  background: #fffafa;
-}
-
-/* ===============================
-   FUNCIONALIDADES
-================================ */
+/* =====================================================
+   GRID
+===================================================== */
 
 .sistema-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-bottom: 18px;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 10px;
 }
 
 .sistema-card-mini {
-  min-height: 132px;
-  margin-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: linear-gradient(180deg, #ffffff, #fff4f4);
-  transition: 0.2s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .sistema-card-mini:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 26px rgba(179, 0, 0, 0.16);
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.1);
 }
 
-.sistema-card-mini p {
-  font-size: 0.95rem;
-}
-
-/* ===============================
+/* =====================================================
    DOCUMENTACIÓN
-================================ */
-
-.sistema-docs {
-  max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
-  background: #ffffff;
-}
+===================================================== */
 
 .docs-lista {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 11px;
-  margin: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin:
+    24px 0;
 }
 
 .docs-lista span {
-  display: block;
-  background: #b30000;
-  color: #ffffff;
-  border-radius: 12px;
-  padding: 11px 13px;
-  font-size: 0.94rem;
+  background:
+    linear-gradient(
+      135deg,
+      #fff5f5,
+      #ffe5e5
+    );
+
+  color: #8f0000;
+
+  padding:
+    12px 18px;
+
+  border-radius: 14px;
+
   font-weight: 700;
-  box-shadow: 0 6px 14px rgba(179, 0, 0, 0.18);
+
+  font-size: 0.96rem;
+
+  border: 1px solid #ffd3d3;
 }
 
-/* ===============================
+/* =====================================================
    DESCARGA
-================================ */
+===================================================== */
 
 .sistema-descarga {
-  max-width: 760px;
-  margin-left: auto;
-  margin-right: auto;
-  background: linear-gradient(135deg, #b30000, #8f0000);
-  color: #ffffff;
-  border: none;
-  border-bottom: 6px solid #6f0000;
-}
-
-.sistema-descarga h4 {
-  color: #ffffff;
-  font-size: 1.45rem;
-}
-
-.sistema-descarga p {
-  margin-bottom: 16px;
-  color: #f3f4f6;
-  font-size: 1rem;
+  text-align: center;
 }
 
 .sistema-btn-descarga {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #ffffff;
-  color: #9e0000;
-  border-radius: 11px;
-  padding: 10px 18px;
-  font-size: 0.97rem;
+  margin-top: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b30000,
+      #7a0000
+    );
+
+  color: white !important;
+
+  border: none;
+
+  border-radius: 16px;
+
+  padding:
+    16px 34px;
+
+  font-size: 1rem;
   font-weight: 800;
-  text-decoration: none;
-  border: 1px solid #ffffff;
-  transition: 0.2s ease;
+
+  letter-spacing: 0.3px;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .sistema-btn-descarga:hover {
-  background: #6f0000;
-  color: #ffffff;
-  border-color: #6f0000;
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 28px rgba(179,0,0,0.22);
+
+  color: white !important;
 }
 
-/* ===============================
+/* =====================================================
    RESPONSIVE
-================================ */
+===================================================== */
 
 @media (max-width: 768px) {
-  .sistema {
-    padding: 0 0 35px;
-  }
 
-  .sistema-container {
-    padding: 0 10px;
+  .sistema {
+    padding: 40px 0;
   }
 
   .sistema-header {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    flex-direction: column;
     text-align: center;
-    padding: 22px 16px;
-  }
 
-  .sistema-logo,
-  .sistema-btn-volver {
-    justify-self: center;
-  }
-
-  .sistema-header-texto {
-    max-width: 100%;
-    padding: 0;
+    padding: 26px 22px;
   }
 
   .titulo-sistema {
-    font-size: 1.45rem;
+    font-size: 1.75rem;
   }
 
   .sistema-subtitulo {
-    font-size: 0.96rem;
+    font-size: 1rem;
   }
 
-  .sistema-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .docs-lista {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
   .sistema-card {
-    padding: 18px 15px;
-  }
-
-  .sistema-logo {
-    width: 62px;
-    height: 62px;
-  }
-
-  .titulo-sistema {
-    font-size: 1.25rem;
+    padding: 24px;
   }
 
   .sistema-card h4 {
-    font-size: 1.18rem;
+    font-size: 1.4rem;
   }
 
-  .sistema-btn-descarga,
-  .sistema-btn-volver {
+  .sistema-card p {
+    font-size: 1rem;
+  }
+
+  .docs-lista {
+    justify-content: center;
+  }
+
+  .sistema-btn-descarga {
     width: 100%;
   }
 }

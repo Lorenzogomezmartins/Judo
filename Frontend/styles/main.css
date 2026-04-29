@@ -16,60 +16,146 @@ body {
 /* =====================================================
    HEADER GENERAL
 ===================================================== */
+
 .header {
   width: 100%;
-  background-color: #b30000;
-  color: #e5e7eb;
+  background: linear-gradient(135deg, #b30000, #790000);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 /* =====================================================
-   TOP BAR (ACCESO ADMIN)
+   TOP BAR
 ===================================================== */
+
 .top-bar {
-  background-color: #9e0000;
-  padding: 6px 20px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 8px 28px;
   text-align: right;
 }
 
 .admin-link {
-  color: #bb6f6f;
-  font-size: 0.85rem;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
   text-decoration: none;
+  opacity: 0.9;
+  transition: all 0.2s ease;
 }
 
 .admin-link:hover {
+  color: #ffffff;
+  opacity: 1;
   text-decoration: underline;
 }
 
 /* =====================================================
-   HEADER PRINCIPAL (LOGOS + TÍTULO)
+   HEADER PRINCIPAL
 ===================================================== */
+
 .header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 40px;
+  gap: 24px;
+  padding: 24px 42px;
 }
 
 .logo {
-  height: 140px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  padding: 10px;
 }
 
 .logo-right {
-  height: 80px;
+  width: 115px;
+  height: 95px;
 }
 
 .header-title {
   flex: 1;
   text-align: center;
+  padding: 0 18px;
 }
 
 .header-title h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: clamp(1.7rem, 3vw, 2.8rem);
+  font-weight: 800;
   margin: 0;
-  color: #e5e7eb;
+  color: #ffffff;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+}
+
+/* =====================================================
+   NAV
+===================================================== */
+
+.nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 28px 22px;
+}
+
+.nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+  transition: all 0.2s ease;
+}
+
+.nav a:hover {
+  background: #ffffff;
+  color: #9e0000;
+  transform: translateY(-2px);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+  .top-bar {
+    text-align: center;
+  }
+
+  .header-top {
+    flex-direction: column;
+    padding: 24px 18px;
+  }
+
+  .logo {
+    width: 105px;
+    height: 105px;
+  }
+
+  .logo-right {
+    width: 95px;
+    height: 75px;
+  }
+
+  .header-title h1 {
+    font-size: 1.65rem;
+  }
+
+  .nav {
+    padding: 0 14px 20px;
+  }
+
+  .nav a {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* =====================================================
