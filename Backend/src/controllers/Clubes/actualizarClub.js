@@ -5,7 +5,7 @@ const actualizarClub = async (req, res) => {
     const data = { ...req.body };
 
     if (req.file) {
-      data.logo = req.file.filename;
+      data.logo = `/assets/Clubes/${req.file.filename}`;
     }
 
     const club = await Club.findByIdAndUpdate(req.params.id, data, {

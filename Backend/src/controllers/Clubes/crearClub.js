@@ -9,7 +9,7 @@ const crearClub = async (req, res) => {
       telefono,
       direccion,
       sitioWeb,
-      logo: req.file ? req.file.filename : null,
+      logo: req.file ? `/assets/Clubes/${req.file.filename}` : null,
     });
 
     await club.save();

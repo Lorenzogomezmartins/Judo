@@ -8,11 +8,15 @@ const crearPatrocinador = async (req, res) => {
       nombre,
       contacto,
       sitioWeb,
-      logo: req.file ? req.file.filename : null,
+      logo: req.file
+        ? `/assets/Patrocinadores/${req.file.filename}`
+        : null,
     });
 
     await patrocinador.save();
+
     res.status(201).json(patrocinador);
+
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
   }
