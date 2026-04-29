@@ -1,4 +1,3 @@
-// controllers/patrocinadores/actualizarPatrocinador.js
 import Patrocinador from '../../models/patrocinador.js';
 
 const actualizarPatrocinador = async (req, res) => {

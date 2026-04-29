@@ -1,4 +1,3 @@
-// src/controllers/clubes/crearClub.js
 import Club from '../../models/club.js';
 
 const crearClub = async (req, res) => {

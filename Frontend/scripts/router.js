@@ -22,21 +22,23 @@ const rutas = {
   profesores: "../partials/profesores.html",
   patrocinadores: "../partials/patrocinadores.html",
   objetivos: "../partials/objetivos.html",
-  loginAdmin: "../partials/loginAdmin.html",
-  sistema: "../partials/sistema.html"
+  loginAdmin: "../partials/LoginAdmin.html",
+  sistema: "../partials/sistema.html",
 };
 
 // ================= CARGAR VISTA =================
 
 async function cargarVista(vista) {
   const contenedor = document.getElementById("contenido");
-  const ruta = rutas[vista] || rutas.home;
-
   const header = document.querySelector("header");
   const footer = document.querySelector("footer");
 
-  // Layout (login sin header/footer)
-  if (vista === "loginAdmin") {
+  if (!contenedor) return;
+
+  const vistaFinal = rutas[vista] ? vista : "home";
+  const ruta = rutas[vistaFinal];
+
+  if (vistaFinal === "loginAdmin") {
     header?.style.setProperty("display", "none");
     footer?.style.setProperty("display", "none");
   } else {
@@ -54,41 +56,39 @@ async function cargarVista(vista) {
     const html = await response.text();
     contenedor.innerHTML = html;
 
-    // ================= HOOKS POR VISTA =================
+    switch (vistaFinal) {
+      case "calendario":
+        await inicializarCalendario();
+        break;
 
- switch (vista) {
-  case "calendario":
-    await inicializarCalendario();
-    break;
+      case "clubes":
+        await cargarClubes();
+        break;
 
-  case "clubes":
-    await cargarClubes();
-    break;
+      case "profesores":
+        await cargarProfesores();
+        break;
 
-  case "profesores":
-    await cargarProfesores();
-    break;
+      case "patrocinadores":
+        await cargarPatrocinadores();
+        break;
 
-  case "patrocinadores":
-    await cargarPatrocinadores();
-    break;
+      case "loginAdmin":
+        await iniciarLoginAdmin();
+        break;
 
-  case "loginAdmin":
-    await iniciarLoginAdmin();
-    break;
+      case "ranking":
+        await cargarRankingUsuarios();
+        break;
 
-  case "ranking":
-    await cargarRankingUsuarios();
-    break;
+      case "torneos-actuales":
+      case "torneos-anteriores":
+        await initTorneos();
+        break;
 
-  case "torneos-actuales":
-  case "torneos-anteriores":
-    await initTorneos();
-    break;
-
-  default:
-    break;
-}
+      default:
+        break;
+    }
   } catch (error) {
     console.error("Error cargando vista:", error);
 
@@ -102,10 +102,18 @@ async function cargarVista(vista) {
 
 // ================= ROUTER =================
 
-function router() {
-  const hash = window.location.hash.replace("#/", "");
-  const vista = hash || "home";
+function obtenerVistaDesdeHash() {
+  let hash = window.location.hash || "#/home";
 
+  hash = hash.replace("#/", "");
+  hash = hash.replace("#", "");
+  hash = hash.trim();
+
+  return hash || "home";
+}
+
+function router() {
+  const vista = obtenerVistaDesdeHash();
   cargarVista(vista);
 }
 

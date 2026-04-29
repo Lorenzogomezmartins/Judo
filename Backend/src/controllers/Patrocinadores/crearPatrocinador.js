@@ -1,4 +1,3 @@
-// controllers/patrocinadores/crearPatrocinador.js
 import Patrocinador from '../../models/patrocinador.js';
 
 const crearPatrocinador = async (req, res) => {
