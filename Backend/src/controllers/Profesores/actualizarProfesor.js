@@ -1,12 +1,11 @@
-// src/controllers/profesores/actualizarProfesor.js
-import Profesor from '../../models/profesor.js';
+import Profesor from "../../models/profesor.js";
 
 const actualizarProfesor = async (req, res) => {
   try {
     const data = { ...req.body };
 
     if (req.file) {
-      data.foto = req.file.filename;
+      data.foto = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
     }
 
     const profesor = await Profesor.findByIdAndUpdate(
@@ -16,7 +15,7 @@ const actualizarProfesor = async (req, res) => {
     );
 
     if (!profesor) {
-      return res.status(404).json({ mensaje: 'Profesor no encontrado' });
+      return res.status(404).json({ mensaje: "Profesor no encontrado" });
     }
 
     res.json(profesor);
