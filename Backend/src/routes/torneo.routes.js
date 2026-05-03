@@ -5,7 +5,10 @@ import obtenerTorneoPorId from "../controllers/torneos/obtenerTorneoId.js";
 import actualizarTorneo from "../controllers/torneos/actualizarTorneo.js";
 import eliminarTorneo from "../controllers/torneos/eliminarTorneo.js";
 import listarTorneos from "../controllers/torneos/listarTorneos..js";
+
 import { authMiddleware, adminOnly } from "../middlewares/authMiddleware.js";
+
+import uploadTorneos from "../middlewares/uploadTorneos.js";
 
 const router = express.Router();
 
@@ -14,8 +17,27 @@ router.get("/", listarTorneos);
 router.get("/:id", obtenerTorneoPorId);
 
 // Protegidas
-router.post("/", authMiddleware, adminOnly, crearTorneo);
-router.put("/:id", authMiddleware, adminOnly, actualizarTorneo);
-router.delete("/:id", authMiddleware, adminOnly, eliminarTorneo);
+router.post(
+  "/",
+  authMiddleware,
+  adminOnly,
+  uploadTorneos.single("foto"),
+  crearTorneo
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  adminOnly,
+  uploadTorneos.single("foto"),
+  actualizarTorneo
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  adminOnly,
+  eliminarTorneo
+);
 
 export default router;

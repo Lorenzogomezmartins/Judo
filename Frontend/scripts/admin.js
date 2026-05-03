@@ -494,7 +494,6 @@ async function cargarPatrocinadoresAdmin(filtroNombre = "") {
 }
 
 /* AGREGAR PATROCINADORES*/
-const formPatrocinador = document.getElementById("formPatrocinador");
 const formContainer = document.getElementById("formPatrocinadorContainer");
 const btnNuevoPatrocinador = document.getElementById("btnNuevoPatrocinador");
 const btnCancelarPatrocinador = document.getElementById("btnCancelarPatrocinador");
@@ -515,62 +514,7 @@ btnCancelarPatrocinador.addEventListener("click", () => {
 });
 
 // Enviar formulario (CREATE + UPDATE)
-formPatrocinador.addEventListener("submit", async (e) => {
-  e.preventDefault();
 
-  const id = document.getElementById("patrocinadorId").value.trim();
-  const nombre = document.getElementById("patrocinadorNombre").value.trim();
-  const contacto = document.getElementById("patrocinadorContacto").value.trim();
-  const sitioWeb = document.getElementById("patrocinadorWeb").value.trim();
-  const logoFile = document.getElementById("patrocinadorLogo").files[0];
-
-  if (!nombre) {
-    alert("El nombre es obligatorio");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("nombre", nombre);
-  formData.append("contacto", contacto);
-  formData.append("sitioWeb", sitioWeb);
-
-  if (logoFile) {
-    formData.append("logo", logoFile);
-  }
-
-  try {
-    const url = id
-      ? `${API_PATROCINADORES}/${id}`
-      : API_PATROCINADORES;
-
-    const method = id ? "PUT" : "POST";
-
-    const response = await fetchProtegido(url, {
-      method: method,
-      body: formData
-    });
-
-    if (!response.ok) {
-      throw new Error("Error al guardar patrocinador");
-    }
-
-    alert(
-      id
-        ? "Patrocinador actualizado correctamente"
-        : "Patrocinador creado correctamente"
-    );
-
-    formContainer.style.display = "none";
-    formPatrocinador.reset();
-    document.getElementById("patrocinadorId").value = "";
-
-    cargarPatrocinadoresAdmin();
-
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Error al guardar patrocinador");
-  }
-});
 
 // Filtrar patrocinadores 
 if (inputFiltroPatrocinadores) {
@@ -1050,74 +994,35 @@ async function guardarTorneo(e) {
     ? categoriasTexto.split(",").map(c => c.trim()).filter(Boolean)
     : [];
 
+  const formData = new FormData();
+  formData.append("nombre", nombre);
+  formData.append("fecha", fecha);
+  formData.append("direccion", direccion);
+  formData.append("reglas", reglas);
+  formData.append("categorias", JSON.stringify(categorias));
+
+  if (fotoInput.files.length > 0) {
+    formData.append("foto", fotoInput.files[0]);
+  }
+
   try {
-    let response;
+    const url = id ? `${API_TORNEOS}/${id}` : API_TORNEOS;
+    const method = id ? "PUT" : "POST";
 
-    if (!id) {
-      response = await fetchProtegido(API_TORNEOS, {
-        method: "POST",
-        headers: {
-          ...getAuthHeaders(),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          nombre,
-          fecha,
-          direccion,
-          reglas,
-          categorias
-        })
-      });
-    } else {
-      const hayFoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
-
-      if (hayFoto) {
-        const formData = new FormData();
-        formData.append("nombre", nombre);
-        formData.append("fecha", fecha);
-        formData.append("direccion", direccion);
-        formData.append("reglas", reglas);
-        formData.append("categorias", JSON.stringify(categorias));
-        formData.append("foto", fotoInput.files[0]);
-
-        response = await fetchProtegido(`${API_TORNEOS}/${id}`, {
-          method: "PUT",
-          body: formData
-        });
-      } else {
-        response = await fetchProtegido(`${API_TORNEOS}/${id}`, {
-          method: "PUT",
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            nombre,
-            fecha,
-            direccion,
-            reglas,
-            categorias
-          })
-        });
-      }
-    }
+    const response = await fetchProtegido(url, {
+      method,
+      body: formData
+    });
 
     const resultado = await response.json();
-    console.log("RESPUESTA BACKEND TORNEO:", resultado);
 
     if (!response.ok) {
       throw new Error(resultado.mensaje || resultado.error || "Error al guardar torneo");
     }
 
-    alert(
-      id
-        ? "Torneo actualizado correctamente"
-        : "Torneo creado correctamente"
-    );
+    alert(id ? "Torneo actualizado correctamente" : "Torneo creado correctamente");
 
-    const form = document.getElementById("formTorneo");
-    if (form) form.reset();
-
+    document.getElementById("formTorneo").reset();
     document.getElementById("torneoId").value = "";
 
     cerrarFormularioTorneo();

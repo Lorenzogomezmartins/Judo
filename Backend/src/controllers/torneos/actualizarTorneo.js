@@ -2,9 +2,24 @@ import Torneo from '../../models/Torneo.js';
 
 const actualizarTorneo = async (req, res) => {
   try {
+    const data = {
+      nombre: req.body.nombre,
+      fecha: req.body.fecha,
+      direccion: req.body.direccion,
+      reglas: req.body.reglas,
+    };
+
+    if (req.body.categorias) {
+      data.categorias = JSON.parse(req.body.categorias);
+    }
+
+    if (req.file) {
+      data.fotos = [`/assets/Torneos/${req.file.filename}`];
+    }
+
     const torneo = await Torneo.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      data,
       { new: true }
     );
 
@@ -16,6 +31,7 @@ const actualizarTorneo = async (req, res) => {
       mensaje: 'Torneo actualizado',
       torneo
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
