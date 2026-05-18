@@ -7,6 +7,7 @@ import usuarioRoutes from './usuario.routes.js';
 import TorneosRoutes from './torneo.routes.js';
 import inscripcionRoutes from './inscripcion.routes.js';
 import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
+import resultadosRoutes from "./resultados.routes.js";
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.use('/Administradores', AdminRoutes);
 router.use('/usuarios', usuarioRoutes);
 router.use('/torneos', TorneosRoutes);
 router.use('/inscripciones', inscripcionRoutes);
+router.use("/resultados", resultadosRoutes);
 
 // Ruta de prueba protegida
 router.get('/admin/verificar', authMiddleware, adminOnly, (req, res) => {

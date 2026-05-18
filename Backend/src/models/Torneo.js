@@ -1,52 +1,56 @@
-// models/Torneo.js
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const torneoSchema = new mongoose.Schema({
-    nombre: { 
-      type: String, 
-      required: true 
+const torneoSchema = new mongoose.Schema(
+  {
+    nombre: {
+      type: String,
+      required: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+
+    fecha: {
+      type: Date,
+      required: true,
+    },
+
+    descripcion: {
+      type: String,
     },
 
     fotos: [
       {
-        type: String
-      }
+        type: String,
+      },
     ],
 
-    direccion: { 
-      type: String 
+    direccion: {
+      type: String,
     },
 
-    fecha: { 
-      type: Date, 
-      required: true 
-    },
-
-    reglas: { 
-      type: String 
+    reglas: {
+      type: String,
     },
 
     categorias: [
       {
         type: String,
-        //enum: ['Futbol', 'Basquet', 'Tenis', 'Padel', 'Otro']
-      }
+      },
     ],
 
-    participantes: [
-      {
-        nombre: { type: String, required: true },
-        email: { type: String },
-        equipo: { type: String },
-        telefono: { type: String },
-        fechaInscripcion: { 
-          type: Date, 
-          default: Date.now 
-        }
-      }
-    ],
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-  }, {
-    timestamps: true 
-});
-export default mongoose.model('Torneo', torneoSchema);
+export default mongoose.model("Torneo", torneoSchema);

@@ -1,16 +1,47 @@
 import Torneo from '../../models/Torneo.js';
 
+function generarSlug(nombre = '') {
+  return nombre
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\d{4}/g, '')
+    .replace(/\bfmj\b/g, '')
+    .replace(/\btorneo\b/g, '')
+    .replace(/\bcopa\b/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+}
+
+function parsearCategorias(categorias) {
+  if (!categorias) return [];
+
+  try {
+    const parsed = JSON.parse(categorias);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return categorias
+      .split(',')
+      .map((cat) => cat.trim())
+      .filter(Boolean);
+  }
+}
+
 const actualizarTorneo = async (req, res) => {
   try {
-    const data = {
-      nombre: req.body.nombre,
-      fecha: req.body.fecha,
-      direccion: req.body.direccion,
-      reglas: req.body.reglas,
-    };
+    const data = {};
 
-    if (req.body.categorias) {
-      data.categorias = JSON.parse(req.body.categorias);
+    if (req.body.nombre) {
+      data.nombre = req.body.nombre;
+      data.slug = generarSlug(req.body.nombre);
+    }
+
+    if (req.body.fecha) data.fecha = req.body.fecha;
+    if (req.body.direccion) data.direccion = req.body.direccion;
+    if (req.body.reglas) data.reglas = req.body.reglas;
+
+    if (req.body.categorias !== undefined) {
+      data.categorias = parsearCategorias(req.body.categorias);
     }
 
     if (req.file) {
@@ -20,7 +51,7 @@ const actualizarTorneo = async (req, res) => {
     const torneo = await Torneo.findByIdAndUpdate(
       req.params.id,
       data,
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!torneo) {

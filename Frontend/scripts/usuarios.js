@@ -2,6 +2,8 @@ const API_USUARIOS = "/api/usuarios";
 
 let rankingUsuarios = [];
 let ordenActual = "desc";
+let sexoSeleccionado = "";
+let pesoSeleccionado = "";
 
 export async function cargarRankingUsuarios() {
   const tbody = document.getElementById("rankingBody");
@@ -89,6 +91,7 @@ function inicializarEventosRanking() {
   const filtroCategoria = document.getElementById("filtroCategoria");
   const sortDesc = document.getElementById("sortDesc");
   const sortAsc = document.getElementById("sortAsc");
+  const botonesPeso = document.querySelectorAll(".peso-btn");
 
   searchInput?.addEventListener("input", aplicarFiltrosRanking);
 
@@ -102,6 +105,18 @@ function inicializarEventosRanking() {
   sortAsc?.addEventListener("click", () => {
     ordenActual = "asc";
     aplicarFiltrosRanking();
+  });
+
+  botonesPeso.forEach((boton) => {
+    boton.addEventListener("click", () => {
+      sexoSeleccionado = boton.dataset.sexo || "";
+      pesoSeleccionado = boton.dataset.peso || "";
+
+      botonesPeso.forEach((btn) => btn.classList.remove("active"));
+      boton.classList.add("active");
+
+      aplicarFiltrosRanking();
+    });
   });
 }
 
@@ -145,6 +160,29 @@ function aplicarFiltrosRanking() {
     usuariosFiltrados = usuariosFiltrados.filter(
       (usuario) => usuario.clasificacion === categoria
     );
+  }
+
+  // SEXO - filtra, pero no se muestra
+  if (sexoSeleccionado) {
+    usuariosFiltrados = usuariosFiltrados.filter(
+      (usuario) => usuario.sexo === sexoSeleccionado
+    );
+  }
+
+  // PESO - filtra, pero no se muestra como columna nueva
+  if (pesoSeleccionado) {
+    usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
+      const pesoUsuario = Number(usuario.peso);
+
+      if (!pesoUsuario) return false;
+
+      if (pesoSeleccionado.includes("+")) {
+        const pesoMinimo = Number(pesoSeleccionado.replace("+", ""));
+        return pesoUsuario > pesoMinimo;
+      }
+
+      return pesoUsuario <= Number(pesoSeleccionado);
+    });
   }
 
   // ORDEN

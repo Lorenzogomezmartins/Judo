@@ -25,46 +25,59 @@
     </div>
   </header>
 
-  <!-- FILTROS -->
-  <section class="card border-0 shadow-sm rounded-4 mb-5">
-    <div class="card-body p-4">
+  <!-- LAYOUT RANKING -->
+<section class="ranking-layout">
 
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-        <div>
-          <h5 class="fw-bold mb-1">
-            Filtros del ranking
-          </h5>
+  <!-- FILTRO LATERAL DE PESOS -->
+  <aside class="ranking-sidebar shadow-sm">
 
-          <p class="text-muted mb-0">
-            Buscá judokas y ordená el listado según su puntaje.
-          </p>
-        </div>
+    <button class="ranking-sidebar-title peso-btn active" type="button" data-sexo="" data-peso="">
+  Todos
+</button>
+
+    <div class="peso-grid">
+
+      <!-- MASCULINO -->
+      <div class="peso-col">
+        <button class="sexo-btn peso-btn" type="button" data-sexo="masculino" data-peso="">
+          M
+        </button>
+
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="60">-60</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="66">-66</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="73">-73</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="81">-81</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="90">-90</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="100">-100</button>
+        <button type="button" class="peso-btn" data-sexo="masculino" data-peso="+100">+100</button>
       </div>
 
+      <!-- FEMENINO -->
+      <div class="peso-col">
+        <button class="sexo-btn peso-btn" type="button" data-sexo="femenino" data-peso="">
+          F
+        </button>
+
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="48">-48</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="52">-52</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="57">-57</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="63">-63</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="70">-70</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="78">-78</button>
+        <button type="button" class="peso-btn" data-sexo="femenino" data-peso="+78">+78</button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- TODO LO DE LA DERECHA VA ADENTRO DE ESTE MAIN -->
+  <main class="ranking-main">
+
+    <!-- FILTROS SUPERIORES -->
+    <section class="ranking-filters shadow-sm mb-4">
       <div class="row g-3 align-items-end">
 
-        <!-- BUSCADOR -->
-        <div class="col-12 col-lg-5">
-          <label for="searchInput" class="form-label fw-semibold">
-            Buscar judoka
-          </label>
-
-          <div class="input-group">
-            <span class="input-group-text bg-white">
-              🔎
-            </span>
-
-            <input
-              type="text"
-              id="searchInput"
-              class="form-control"
-              placeholder="Nombre o DNI..."
-            >
-          </div>
-        </div>
-
-        <!-- FILTRO CATEGORÍA -->
-        <div class="col-12 col-lg-3">
+        <div class="col-12 col-lg-4">
           <label for="filtroCategoria" class="form-label fw-semibold">
             Categoría
           </label>
@@ -74,67 +87,81 @@
           </select>
         </div>
 
-        <!-- ORDENAMIENTO -->
-        <div class="col-12 col-lg-4">
-          <label class="form-label fw-semibold">
-            Ordenar por puntos
+        <div class="col-12 col-lg-5">
+          <label for="searchInput" class="form-label fw-semibold">
+            Buscar por nombre o DNI
           </label>
 
-          <div class="d-flex gap-2 flex-wrap">
-            <button id="sortDesc" class="btn btn-danger flex-fill">
-              Mayor puntaje
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Ej: Gómez, Juan, 12345678..."
+          >
+        </div>
+
+        <div class="col-12 col-lg-3">
+          <label class="form-label fw-semibold">
+            Orden
+          </label>
+
+          <div class="d-flex gap-2">
+            <button id="sortDesc" class="btn btn-danger flex-fill" type="button">
+              Mayor
             </button>
 
-            <button id="sortAsc" class="btn btn-outline-danger flex-fill">
-              Menor puntaje
+            <button id="sortAsc" class="btn btn-outline-danger flex-fill" type="button">
+              Menor
             </button>
           </div>
         </div>
 
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TABLA RANKING -->
-  <section class="card border-0 shadow-sm rounded-4">
-    <div class="card-body p-0">
+    <!-- TABLA RANKING -->
+    <section class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-0">
 
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-4 border-bottom">
-        <div>
-          <h5 class="fw-bold mb-1">
-            Listado de judokas
-          </h5>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-4 border-bottom">
+          <div>
+            <h5 class="fw-bold mb-1">
+              Listado de judokas
+            </h5>
 
-          <p class="text-muted mb-0">
-            Ranking actualizado según los puntos cargados.
-          </p>
+            <p class="text-muted mb-0">
+              Ranking actualizado según los puntos cargados.
+            </p>
+          </div>
         </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover text-center align-middle mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Posición</th>
+                <th>Foto</th>
+                <th>Judoka</th>
+                <th>Categoría</th>
+                <th>Peso</th>
+                <th>Puntos</th>
+              </tr>
+            </thead>
+
+            <tbody id="rankingBody">
+              <tr>
+                <td colspan="6" class="py-4 text-muted">
+                  Cargando ranking...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
+    </section>
 
-      <div class="table-responsive">
-        <table class="table table-hover text-center align-middle mb-0">
-          <thead class="table-dark">
-            <tr>
-              <th>Posición</th>
-              <th>Foto</th>
-              <th>Judoka</th>
-              <th>Categoría</th>
-              <th>Peso</th>
-              <th>Puntos</th>
-            </tr>
-          </thead>
-
-          <tbody id="rankingBody">
-            <tr>
-              <td colspan="6" class="py-4 text-muted">
-                Cargando ranking...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-  </section>
+  </main>
+</section>
 
 </section>

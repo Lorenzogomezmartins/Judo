@@ -17,6 +17,7 @@ const rutas = {
   torneos: "../partials/torneos.html",
   "torneos-actuales": "../partials/torneos-actuales.html",
   "torneos-anteriores": "../partials/torneos-anteriores.html",
+  resultados: "../partials/resultados.html",
   clubes: "../partials/clubes.html",
   cursos: "../partials/cursos.html",
   profesores: "../partials/profesores.html",
@@ -33,7 +34,10 @@ async function cargarVista(vista) {
   const header = document.querySelector("header");
   const footer = document.querySelector("footer");
 
-  if (!contenedor) return;
+  if (!contenedor) {
+    console.error("No existe el contenedor #contenido");
+    return;
+  }
 
   const vistaFinal = rutas[vista] ? vista : "home";
   const ruta = rutas[vistaFinal];
@@ -81,6 +85,7 @@ async function cargarVista(vista) {
         await cargarRankingUsuarios();
         break;
 
+      case "torneos":
       case "torneos-actuales":
       case "torneos-anteriores":
         await initTorneos();
@@ -109,7 +114,9 @@ function obtenerVistaDesdeHash() {
   hash = hash.replace("#", "");
   hash = hash.trim();
 
-  return hash || "home";
+  const vista = hash.split("?")[0];
+
+  return vista || "home";
 }
 
 function router() {

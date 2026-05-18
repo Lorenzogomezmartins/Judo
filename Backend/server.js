@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 
 import apiRoutes from './src/routes/RoutesMain.js';
 import connectDB from './src/config/db.js';
+import sincronizarResultadosFTPAutomatico from "./src/controllers/resultados/sincronizarResultadosFTPAutomatico.js";
 
 dotenv.config();
 connectDB();
@@ -48,6 +49,15 @@ app.get('/test', (req, res) => {
 ========================= */
 
 app.use('/api', apiRoutes);
+
+setInterval(async () => {
+  try {
+    console.log("⏳ Revisando FTP automáticamente...");
+    await sincronizarResultadosFTPAutomatico();
+  } catch (error) {
+    console.error("❌ Error en FTP automático:", error.message);
+  }
+}, 5 * 60 * 1000);
 
 /* =========================
    HOME

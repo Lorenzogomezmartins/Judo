@@ -1,22 +1,62 @@
 <section class="contenido container mt-5">
-  <a href="#/torneos" class="btn btn-outline-secondary mb-4">
-    ← Volver a Torneos
-  </a>
 
-  <h2 class="text-center mb-4">Torneos Disponibles</h2>
+  <!-- BOTÓN VOLVER -->
+  <div class="mb-4">
+    <a href="#/torneos" class="btn btn-outline-secondary">
+      ← Volver a Torneos
+    </a>
+  </div>
 
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-6">
-      <input
-        type="text"
-        id="buscadorTorneosActuales"
-        class="form-control form-control-lg"
-        placeholder="Buscar torneo por nombre, lugar o estado..."
-      />
+  <!-- HEADER -->
+  <header class="text-center mb-5">
+    <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">
+      Próximas competencias
+    </span>
+
+    <h2 class="fw-bold mb-2">
+      Torneos Disponibles
+    </h2>
+
+    <p class="text-muted mb-0">
+      Consultá próximos torneos, categorías, sedes y fechas de inscripción.
+    </p>
+  </header>
+
+  <!-- BUSCADOR -->
+  <section class="row justify-content-center mb-5">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="input-group input-group-lg shadow-sm">
+        <span class="input-group-text bg-white">
+          🔎
+        </span>
+
+        <input
+          type="text"
+          id="buscadorTorneosActuales"
+          class="form-control"
+          placeholder="Buscar torneo por nombre, lugar o categoría..."
+        />
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div id="listaTorneosActuales" class="row g-4">
-    <!-- Acá se insertan los torneos dinámicamente -->
-  </div>
+  <!-- LISTADO -->
+  <section>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h4 class="fw-bold mb-1">
+          Próximos Torneos
+        </h4>
+
+        <p class="text-muted mb-0">
+          Eventos abiertos y competencias próximas.
+        </p>
+      </div>
+    </div>
+
+    <div id="listaTorneosActuales" class="row g-4">
+      <!-- Cards dinámicas -->
+    </div>
+  </section>
+
 </section>

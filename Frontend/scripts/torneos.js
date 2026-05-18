@@ -2,7 +2,13 @@ const API_URL = "/api/torneos";
 
 let cacheTorneos = [];
 
+// ============================
+// HELPERS
+// ============================
+
 function esTorneoActual(fecha) {
+  if (!fecha) return false;
+
   const hoy = new Date();
   const fechaTorneo = new Date(fecha);
 
@@ -13,6 +19,8 @@ function esTorneoActual(fecha) {
 }
 
 function esTorneoAnterior(fecha) {
+  if (!fecha) return false;
+
   const hoy = new Date();
   const fechaTorneo = new Date(fecha);
 
@@ -23,15 +31,19 @@ function esTorneoAnterior(fecha) {
 }
 
 function obtenerImagenTorneo(torneo) {
-  if (torneo.fotos && torneo.fotos.length > 0) {
+  if (Array.isArray(torneo.fotos) && torneo.fotos.length > 0) {
     return torneo.fotos[0];
+  }
+
+  if (torneo.imagen) {
+    return torneo.imagen;
   }
 
   return "../assets/Logos/Logo1.png";
 }
 
 function formatearCategorias(categorias) {
-  if (!categorias || categorias.length === 0) {
+  if (!Array.isArray(categorias) || categorias.length === 0) {
     return "Sin categorías";
   }
 
@@ -39,8 +51,99 @@ function formatearCategorias(categorias) {
 }
 
 function formatearFecha(fecha) {
-  return new Date(fecha).toLocaleDateString("es-AR");
+  if (!fecha) return "Sin fecha";
+
+  return new Date(fecha).toLocaleDateString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
+
+function obtenerSlugTorneo(torneo) {
+  return torneo.slug || torneo.torneoSlug || torneo._id || "";
+}
+
+function generarSlugDesdeNombre(nombre = "") {
+  return nombre
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\d{4}/g, "")
+    .replace(/\bfmj\b/g, "")
+    .replace(/\btorneo\b/g, "")
+    .replace(/\bcopa\b/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+function obtenerSlugResultado(torneo) {
+  return torneo.slug || torneo.torneoSlug || generarSlugDesdeNombre(torneo.nombre);
+}
+// ============================
+// CARD
+// ============================
+
+function crearCardTorneo(torneo, esAnterior = false) {
+  const slug = obtenerSlugResultado(torneo);
+
+  return `
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow border-0 rounded-4 overflow-hidden">
+        <img
+          src="${obtenerImagenTorneo(torneo)}"
+          class="card-img-top"
+          alt="${torneo.nombre || "Torneo"}"
+          style="height: 220px; object-fit: cover;"
+          onerror="this.src='../assets/Logos/Logo1.png'"
+        >
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold">
+            ${torneo.nombre || "Torneo sin nombre"}
+          </h5>
+
+          <p class="mb-2">
+            <strong>Fecha:</strong> ${formatearFecha(torneo.fecha)}
+          </p>
+
+          <p class="mb-2">
+            <strong>Dirección:</strong> ${torneo.direccion || torneo.sede || "A confirmar"}
+          </p>
+
+          <p class="mb-3">
+            <strong>Categorías:</strong> ${formatearCategorias(torneo.categorias)}
+          </p>
+
+          <div class="mt-auto d-grid gap-2">
+            ${
+              esAnterior
+                ? `
+                  <a
+                    href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-danger"
+                  >
+                    Ver resultados
+                  </a>
+                `
+                : `
+                  <span class="badge bg-success py-2">
+                    Torneo disponible
+                  </span>
+                `
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================
+// RENDER ACTUALES
+// ============================
 
 function renderTorneosActuales(torneos) {
   const contenedor = document.getElementById("listaTorneosActuales");
@@ -61,35 +164,14 @@ function renderTorneosActuales(torneos) {
     return;
   }
 
-  actuales.forEach((torneo) => {
-    contenedor.innerHTML += `
-      <div class="col-md-4">
-        <div class="card h-100 shadow">
-          <img
-            src="${obtenerImagenTorneo(torneo)}"
-            class="card-img-top"
-            alt="${torneo.nombre}"
-            style="height: 220px; object-fit: cover;"
-          >
-
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">${torneo.nombre}</h5>
-
-            <p><strong>Fecha:</strong> ${formatearFecha(torneo.fecha)}</p>
-            <p><strong>Dirección:</strong> ${torneo.direccion || "A confirmar"}</p>
-            <p><strong>Categorías:</strong> ${formatearCategorias(torneo.categorias)}</p>
-
-            <div class="mt-auto">
-              <span class="badge bg-success w-100 py-2">
-                Torneo disponible
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  });
+  contenedor.innerHTML = actuales
+    .map((torneo) => crearCardTorneo(torneo, false))
+    .join("");
 }
+
+// ============================
+// RENDER ANTERIORES
+// ============================
 
 function renderTorneosAnteriores(torneos) {
   const contenedor = document.getElementById("listaTorneosAnteriores");
@@ -112,29 +194,14 @@ function renderTorneosAnteriores(torneos) {
     return;
   }
 
-  anteriores.forEach((torneo) => {
-    contenedor.innerHTML += `
-      <div class="col-md-4">
-        <div class="card h-100 shadow">
-          <img
-            src="${obtenerImagenTorneo(torneo)}"
-            class="card-img-top"
-            alt="${torneo.nombre}"
-            style="height: 220px; object-fit: cover;"
-          >
-
-          <div class="card-body">
-            <h5 class="card-title">${torneo.nombre}</h5>
-
-            <p><strong>Fecha:</strong> ${formatearFecha(torneo.fecha)}</p>
-            <p><strong>Dirección:</strong> ${torneo.direccion || "Sin dirección"}</p>
-            <p><strong>Categorías:</strong> ${formatearCategorias(torneo.categorias)}</p>
-          </div>
-        </div>
-      </div>
-    `;
-  });
+  contenedor.innerHTML = anteriores
+    .map((torneo) => crearCardTorneo(torneo, true))
+    .join("");
 }
+
+// ============================
+// CARRUSEL ANTERIORES
+// ============================
 
 function renderCarousel(torneos) {
   const contenedor = document.getElementById("carouselTorneosInner");
@@ -164,39 +231,63 @@ function renderCarousel(torneos) {
     return;
   }
 
-  anteriores.slice(0, 5).forEach((torneo, index) => {
-    contenedor.innerHTML += `
-      <div class="carousel-item ${index === 0 ? "active" : ""}">
-        <img
-          src="${obtenerImagenTorneo(torneo)}"
-          class="d-block w-100"
-          alt="${torneo.nombre}"
-          style="height: 450px; object-fit: cover;"
-        >
+  contenedor.innerHTML = anteriores.slice(0, 5).map((torneo, index) => `
+    <div class="carousel-item ${index === 0 ? "active" : ""}">
+      <img
+        src="${obtenerImagenTorneo(torneo)}"
+        class="d-block w-100"
+        alt="${torneo.nombre || "Torneo"}"
+        style="height: 450px; object-fit: cover;"
+        onerror="this.src='../assets/Logos/Logo1.png'"
+      >
 
-        <div class="carousel-caption bg-dark bg-opacity-75 rounded p-2">
-          <h5>${torneo.nombre}</h5>
-          <p>${formatearFecha(torneo.fecha)} · ${torneo.direccion || "Sin dirección"}</p>
-        </div>
+      <div class="carousel-caption bg-dark bg-opacity-75 rounded p-3">
+        <h5>${torneo.nombre || "Torneo sin nombre"}</h5>
+
+        <p class="mb-3">
+          ${formatearFecha(torneo.fecha)} ·
+          ${torneo.direccion || torneo.sede || "Sin dirección"}
+        </p>
+
+        <a
+  <a
+  href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="btn btn-danger"
+>
+  Ver resultados
+</a>
       </div>
-    `;
-  });
+    </div>
+  `).join("");
+}
+// ============================
+// FILTROS
+// ============================
+
+function coincideBusqueda(torneo, texto) {
+  const nombre = (torneo.nombre || "").toLowerCase();
+  const direccion = (torneo.direccion || torneo.sede || "").toLowerCase();
+  const fecha = formatearFecha(torneo.fecha).toLowerCase();
+  const categorias = Array.isArray(torneo.categorias) ? torneo.categorias : [];
+
+  return (
+    nombre.includes(texto) ||
+    direccion.includes(texto) ||
+    fecha.includes(texto) ||
+    categorias.some((categoria) =>
+      String(categoria).toLowerCase().includes(texto)
+    )
+  );
 }
 
 function filtrarActuales(e) {
   const texto = e.target.value.toLowerCase().trim();
 
-  const filtrados = cacheTorneos.filter(
-    (torneo) =>
-      esTorneoActual(torneo.fecha) &&
-      (
-        (torneo.nombre || "").toLowerCase().includes(texto) ||
-        (torneo.direccion || "").toLowerCase().includes(texto) ||
-        (torneo.categorias || []).some((categoria) =>
-          categoria.toLowerCase().includes(texto)
-        )
-      )
-  );
+  const filtrados = cacheTorneos.filter((torneo) => {
+    return esTorneoActual(torneo.fecha) && coincideBusqueda(torneo, texto);
+  });
 
   renderTorneosActuales(filtrados);
 }
@@ -204,17 +295,9 @@ function filtrarActuales(e) {
 function filtrarAnteriores(e) {
   const texto = e.target.value.toLowerCase().trim();
 
-  const filtrados = cacheTorneos.filter(
-    (torneo) =>
-      esTorneoAnterior(torneo.fecha) &&
-      (
-        (torneo.nombre || "").toLowerCase().includes(texto) ||
-        (torneo.direccion || "").toLowerCase().includes(texto) ||
-        (torneo.categorias || []).some((categoria) =>
-          categoria.toLowerCase().includes(texto)
-        )
-      )
-  );
+  const filtrados = cacheTorneos.filter((torneo) => {
+    return esTorneoAnterior(torneo.fecha) && coincideBusqueda(torneo, texto);
+  });
 
   renderTorneosAnteriores(filtrados);
 }
@@ -234,7 +317,14 @@ function activarBuscador() {
   }
 }
 
+// ============================
+// INIT
+// ============================
+
 export async function initTorneos() {
+  const contenedorActuales = document.getElementById("listaTorneosActuales");
+  const contenedorAnteriores = document.getElementById("listaTorneosAnteriores");
+
   try {
     const response = await fetch(API_URL);
 
@@ -243,7 +333,13 @@ export async function initTorneos() {
     }
 
     const torneos = await response.json();
-    console.log("Torneos cargados:", torneos);
+
+    if (!Array.isArray(torneos)) {
+      console.error("La API no devolvió un array:", torneos);
+      return;
+    }
+
+    console.log("✅ Torneos cargados:", torneos);
 
     cacheTorneos = torneos;
 
@@ -251,7 +347,19 @@ export async function initTorneos() {
     renderTorneosAnteriores(cacheTorneos);
     renderCarousel(cacheTorneos);
     activarBuscador();
+
   } catch (error) {
-    console.error("Error al cargar torneos:", error);
+    console.error("❌ Error al cargar torneos:", error);
+
+    const mensajeError = `
+      <div class="col-12">
+        <div class="alert alert-danger text-center">
+          Error al cargar torneos.
+        </div>
+      </div>
+    `;
+
+    if (contenedorActuales) contenedorActuales.innerHTML = mensajeError;
+    if (contenedorAnteriores) contenedorAnteriores.innerHTML = mensajeError;
   }
 }

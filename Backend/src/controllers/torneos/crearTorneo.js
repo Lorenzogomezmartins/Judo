@@ -1,13 +1,29 @@
 import Torneo from '../../models/Torneo.js';
 
+function generarSlug(nombre = '') {
+  return nombre
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\d{4}/g, '')
+    .replace(/\bfmj\b/g, '')
+    .replace(/\btorneo\b/g, '')
+    .replace(/\bcopa\b/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+}
+
 const crearTorneo = async (req, res) => {
   try {
     const categorias = req.body.categorias
       ? JSON.parse(req.body.categorias)
       : [];
 
+    const slug = generarSlug(req.body.nombre);
+
     const torneo = new Torneo({
       nombre: req.body.nombre,
+      slug,
       fecha: req.body.fecha,
       direccion: req.body.direccion,
       reglas: req.body.reglas,

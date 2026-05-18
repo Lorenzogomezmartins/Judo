@@ -1,15 +1,14 @@
 /* ===============================
-   BASE RANKING
+   RANKING GENERAL
 ================================ */
 
-.contenido {
-  max-width: 1300px;
-  margin: 0 auto;
+.contenido.container.my-5 {
+  margin-top: 24px !important;
 }
 
-/* ===============================
-   HEADER
-================================ */
+.contenido > header {
+  margin-bottom: 28px !important;
+}
 
 .contenido h2 {
   font-weight: 800;
@@ -18,48 +17,136 @@
 
 .contenido .badge {
   font-size: 0.85rem;
-  letter-spacing: 0.3px;
 }
 
 /* ===============================
-   CARDS / CONTENEDORES
+   LAYOUT PRINCIPAL
 ================================ */
 
-.card {
+.ranking-layout {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  width: 100%;
+}
+
+.ranking-main {
+  min-width: 0;
+  width: 100%;
+}
+
+/* ===============================
+   SIDEBAR PESOS
+================================ */
+
+.ranking-sidebar {
+  width: 170px;
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  overflow: hidden;
+  position: sticky;
+  top: 16px;
+  z-index: 1;
+}
+
+.ranking-sidebar-title {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: #45437f;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-align: left;
+  padding: 13px 12px;
+  cursor: default;
+}
+
+.ranking-sidebar > .peso-btn {
+  width: 100%;
+  border-left: 0;
+  border-right: 0;
+  font-weight: 800;
+}
+
+.peso-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+.peso-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.peso-col:first-child {
+  border-right: 1px solid #dcdcdc;
+}
+
+.peso-col h6 {
+  margin: 0;
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #222222;
+  background: #f7f7f7;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.peso-btn {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #dcdcdc;
+  background: #ffffff;
+  color: #222222;
+  padding: 10px 4px;
+  font-size: 0.88rem;
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.peso-btn:hover,
+.peso-btn.active {
+  background: #b30000;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* ===============================
+   FILTROS SUPERIORES
+================================ */
+
+.ranking-filters {
+  background: #ffffff;
   border: 1px solid #eeeeee;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 18px !important;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
+.ranking-filters .form-label {
+  color: #333333;
+  margin-bottom: 6px;
 }
-
-.rounded-4 {
-  border-radius: 18px !important;
-}
-
-/* ===============================
-   FILTROS
-================================ */
 
 #searchInput,
 #filtroCategoria {
   border: 1px solid #d8d8d8;
+  min-height: 39px;
 }
 
 #searchInput:focus,
 #filtroCategoria:focus {
   border-color: #b30000;
-  box-shadow: 0 0 0 0.2rem rgba(179, 0, 0, 0.18);
-}
-
-.input-group-text {
-  border-color: #d8d8d8;
-}
-
-.form-label {
-  color: #333333;
+  box-shadow: 0 0 0 0.2rem rgba(179, 0, 0, 0.16);
 }
 
 /* ===============================
@@ -67,68 +154,124 @@
 ================================ */
 
 .btn-danger {
-  background-color: #b30000;
-  border-color: #b30000;
+  background-color: #b30000 !important;
+  border-color: #b30000 !important;
 }
 
 .btn-danger:hover {
-  background-color: #8f0000;
-  border-color: #8f0000;
+  background-color: #8f0000 !important;
+  border-color: #8f0000 !important;
 }
 
 .btn-outline-danger {
-  color: #b30000;
-  border-color: #b30000;
+  color: #b30000 !important;
+  border-color: #b30000 !important;
 }
 
 .btn-outline-danger:hover {
-  background-color: #b30000;
-  border-color: #b30000;
-  color: #ffffff;
+  background-color: #b30000 !important;
+  color: #ffffff !important;
 }
 
 /* ===============================
-   TABLA RANKING
+   TABLA
 ================================ */
 
-.table {
-  background-color: #ffffff;
+.ranking-main .card {
+  border: 1px solid #eeeeee !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  transform: none !important;
 }
 
-.table thead th {
+.ranking-main .card:hover {
+  transform: none !important;
+}
+
+.ranking-main .card-body {
+  padding: 0 !important;
+}
+
+.ranking-main .border-bottom {
+  padding: 18px 22px !important;
+}
+
+.ranking-main h5 {
+  font-weight: 800;
+  color: #111111;
+}
+
+.ranking-main .table {
+  margin-bottom: 0;
+  background: #ffffff;
+}
+
+.ranking-main .table thead th {
+  background: #202020 !important;
+  color: #ffffff !important;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 13px 16px;
+  white-space: nowrap;
   vertical-align: middle;
-  font-size: 0.9rem;
-  letter-spacing: 0.3px;
 }
 
-.table td,
-.table th {
+.ranking-main .table tbody td {
+  padding: 12px 16px;
+  font-size: 0.95rem;
   vertical-align: middle;
+  border-bottom: 1px solid #eeeeee;
 }
 
-.table tbody tr {
-  transition: background-color 0.2s ease;
-}
-
-.table tbody tr:hover {
+.ranking-main .table tbody tr:hover {
   background-color: #f8eaea;
 }
 
-#rankingBody td {
-  font-size: 0.95rem;
+.ranking-posicion {
+  font-weight: 800;
+  color: #222222;
+  white-space: nowrap;
+}
+
+.ranking-nombre {
+  font-weight: 800;
+  color: #111111;
+  white-space: nowrap;
+}
+
+.ranking-categoria {
+  color: #333333;
+  white-space: nowrap;
+}
+
+.ranking-puntos {
+  color: #b30000;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 /* ===============================
-   FOTO JUDOKA
+   FOTO
 ================================ */
 
-.ranking-foto,
-#rankingBody img {
-  width: 54px;
-  height: 54px;
+.ranking-foto {
+  width: 82px;
+  height: 82px;
   object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #eeeeee;
+  object-position: center top;
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+  outline: 2px solid #b30000;
+  background: #eeeeee;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ranking-foto:hover {
+  transform: scale(1.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
 }
 
 /* ===============================
@@ -136,37 +279,66 @@
 ================================ */
 
 @media (max-width: 991px) {
-  .card {
-    margin-bottom: 20px;
+  .ranking-layout {
+    grid-template-columns: 1fr;
   }
 
-  .table {
-    font-size: 0.9rem;
+  .ranking-sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .ranking-main .table {
+    min-width: 720px;
   }
 }
 
 @media (max-width: 576px) {
-  .contenido {
-    padding-inline: 14px;
+  .contenido.container.my-5 {
+    margin-top: 18px !important;
+    padding-inline: 12px;
   }
 
-  .contenido h2 {
-    font-size: 1.7rem;
+  .contenido > header {
+    margin-bottom: 22px !important;
   }
 
-  .card-body {
-    padding: 1rem !important;
+  .ranking-filters {
+    padding: 15px;
   }
 
-  .table thead th,
-  .table td {
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
+  .ranking-foto {
+  width: 66px;
+  height: 66px;
+  border-radius: 8px;
+}
 
-  .ranking-foto,
-  #rankingBody img {
-    width: 44px;
-    height: 44px;
+  .ranking-main .table thead th,
+  .ranking-main .table tbody td {
+    font-size: 0.84rem;
+    padding: 10px 12px;
   }
+}
+
+
+
+.ranking-sidebar-title {
+  background-color: #494785 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  text-align: center;
+  padding: 13px 8px;
+}
+
+.sexo-btn {
+  background-color: #f3f3f3;
+  color: #222222;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.sexo-btn:hover,
+.sexo-btn.active {
+  background-color: #b30000;
+  color: #ffffff;
 }
