@@ -1,4 +1,5 @@
 import Torneo from '../../models/Torneo.js';
+import { crearEventoCalendario } from '../../config/google.js';
 
 function generarSlug(nombre = '') {
   return nombre
@@ -34,6 +35,18 @@ const crearTorneo = async (req, res) => {
     });
 
     const guardado = await torneo.save();
+
+    try {
+      const eventoGoogle = await crearEventoCalendario(guardado);
+
+      guardado.googleCalendarEventId = eventoGoogle.id;
+      await guardado.save();
+    } catch (errorGoogle) {
+      console.error(
+        'Torneo creado, pero falló Google Calendar:',
+        errorGoogle.message
+      );
+    }
 
     res.status(201).json({
       mensaje: 'Torneo creado correctamente',

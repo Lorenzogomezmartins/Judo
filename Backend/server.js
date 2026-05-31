@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import apiRoutes from './src/routes/RoutesMain.js';
 import connectDB from './src/config/db.js';
 import sincronizarResultadosFTPAutomatico from "./src/controllers/resultados/sincronizarResultadosFTPAutomatico.js";
+import { ejecutarImportacionRanking } from "./src/controllers/ranking/importarRanking.controller.js";
 
 dotenv.config();
 connectDB();
@@ -50,6 +51,11 @@ app.get('/test', (req, res) => {
 
 app.use('/api', apiRoutes);
 
+
+/* =========================
+   FTP AUTOMÁTICO
+========================= */
+
 setInterval(async () => {
   try {
     console.log("⏳ Revisando FTP automáticamente...");
@@ -58,6 +64,8 @@ setInterval(async () => {
     console.error("❌ Error en FTP automático:", error.message);
   }
 }, 5 * 60 * 1000);
+
+
 
 /* =========================
    HOME

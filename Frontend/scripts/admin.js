@@ -4,7 +4,7 @@ const API_TORNEOS = "/api/torneos";
 const BACKEND_URL = "";
 const API_PROFESORES = "/api/profesores";
 const API_VERIFICAR_ADMIN = "/api/admin/verificar";
-const API_INSCRIPCIONES = "/api/inscripciones";
+const API_RANKING = "/api/ranking";
 
 // ============================
 // SEGURIDAD ADMIN
@@ -115,16 +115,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   cargarInscripcionesAdmin();
 
   const btnImportarInscripciones = document.getElementById("btnImportarInscripciones");
-if (btnImportarInscripciones) {
-  btnImportarInscripciones.addEventListener("click", importarInscripcionesSheets);
-}
 
-const filtroEstadoInscripciones = document.getElementById("filtroEstadoInscripciones");
-if (filtroEstadoInscripciones) {
-  filtroEstadoInscripciones.addEventListener("change", () => {
-    cargarInscripcionesAdmin(filtroEstadoInscripciones.value);
-  });
-}
+  if (btnImportarInscripciones) {
+    btnImportarInscripciones.addEventListener("click", importarInscripcionesSheets);
+  }
 
   // ============================
   // LOGOUT
@@ -1104,131 +1098,133 @@ function formatearCategoriasAdmin(categorias) {
 
 
 
+
 /* ============================= 
-   INSCRIPCIONES
+   RANKING
 ============================= */
 
 async function importarInscripcionesSheets() {
-  if (!confirm("¿Querés importar las nuevas inscripciones desde Google Sheets?")) {
+  if (!confirm("¿Querés importar el ranking desde Google Sheets?")) {
     return;
   }
 
   try {
-    const response = await fetchProtegido(`${API_INSCRIPCIONES}/importar-sheets`, {
-      method: "POST"
-    });
+    const response = await fetchProtegido(
+      `${API_RANKING}/importar-sheets`,
+      {
+        method: "POST",
+      }
+    );
 
     const resultado = await response.json();
 
-    console.log("RESULTADO IMPORTACION:", resultado);
-
-    alert(
-      `${resultado.mensaje || "Importación finalizada"}\n\n` +
-      `Creadas: ${resultado.creadas ?? 0}\n` +
-      `Duplicadas: ${resultado.duplicadas ?? 0}\n` +
-      `Actualizadas: ${resultado.actualizadas ?? 0}\n` +
-      `Errores: ${resultado.errores?.length || 0}\n\n` +
-      `${resultado.errores?.map(e => `Fila ${e.fila}: ${e.error}`).join("\n") || "Sin errores"}`
-    );
-
-    const filtroEstado = document.getElementById("filtroEstadoInscripciones");
-
-    if (filtroEstado) {
-      filtroEstado.value = "";
+    if (!response.ok) {
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error importando ranking"
+      );
     }
 
-    await cargarInscripcionesAdmin("");
+    alert(
+      `${resultado.mensaje}\n\n` +
+      `Creadas: ${resultado.creadas ?? 0}\n` +
+      `Actualizadas: ${resultado.actualizadas ?? 0}\n` +
+      `Sin cambios: ${resultado.sinCambios ?? 0}\n` +
+      `Sin DNI: ${resultado.omitidasSinDni ?? 0}\n` +
+      `Sin foto: ${resultado.omitidasSinFoto ?? 0}\n` +
+      `Errores: ${resultado.errores?.length || 0}`
+    );
+
+    await cargarInscripcionesAdmin();
 
   } catch (error) {
-    console.error("Error importando inscripciones:", error);
-    alert("Error importando inscripciones: " + error.message);
+    console.error("Error importando ranking:", error);
+
+    alert(
+      "Error importando ranking: " + error.message
+    );
   }
 }
 
-async function cargarInscripcionesAdmin(estado = "pendiente") {
-  const container = document.getElementById("inscripcionesGrid");
+async function cargarInscripcionesAdmin() {
+  const container =
+    document.getElementById("inscripcionesGrid");
+
   if (!container) return;
 
-  container.innerHTML = "<p>Cargando inscripciones...</p>";
+  container.innerHTML =
+    "<p>Cargando ranking...</p>";
 
   try {
-    const url = estado
-      ? `${API_INSCRIPCIONES}?estado=${estado}`
-      : API_INSCRIPCIONES;
+    const response = await fetchProtegido(
+      API_RANKING,
+      {
+        method: "GET",
+      }
+    );
 
-    const response = await fetchProtegido(url, {
-      method: "GET"
-    });
-
-    const inscripciones = await response.json();
-    console.log("INSCRIPCIONES CARGADAS:", inscripciones);
+    const ranking = await response.json();
 
     if (!response.ok) {
-      throw new Error(inscripciones.mensaje || "Error cargando inscripciones");
+      throw new Error(
+        ranking.mensaje ||
+        "Error cargando ranking"
+      );
     }
 
-    if (!Array.isArray(inscripciones) || !inscripciones.length) {
-      container.innerHTML = "<p>No hay inscripciones para mostrar.</p>";
+    if (!Array.isArray(ranking) || !ranking.length) {
+      container.innerHTML =
+        "<p>No hay ranking importado.</p>";
+
       return;
     }
 
     container.innerHTML = "";
 
-    inscripciones.forEach((inscripcion) => {
+    ranking.forEach((usuario) => {
       const row = document.createElement("div");
+
       row.classList.add("club-admin-row");
 
       row.innerHTML = `
         <div class="club-col">
-          ${inscripcion.nombre || "-"} ${inscripcion.apellido || ""}
+          ${usuario.apellido || "-"},
+          ${usuario.nombre || "-"}
         </div>
 
         <div class="club-col">
-          ${inscripcion.dni || "-"}
+          ${usuario.dni || "-"}
         </div>
 
         <div class="club-col">
-          ${inscripcion.email || "-"}
+          ${usuario.institucion || "-"}
         </div>
 
         <div class="club-col">
-          ${inscripcion.clasificacion || "-"}
-          <br>
-          <small class="text-muted">
-            Puntos: ${inscripcion.Puntos ?? 0}
-          </small>
+          ${usuario.categoria || "-"}
         </div>
 
         <div class="club-col">
-          <span class="badge ${obtenerClaseEstadoInscripcion(inscripcion.estado)}">
-            ${inscripcion.estado || "-"}
-          </span>
+          ${usuario.puntajeTotal ?? 0}
         </div>
 
-        <div class="club-admin-actions d-flex gap-2 align-items-center flex-wrap">
-          <button 
-            class="btn btn-outline-info btn-sm"
-            onclick="verInscripcion('${inscripcion._id}')">
-            <i class="bi bi-eye"></i>
-          </button>
-
-          <button 
-            class="btn btn-outline-primary btn-sm"
-            onclick="editarInscripcion('${inscripcion._id}')">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <button 
-            class="btn btn-outline-success btn-sm"
-            onclick="aprobarInscripcion('${inscripcion._id}')">
-            <i class="bi bi-check-lg"></i>
-          </button>
-
-          <button 
-            class="btn btn-outline-danger btn-sm"
-            onclick="rechazarInscripcion('${inscripcion._id}')">
-            <i class="bi bi-x-lg"></i>
-          </button>
+        <div class="club-col">
+          ${
+            usuario.foto
+              ? `
+                <img
+                  src="${usuario.foto}"
+                  style="
+                    width:50px;
+                    height:50px;
+                    border-radius:50%;
+                    object-fit:cover;
+                  "
+                >
+              `
+              : "-"
+          }
         </div>
       `;
 
@@ -1236,207 +1232,9 @@ async function cargarInscripcionesAdmin(estado = "pendiente") {
     });
 
   } catch (error) {
-    console.error("Error cargando inscripciones:", error);
-    container.innerHTML = "<p>Error al cargar inscripciones.</p>";
+    console.error("Error cargando ranking:", error);
+
+    container.innerHTML =
+      "<p>Error al cargar ranking.</p>";
   }
-}
-
-function obtenerClaseEstadoInscripcion(estado) {
-  switch (estado) {
-    case "pendiente":
-      return "bg-warning text-dark";
-    case "aprobado":
-      return "bg-success";
-    case "rechazado":
-      return "bg-danger";
-    case "duplicado":
-      return "bg-secondary";
-    case "error":
-      return "bg-dark";
-    default:
-      return "bg-light text-dark";
-  }
-}
-
-async function verInscripcion(id) {
-  try {
-    const response = await fetchProtegido(`${API_INSCRIPCIONES}/${id}`, {
-      method: "GET"
-    });
-
-    const inscripcion = await response.json();
-
-    if (!response.ok) {
-      throw new Error(inscripcion.mensaje || "Error obteniendo inscripción");
-    }
-
-    const detalle = `
-Nombre: ${inscripcion.nombre || "-"} ${inscripcion.apellido || ""}
-DNI: ${inscripcion.dni || "-"}
-Email: ${inscripcion.email || "-"}
-Teléfono: ${inscripcion.telefono || "-"}
-Sexo: ${inscripcion.sexo || "-"}
-Peso: ${inscripcion.peso || "-"}
-Clasificación: ${inscripcion.clasificacion || "-"}
-Puntos: ${inscripcion.Puntos ?? 0}
-Estado: ${inscripcion.estado || "-"}
-Observación: ${inscripcion.observacion || "-"}
-Fila Google Sheet: ${inscripcion.filaGoogleSheet || "-"}
-Foto Drive: ${inscripcion.fotoDriveUrl || "Sin foto"}
-    `;
-
-    alert(detalle);
-
-    if (inscripcion.fotoDriveUrl) {
-      const abrirFoto = confirm("¿Querés abrir la foto original en Google Drive?");
-      if (abrirFoto) {
-        window.open(inscripcion.fotoDriveUrl, "_blank");
-      }
-    }
-
-  } catch (error) {
-    console.error("Error viendo inscripción:", error);
-    alert("Error viendo inscripción: " + error.message);
-  }
-}
-
-async function editarInscripcion(id) {
-  try {
-    const response = await fetchProtegido(`${API_INSCRIPCIONES}/${id}`, {
-      method: "GET"
-    });
-
-    const inscripcion = await response.json();
-
-    if (!response.ok) {
-      throw new Error(inscripcion.mensaje || "Error obteniendo inscripción");
-    }
-
-    document.getElementById("editInscripcionId").value = inscripcion._id;
-
-    document.getElementById("editNombreCompleto").value =
-      `${inscripcion.nombre || ""} ${inscripcion.apellido || ""}`.trim();
-
-    document.getElementById("editDni").value =
-      inscripcion.dni || "";
-
-    document.getElementById("editPuntos").value =
-      inscripcion.Puntos ?? 0;
-
-    const modal = new bootstrap.Modal(
-      document.getElementById("modalEditarInscripcion")
-    );
-
-    modal.show();
-
-  } catch (error) {
-    console.error("Error abriendo edición de Puntos:", error);
-    alert("No se pudo abrir la edición de Puntos");
-  }
-}
-
-async function aprobarInscripcion(id) {
-  if (!confirm("¿Aprobar esta inscripción y crear el usuario final?")) {
-    return;
-  }
-
-  try {
-    const response = await fetchProtegido(`${API_INSCRIPCIONES}/${id}/aprobar`, {
-      method: "PUT"
-    });
-
-    const resultado = await response.json();
-
-    if (!response.ok) {
-      throw new Error(resultado.mensaje || resultado.error || "Error aprobando inscripción");
-    }
-
-    alert("Inscripción aprobada y usuario creado correctamente");
-
-    const filtro = document.getElementById("filtroEstadoInscripciones")?.value || "pendiente";
-    cargarInscripcionesAdmin(filtro);
-
-  } catch (error) {
-    console.error("Error aprobando inscripción:", error);
-    alert("Error aprobando inscripción: " + error.message);
-  }
-}
-
-async function rechazarInscripcion(id) {
-  if (!confirm("¿Seguro que querés rechazar esta inscripción? Se eliminará del panel.")) {
-    return;
-  }
-
-  try {
-    const response = await fetchProtegido(`${API_INSCRIPCIONES}/${id}/rechazar`, {
-      method: "PUT"
-    });
-
-    const resultado = await response.json();
-
-    if (!response.ok) {
-      throw new Error(resultado.mensaje || resultado.error || "Error rechazando inscripción");
-    }
-
-    alert("Inscripción rechazada y eliminada correctamente");
-
-    const filtro = document.getElementById("filtroEstadoInscripciones")?.value || "pendiente";
-    cargarInscripcionesAdmin(filtro);
-
-  } catch (error) {
-    console.error("Error rechazando inscripción:", error);
-    alert("No se pudo rechazar la inscripción");
-  }
-}
-
-/* ============================= 
-   GUARDAR EDICIÓN DE Puntos
-============================= */
-
-const formEditarInscripcion = document.getElementById("formEditarInscripcion");
-
-if (formEditarInscripcion) {
-  formEditarInscripcion.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const id = document.getElementById("editInscripcionId").value;
-    const Puntos = Number(document.getElementById("editPuntos").value);
-
-    if (Number.isNaN(Puntos) || Puntos < 0) {
-      alert("Los Puntos deben ser un número válido mayor o igual a 0");
-      return;
-    }
-
-    try {
-      const response = await fetchProtegido(`${API_INSCRIPCIONES}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ Puntos })
-      });
-
-      const resultado = await response.json();
-
-      if (!response.ok) {
-        throw new Error(resultado.mensaje || resultado.error || "Error actualizando Puntos");
-      }
-
-      const modalElement = document.getElementById("modalEditarInscripcion");
-      const modal = bootstrap.Modal.getInstance(modalElement);
-
-      if (modal) {
-        modal.hide();
-      }
-
-      alert("Puntos actualizados correctamente");
-
-      const filtro = document.getElementById("filtroEstadoInscripciones")?.value || "pendiente";
-      cargarInscripcionesAdmin(filtro);
-
-    } catch (error) {
-      console.error("Error guardando Puntos:", error);
-      alert("No se pudieron guardar los Puntos");
-    }
-  });
 }

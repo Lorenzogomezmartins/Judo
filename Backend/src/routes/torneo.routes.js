@@ -5,6 +5,7 @@ import obtenerTorneoPorId from "../controllers/torneos/obtenerTorneoId.js";
 import actualizarTorneo from "../controllers/torneos/actualizarTorneo.js";
 import eliminarTorneo from "../controllers/torneos/eliminarTorneo.js";
 import listarTorneos from "../controllers/torneos/listarTorneos..js";
+import { sincronizarGoogleCalendar } from "../controllers/torneos/sincronizarGoogleCalendar.controller.js";
 
 import { authMiddleware, adminOnly } from "../middlewares/authMiddleware.js";
 
@@ -15,7 +16,7 @@ const router = express.Router();
 // Públicas
 router.get("/", listarTorneos);
 router.get("/:id", obtenerTorneoPorId);
-
+router.get("/cron/sincronizar-google", sincronizarGoogleCalendar);
 // Protegidas
 router.post(
   "/",

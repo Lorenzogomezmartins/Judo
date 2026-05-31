@@ -43,6 +43,11 @@ const torneoSchema = new mongoose.Schema(
       },
     ],
 
+    googleCalendarEventId: {
+      type: String,
+      default: "",
+    },
+
     activo: {
       type: Boolean,
       default: true,

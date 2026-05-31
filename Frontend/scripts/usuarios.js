@@ -1,4 +1,4 @@
-const API_USUARIOS = "/api/usuarios";
+const API_RANKING = "/api/ranking";
 
 let rankingUsuarios = [];
 let ordenActual = "desc";
@@ -17,17 +17,17 @@ export async function cargarRankingUsuarios() {
   `;
 
   try {
-    const response = await fetch(API_USUARIOS);
+    const response = await fetch(API_RANKING);
     const usuarios = await response.json();
 
     if (!response.ok) {
-      throw new Error("Error al obtener usuarios");
+      throw new Error("Error al obtener ranking");
     }
 
     if (!Array.isArray(usuarios)) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="6">Error en el formato de usuarios.</td>
+          <td colspan="6">Error en el formato del ranking.</td>
         </tr>
       `;
       return;
@@ -35,13 +35,12 @@ export async function cargarRankingUsuarios() {
 
     rankingUsuarios = usuarios.map((usuario) => ({
       ...usuario,
-      puntos: obtenerPuntosUsuario(usuario),
+      puntos: Number(usuario.puntajeTotal ?? 0),
     }));
 
     cargarCategoriasRanking();
     inicializarEventosRanking();
     aplicarFiltrosRanking();
-
   } catch (error) {
     console.error("Error cargando ranking:", error);
 
@@ -53,12 +52,17 @@ export async function cargarRankingUsuarios() {
   }
 }
 
-function obtenerPuntosUsuario(usuario) {
-  return Number(usuario.Puntos ?? usuario.puntos ?? 0);
+function obtenerFotoUsuario(usuario) {
+  return usuario.foto || "/assets/imagenes/default.png";
 }
 
-function obtenerFotoUsuario(usuario) {
-  return usuario.ft || "/assets/imagenes/default.png";
+function obtenerPesoDesdeCategoria(categoria = "") {
+  const texto = String(categoria).toUpperCase();
+  const match = texto.match(/([+-]?\d+)$/);
+
+  if (!match) return null;
+
+  return match[1];
 }
 
 function cargarCategoriasRanking() {
@@ -67,10 +71,11 @@ function cargarCategoriasRanking() {
   if (!filtroCategoria) return;
 
   const categorias = [
-    "senior",
-    "cadete",
-    "junior",
-    "infantil-b",
+    ...new Set(
+      rankingUsuarios
+        .map((usuario) => usuario.categoria)
+        .filter(Boolean)
+    ),
   ];
 
   filtroCategoria.innerHTML = `
@@ -94,7 +99,6 @@ function inicializarEventosRanking() {
   const botonesPeso = document.querySelectorAll(".peso-btn");
 
   searchInput?.addEventListener("input", aplicarFiltrosRanking);
-
   filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
 
   sortDesc?.addEventListener("click", () => {
@@ -134,58 +138,51 @@ function aplicarFiltrosRanking() {
 
   let usuariosFiltrados = [...rankingUsuarios];
 
-  // BUSCADOR
   if (texto) {
     usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
       const nombre = String(usuario.nombre || "").toLowerCase();
-
       const apellido = String(usuario.apellido || "").toLowerCase();
-
-      const nombreCompleto =
-        `${nombre} ${apellido}`.trim();
-
+      const nombreCompleto = `${nombre} ${apellido}`.trim();
       const dni = String(usuario.dni || "").toLowerCase();
+      const institucion = String(usuario.institucion || "").toLowerCase();
 
       return (
         nombre.includes(texto) ||
         apellido.includes(texto) ||
         nombreCompleto.includes(texto) ||
-        dni.includes(texto)
+        dni.includes(texto) ||
+        institucion.includes(texto)
       );
     });
   }
 
-  // CATEGORÍA
   if (categoria) {
     usuariosFiltrados = usuariosFiltrados.filter(
-      (usuario) => usuario.clasificacion === categoria
+      (usuario) => usuario.categoria === categoria
     );
   }
 
-  // SEXO - filtra, pero no se muestra
   if (sexoSeleccionado) {
     usuariosFiltrados = usuariosFiltrados.filter(
       (usuario) => usuario.sexo === sexoSeleccionado
     );
   }
 
-  // PESO - filtra, pero no se muestra como columna nueva
   if (pesoSeleccionado) {
     usuariosFiltrados = usuariosFiltrados.filter((usuario) => {
-      const pesoUsuario = Number(usuario.peso);
+      const pesoCategoria = obtenerPesoDesdeCategoria(usuario.categoria);
 
-      if (!pesoUsuario) return false;
+      if (!pesoCategoria) return false;
 
       if (pesoSeleccionado.includes("+")) {
         const pesoMinimo = Number(pesoSeleccionado.replace("+", ""));
-        return pesoUsuario > pesoMinimo;
+        return Number(pesoCategoria) > pesoMinimo;
       }
 
-      return pesoUsuario <= Number(pesoSeleccionado);
+      return Number(pesoCategoria) === Number(pesoSeleccionado);
     });
   }
 
-  // ORDEN
   usuariosFiltrados.sort((a, b) => {
     return ordenActual === "asc"
       ? a.puntos - b.puntos
@@ -213,49 +210,74 @@ function renderizarRanking(usuarios) {
 
   tbody.innerHTML = "";
 
-  usuarios.forEach((usuario, index) => {
+  usuarios.forEach((usuario) => {
     const fila = document.createElement("tr");
-
     const foto = obtenerFotoUsuario(usuario);
 
     fila.innerHTML = `
-      <td class="fw-bold">
-        ${index + 1}
-      </td>
+  <td class="fw-bold">
+    ${rankingUsuarios.findIndex(
+  (u) => u.dni === usuario.dni
+) + 1}
+  </td>
 
-      <td>
-        <img
-          src="${foto}"
-          alt="${usuario.nombre || "Usuario"}"
-          class="ranking-foto"
-          style="
-            width: 85px;
-            height: 85px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid #b30000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-          "
-        >
-      </td>
+  <td>
+    <img
+      src="${foto}"
+      alt="${usuario.nombre || "Usuario"}"
+      class="ranking-foto"
+      style="
+        width: 85px;
+        height: 85px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #b30000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      "
+    >
+  </td>
 
-      <td class="fw-semibold">
-        ${usuario.nombre || "-"} ${usuario.apellido || "-"}
-      </td>
+  <td class="fw-semibold">
+    ${usuario.nombre || "-"} ${usuario.apellido || "-"}
+  </td>
 
-      <td>
-        ${usuario.clasificacion || "-"}
-      </td>
+  <td>
+    ${usuario.categoria || "-"}
+  </td>
 
-      <td>
-        ${usuario.peso || "-"} kg
-      </td>
+  <td>
+    ${usuario.institucion || "-"}
+  </td>
 
-      <td class="fw-bold text-danger">
-        ${usuario.puntos}
-      </td>
-    `;
+  <td>
+    <div class="fw-semibold">
+      Posición:
+      ${usuario.abiertoCiudad2025?.posicion || "-"}
+    </div>
 
-    tbody.appendChild(fila);
-  });
+    <small class="text-muted">
+      Puntaje:
+      ${usuario.abiertoCiudad2025?.puntaje ?? 0}
+    </small>
+  </td>
+
+  <td>
+    <div class="fw-semibold">
+      Posición:
+      ${usuario.torneoMetropolitano2025?.posicion || "-"}
+    </div>
+
+    <small class="text-muted">
+      Puntaje:
+      ${usuario.torneoMetropolitano2025?.puntaje ?? 0}
+    </small>
+  </td>
+
+  <td class="fw-bold text-danger">
+    ${usuario.puntos}
+  </td>
+`;
+
+tbody.appendChild(fila);
+});
 }

@@ -1,4 +1,5 @@
 import Torneo from '../../models/Torneo.js';
+import { actualizarEventoCalendario } from '../../config/google.js';
 
 function generarSlug(nombre = '') {
   return nombre
@@ -56,6 +57,15 @@ const actualizarTorneo = async (req, res) => {
 
     if (!torneo) {
       return res.status(404).json({ mensaje: 'Torneo no encontrado' });
+    }
+
+    try {
+      await actualizarEventoCalendario(torneo);
+    } catch (errorGoogle) {
+      console.error(
+        'Torneo actualizado, pero falló Google Calendar:',
+        errorGoogle.message
+      );
     }
 
     res.json({

@@ -1,49 +1,54 @@
-<section class="calendar-wrapper">
+<div class="calendar-page">
 
-  <!-- ================= CALENDARIO ================= -->
-  <section class="calendar-container">
+  <!-- ================= ACCIONES GOOGLE CALENDAR ================= -->
+  <div class="calendar-actions">
 
-    <!-- CONTROLES -->
-    <div class="calendar-controls">
-      <button id="prevMonth">◀</button>
-      <h2 id="monthYear"></h2>
-      <button id="nextMonth">▶</button>
-    </div>
+    <a
+      href="https://calendar.google.com/calendar/u/0?cid=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39@group.calendar.google.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="calendar-btn google-btn"
+    >
+      📅 Agregar calendario FMJ a mi Google Calendar
+    </a>
 
-    <!-- DIAS -->
-    <div class="weekdays">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mié</div>
-      <div>Jue</div>
-      <div>Vie</div>
-      <div>Sáb</div>
-      <div>Dom</div>
-    </div>
+    <a
+      href="https://calendar.google.com/calendar/embed?src=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39%40group.calendar.google.com&ctz=America%2FArgentina%2FBuenos_Aires"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="calendar-btn public-btn"
+    >
+      🌐 Ver calendario público
+    </a>
+
+  </div>
+
+  <!-- ================= CALENDARIO + LEYENDA ================= -->
+  <div class="calendar-layout">
 
     <!-- CALENDARIO -->
-    <div id="calendarDays" class="days"></div>
+    <section class="calendar-container">
 
-  </section>
+      <div class="calendar-controls">
+        <button id="prevMonth">◀</button>
+        <h2 id="monthYear"></h2>
+        <button id="nextMonth">▶</button>
+      </div>
 
-  <!-- ================= LEYENDA ================= -->
-  <aside class="calendar-legend">
+      <div class="weekdays">
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mié</div>
+        <div>Jue</div>
+        <div>Vie</div>
+        <div>Sáb</div>
+        <div>Dom</div>
+      </div>
 
-    <h3>Referencias</h3>
+      <div id="calendarDays" class="days"></div>
 
-    <div class="legend-item">
-      <span class="legend-color red"></span>
-      <span>Torneos realizados</span>
-    </div>
-
-    <div class="legend-item">
-      <span class="legend-color green"></span>
-      <span>Torneos próximos</span>
-    </div>
-
-  </aside>
-
-</section>
+    </section>
+</div>
 
 <!-- =========================
      MODAL DETALLE TORNEO
@@ -52,12 +57,10 @@
 
   <div class="torneo-modal">
 
-    <!-- CERRAR -->
     <span id="closeModal" class="close-modal">
       ✖
     </span>
 
-    <!-- IMAGEN -->
     <img
       id="eventImage"
       class="torneo-image"
@@ -66,10 +69,8 @@
       style="display: none;"
     >
 
-    <!-- TITULO -->
     <h2 id="eventTitle"></h2>
 
-    <!-- INFO -->
     <div class="torneo-info">
 
       <div class="info-item">

@@ -149,23 +149,27 @@ function renderTorneosActuales(torneos) {
   const contenedor = document.getElementById("listaTorneosActuales");
   if (!contenedor) return;
 
-  const actuales = torneos.filter((torneo) => esTorneoActual(torneo.fecha));
+  const todos = [...torneos].sort(
+    (a, b) => new Date(b.fecha) - new Date(a.fecha)
+  );
 
   contenedor.innerHTML = "";
 
-  if (actuales.length === 0) {
+  if (todos.length === 0) {
     contenedor.innerHTML = `
       <div class="col-12">
         <div class="alert alert-info text-center">
-          No hay torneos disponibles por el momento.
+          No hay torneos cargados por el momento.
         </div>
       </div>
     `;
     return;
   }
 
-  contenedor.innerHTML = actuales
-    .map((torneo) => crearCardTorneo(torneo, false))
+  contenedor.innerHTML = todos
+    .map((torneo) =>
+      crearCardTorneo(torneo, esTorneoAnterior(torneo.fecha))
+    )
     .join("");
 }
 
@@ -183,7 +187,7 @@ function renderTorneosAnteriores(torneos) {
 
   contenedor.innerHTML = "";
 
-  if (anteriores.length === 0) {
+  if (todos.length === 0) {
     contenedor.innerHTML = `
       <div class="col-12">
         <div class="alert alert-info text-center">
@@ -207,13 +211,13 @@ function renderCarousel(torneos) {
   const contenedor = document.getElementById("carouselTorneosInner");
   if (!contenedor) return;
 
-  const anteriores = torneos
-    .filter((torneo) => esTorneoAnterior(torneo.fecha))
-    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  const todos = [...torneos].sort(
+  (a, b) => new Date(b.fecha) - new Date(a.fecha)
+);
 
   contenedor.innerHTML = "";
 
-  if (anteriores.length === 0) {
+  if (todos.length === 0) {
     contenedor.innerHTML = `
       <div class="carousel-item active">
         <img
@@ -231,7 +235,7 @@ function renderCarousel(torneos) {
     return;
   }
 
-  contenedor.innerHTML = anteriores.slice(0, 5).map((torneo, index) => `
+  contenedor.innerHTML = todos.slice(0, 5).map((torneo, index) => `
     <div class="carousel-item ${index === 0 ? "active" : ""}">
       <img
         src="${obtenerImagenTorneo(torneo)}"
@@ -286,7 +290,7 @@ function filtrarActuales(e) {
   const texto = e.target.value.toLowerCase().trim();
 
   const filtrados = cacheTorneos.filter((torneo) => {
-    return esTorneoActual(torneo.fecha) && coincideBusqueda(torneo, texto);
+    return coincideBusqueda(torneo, texto);
   });
 
   renderTorneosActuales(filtrados);
