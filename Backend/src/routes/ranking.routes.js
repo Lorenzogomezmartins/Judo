@@ -5,7 +5,18 @@ import { listarRanking } from "../controllers/ranking/listarRanking.controller.j
 
 const router = Router();
 
+router.post("/cron/importar-sheets", (req, res) => {
+  if (req.query.secret !== process.env.CRON_SECRET) {
+    return res.status(401).json({
+      mensaje: "No autorizado",
+    });
+  }
+
+  return importarRankingDesdeSheets(req, res);
+});
+
 router.post("/importar-sheets", importarRankingDesdeSheets);
+
 router.get("/", listarRanking);
 
 export default router;
