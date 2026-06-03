@@ -731,8 +731,32 @@ async function guardarProfesor(e) {
   const id = document.getElementById("profesorId").value.trim();
   const nombre = document.getElementById("profesorNombre").value.trim();
   const apellido = document.getElementById("profesorApellido").value.trim();
+  const club = document.getElementById("profesorClub").value.trim();
   const descripcion = document.getElementById("profesorDescripcion").value.trim();
   const fotoInput = document.getElementById("profesorFoto");
+
+  const capacitacionesTexto = document
+  .getElementById("profesorCapacitaciones")
+  .value
+  .trim();
+
+const capacitaciones = capacitacionesTexto
+  ? capacitacionesTexto
+      .split("\n")
+      .map((linea) => {
+        const [titulo, club, fecha, descripcion] = linea
+          .split("|")
+          .map((valor) => valor.trim());
+
+        return {
+          titulo,
+          club,
+          fecha,
+          descripcion,
+        };
+      })
+      .filter((capacitacion) => capacitacion.titulo && capacitacion.club)
+  : [];
 
   if (!nombre || !apellido) {
     alert("Nombre y apellido son obligatorios");
@@ -759,7 +783,9 @@ async function guardarProfesor(e) {
 
     formData.append("nombre", nombre);
     formData.append("apellido", apellido);
+    formData.append("club", club);
     formData.append("descripcion", descripcion);
+    formData.append("capacitaciones", JSON.stringify(capacitaciones));
 
     if (fotoInput.files.length > 0) {
       formData.append("foto", fotoInput.files[0]);
@@ -834,7 +860,21 @@ async function editarProfesor(id) {
     document.getElementById("profesorId").value = profesor._id;
     document.getElementById("profesorNombre").value = profesor.nombre || "";
     document.getElementById("profesorApellido").value = profesor.apellido || "";
+    document.getElementById("profesorClub").value = profesor.club || "";
     document.getElementById("profesorDescripcion").value = profesor.descripcion || "";
+
+    document.getElementById("profesorCapacitaciones").value =
+  Array.isArray(profesor.capacitaciones)
+    ? profesor.capacitaciones
+        .map((capacitacion) => {
+          const fecha = capacitacion.fecha
+            ? capacitacion.fecha.split("T")[0]
+            : "";
+
+          return `${capacitacion.titulo || ""} | ${capacitacion.club || ""} | ${fecha} | ${capacitacion.descripcion || ""}`;
+        })
+        .join("\n")
+    : "";
 
   } catch (error) {
     console.error("Error cargando profesor:", error);

@@ -23,13 +23,6 @@
    LAYOUT PRINCIPAL
 ================================ */
 
-.ranking-layout {
-  display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
-  gap: 18px;
-  align-items: start;
-  width: 100%;
-}
 
 .ranking-main {
   min-width: 0;
