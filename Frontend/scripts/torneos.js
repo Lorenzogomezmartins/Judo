@@ -214,8 +214,8 @@ function renderCarousel(torneos) {
   if (!contenedor) return;
 
   const todos = [...torneos].sort(
-  (a, b) => new Date(b.fecha) - new Date(a.fecha)
-);
+    (a, b) => new Date(b.fecha) - new Date(a.fecha)
+  );
 
   contenedor.innerHTML = "";
 
@@ -230,7 +230,7 @@ function renderCarousel(torneos) {
         >
 
         <div class="carousel-caption bg-dark bg-opacity-75 rounded p-2">
-          <h5>No hay torneos finalizados</h5>
+          <h5>No hay eventos cargados</h5>
         </div>
       </div>
     `;
@@ -242,28 +242,33 @@ function renderCarousel(torneos) {
       <img
         src="${obtenerImagenTorneo(torneo)}"
         class="d-block w-100"
-        alt="${torneo.nombre || "Torneo"}"
-        style="height: 450px; object-fit: cover;"
+        alt="${torneo.nombre || "Evento"}"
+        style="height: 450px; object-fit: contain; background: #f5f5f5;"
         onerror="this.src='../assets/Logos/Logo1.png'"
       >
 
       <div class="carousel-caption bg-dark bg-opacity-75 rounded p-3">
-        <h5>${torneo.nombre || "Torneo sin nombre"}</h5>
+        <h5>${torneo.nombre || "Evento sin nombre"}</h5>
 
         <p class="mb-3">
           ${formatearFecha(torneo.fecha)} ·
           ${torneo.direccion || torneo.sede || "Sin dirección"}
         </p>
 
-        <a
-  <a
-  href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="btn btn-danger"
->
-  Ver resultados
-</a>
+        ${
+          torneo.resultadosSubidos
+            ? `
+              <a
+                href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-danger"
+              >
+                Ver resultados
+              </a>
+            `
+            : ""
+        }
       </div>
     </div>
   `).join("");
