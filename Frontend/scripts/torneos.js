@@ -117,23 +117,25 @@ function crearCardTorneo(torneo, esAnterior = false) {
 
           <div class="mt-auto d-grid gap-2">
             ${
-              esAnterior
-                ? `
-                  <a
-                    href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn btn-danger"
-                  >
-                    Ver resultados
-                  </a>
-                `
-                : `
-                  <span class="badge bg-success py-2">
-                    Torneo disponible
-                  </span>
-                `
-            }
+  esAnterior && torneo.resultadosSubidos
+    ? `
+      <a
+        href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-danger"
+      >
+        Ver resultados
+      </a>
+    `
+    : esAnterior
+      ? ``
+      : `
+        <span class="badge bg-success py-2">
+          Evento disponible
+        </span>
+      `
+}
           </div>
         </div>
       </div>
