@@ -122,12 +122,17 @@
   white-space: nowrap;
 }
 
-.event.red {
-  background-color: red;
+.event.green {
+  background-color: #198754;
 }
 
-.event.green {
-  background-color: green;
+.event.red {
+  background-color: #dc3545;
+}
+
+.event.yellow {
+  background-color: #ffc107;
+  color: #000;
 }
 
 /* FERIADOS */

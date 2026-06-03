@@ -99,10 +99,26 @@ function renderCalendar() {
 
       const esPasado = fechaEvento < hoy;
 
-      const eventoDiv = document.createElement("div");
-      eventoDiv.classList.add("event", esPasado ? "red" : "green");
+     const tipo = torneo.tipo || "torneo";
 
-      eventoDiv.textContent = torneo.nombre || "Torneo";
+const eventoDiv = document.createElement("div");
+
+if (tipo === "torneo") {
+  eventoDiv.classList.add("event", esPasado ? "red" : "green");
+} else {
+  eventoDiv.classList.add("event", "yellow");
+}
+
+const etiquetaTipo =
+  tipo === "curso"
+    ? "Curso"
+    : tipo === "capacitacion"
+      ? "Capacitación"
+      : tipo === "evento"
+        ? "Evento"
+        : "Torneo";
+
+eventoDiv.textContent = `${etiquetaTipo}: ${torneo.nombre || "Sin nombre"}`;
 
       eventoDiv.addEventListener("click", (e) => {
         e.stopPropagation();

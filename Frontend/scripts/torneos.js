@@ -151,9 +151,9 @@ function renderTorneosActuales(torneos) {
   const contenedor = document.getElementById("listaTorneosActuales");
   if (!contenedor) return;
 
-  const todos = [...torneos].sort(
-    (a, b) => new Date(b.fecha) - new Date(a.fecha)
-  );
+  const todos = torneos
+  .filter((torneo) => (torneo.tipo || "torneo") === "torneo")
+  .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   contenedor.innerHTML = "";
 
@@ -184,16 +184,20 @@ function renderTorneosAnteriores(torneos) {
   if (!contenedor) return;
 
   const anteriores = torneos
-    .filter((torneo) => esTorneoAnterior(torneo.fecha))
-    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  .filter(
+    (torneo) =>
+      (torneo.tipo || "torneo") === "torneo" &&
+      esTorneoAnterior(torneo.fecha)
+  )
+  .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   contenedor.innerHTML = "";
 
-  if (todos.length === 0) {
+  if (anteriores.length === 0) {
     contenedor.innerHTML = `
       <div class="col-12">
         <div class="alert alert-info text-center">
-          No hay torneos finalizados para mostrar.
+          No hay eventos finalizados para mostrar.
         </div>
       </div>
     `;
@@ -204,7 +208,6 @@ function renderTorneosAnteriores(torneos) {
     .map((torneo) => crearCardTorneo(torneo, true))
     .join("");
 }
-
 // ============================
 // CARRUSEL ANTERIORES
 // ============================
@@ -213,9 +216,9 @@ function renderCarousel(torneos) {
   const contenedor = document.getElementById("carouselTorneosInner");
   if (!contenedor) return;
 
-  const todos = [...torneos].sort(
-    (a, b) => new Date(b.fecha) - new Date(a.fecha)
-  );
+  const todos = torneos
+  .filter((torneo) => (torneo.tipo || "torneo") === "torneo")
+  .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   contenedor.innerHTML = "";
 

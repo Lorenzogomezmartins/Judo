@@ -41,13 +41,15 @@ const actualizarTorneo = async (req, res) => {
     if (req.body.direccion) data.direccion = req.body.direccion;
     if (req.body.reglas) data.reglas = req.body.reglas;
 
-    if (req.body.categorias !== undefined) {
-      data.categorias = parsearCategorias(req.body.categorias);
-    }
+data.tipo = "torneo";
+
+if (req.body.categorias !== undefined) {
+  data.categorias = parsearCategorias(req.body.categorias);
+}
 
     if (req.file) {
-      data.fotos = [`/assets/Torneos/${req.file.filename}`];
-    }
+  data.fotos = [req.file.path];
+}
 
     const torneo = await Torneo.findByIdAndUpdate(
       req.params.id,

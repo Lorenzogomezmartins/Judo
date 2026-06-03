@@ -7,12 +7,19 @@ const torneoSchema = new mongoose.Schema(
       required: true,
     },
 
+    tipo: {
+  type: String,
+  enum: ["torneo", "curso", "capacitacion", "evento"],
+  default: "torneo",
+},
+
     slug: {
       type: String,
       required: true,
       unique: true,
       trim: true,
     },
+    
 
     fecha: {
       type: Date,

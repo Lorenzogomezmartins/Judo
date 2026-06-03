@@ -23,16 +23,15 @@ const crearTorneo = async (req, res) => {
     const slug = generarSlug(req.body.nombre);
 
     const torneo = new Torneo({
-      nombre: req.body.nombre,
-      slug,
-      fecha: req.body.fecha,
-      direccion: req.body.direccion,
-      reglas: req.body.reglas,
-      categorias,
-      fotos: req.file
-        ? [`/assets/Torneos/${req.file.filename}`]
-        : []
-    });
+  nombre: req.body.nombre,
+  tipo: "torneo",
+  slug,
+  fecha: req.body.fecha,
+  direccion: req.body.direccion,
+  reglas: req.body.reglas,
+  categorias,
+  fotos: req.file ? [req.file.path] : []
+});
 
     const guardado = await torneo.save();
 

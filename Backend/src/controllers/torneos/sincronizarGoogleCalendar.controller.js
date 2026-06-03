@@ -14,6 +14,24 @@ function generarSlug(nombre = "") {
     .replace(/\s+/g, "-");
 }
 
+function detectarTipoEvento(nombre = "") {
+  const texto = nombre.toLowerCase();
+
+  if (texto.includes("curso")) {
+    return "curso";
+  }
+
+  if (texto.includes("capacitacion") || texto.includes("capacitación")) {
+    return "capacitacion";
+  }
+
+  if (texto.includes("torneo") || texto.includes("copa")) {
+    return "torneo";
+  }
+
+  return "evento";
+}
+
 export async function sincronizarGoogleCalendar(req, res) {
   try {
     const { secret } = req.query;
@@ -41,6 +59,7 @@ export async function sincronizarGoogleCalendar(req, res) {
 
       const data = {
         nombre: evento.summary,
+        tipo: detectarTipoEvento(evento.summary),
         fecha: new Date(fechaEvento),
         direccion: evento.location || "",
         descripcion: evento.description || "",
