@@ -85,13 +85,108 @@
   <div class="tab-content">
 
     <section class="tab-pane fade show active" id="dashboard">
-      <div class="card p-4 shadow-sm">
-        <h4>Panel de Administración</h4>
-        <p class="mb-0">
-          Gestioná clubes, patrocinadores, profesores, torneos e inscripciones.
-        </p>
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-3">
+      Panel de Administración
+    </h4>
+
+    <p class="text-muted mb-4">
+      Desde este panel podés administrar el contenido principal de la Federación Metropolitana de Judo.
+    </p>
+
+    <div class="row g-4">
+
+      <div class="col-12 col-md-6">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">
+            Sección Ranking / Inscripciones
+          </h5>
+
+          <ol class="mb-0">
+            <li>Tocar el botón <strong>Importar desde Google Sheets</strong>.</li>
+            <li>El sistema lee el excel de ranking.</li>
+            <li>Solo importa judokas que tengan <strong>DNI</strong> y <strong>foto</strong>.</li>
+            <li>Si el judoka no existe, lo crea automáticamente.</li>
+            <li>Si el judoka ya existe y cambió algún dato, lo actualiza.</li>
+            <li>No duplica personas porque usa el DNI como identificador.</li>
+          </ol>
+        </div>
       </div>
-    </section>
+
+      <div class="col-12 col-md-6">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">
+            Sección Clubes
+          </h5>
+
+          <ol class="mb-0">
+            <li>Tocar <strong>Agregar Club</strong>.</li>
+            <li>Completar nombre, teléfono, dirección y sitio web.</li>
+            <li>Subir logo si corresponde.</li>
+            <li>Guardar para que el club aparezca en la página pública.</li>
+            <li>Usar el botón de editar para modificar datos existentes.</li>
+            <li>Usar eliminar solo si el club ya no debe mostrarse.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">
+            Sección Patrocinadores
+          </h5>
+
+          <ol class="mb-0">
+            <li>Tocar <strong>Agregar Patrocinador</strong>.</li>
+            <li>Completar nombre, contacto y sitio web.</li>
+            <li>Subir el logo del patrocinador.</li>
+            <li>Guardar para mostrarlo en la página pública.</li>
+            <li>Editar si cambia el logo, contacto o enlace.</li>
+            <li>Eliminar si ya no corresponde mostrarlo.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">
+            Sección Profesores
+          </h5>
+
+          <ol class="mb-0">
+            <li>Tocar <strong>Agregar Profesor</strong>.</li>
+            <li>Completar nombre, apellido, club y descripción.</li>
+            <li>Subir foto si corresponde.</li>
+            <li>Cargar capacitaciones una por línea.</li>
+            <li>Respetar el formato: título, club, fecha y descripción.</li>
+            <li>Guardar para que aparezca en la sección pública de profesores.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">
+            Sección Torneos
+          </h5>
+
+          <ol class="mb-0">
+            <li>Tocar <strong>Agregar Torneo</strong>.</li>
+            <li>Completar nombre, fecha, dirección, categorías y reglas.</li>
+            <li>Subir una foto principal del torneo.</li>
+            <li>Agregar link de YouTube si hay transmisión en vivo o video publicado.</li>
+            <li>Al guardar, el sistema crea el torneo en  la Base de datos.</li>
+            <li>También crea automáticamente la carpeta del torneo para subir el FTP (los resultados).</li>
+            <li>También intenta crear el evento en Google Calendar.</li>
+            <li>Si se elimina un torneo, también se elimina su carpeta de resultados.</li>
+            <li>No editar el nombre para cambiar si ya hay resultados cargados.</li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <!-- INSCRIPCIONES -->
     <section class="tab-pane fade" id="inscripciones">

@@ -8,7 +8,6 @@ function generarSlug(nombre = "") {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\d{4}/g, "")
     .replace(/\bfmj\b/g, "")
     .replace(/\btorneo\b/g, "")
     .replace(/\bcopa\b/g, "")
@@ -51,9 +50,8 @@ const actualizarTorneo = async (req, res) => {
     const data = {};
 
     if (req.body.nombre) {
-      data.nombre = req.body.nombre;
-      data.slug = generarSlug(req.body.nombre);
-    }
+  data.nombre = req.body.nombre;
+}
 
     if (req.body.fecha) data.fecha = req.body.fecha;
     if (req.body.direccion !== undefined) data.direccion = req.body.direccion;

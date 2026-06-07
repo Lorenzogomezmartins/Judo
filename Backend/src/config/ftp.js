@@ -66,3 +66,39 @@ export async function leerArchivoFTP(rutaArchivo) {
     client.close();
   }
 }
+
+export async function crearCarpetaFTP(rutaCarpeta) {
+  const client = await conectarFTP();
+
+  try {
+    await client.ensureDir(rutaCarpeta);
+    console.log(`✅ Carpeta FTP creada/verificada: ${rutaCarpeta}`);
+  } finally {
+    client.close();
+  }
+}
+
+export async function crearCarpetaResultadoTorneo(slug) {
+  const baseDir = process.env.FTP_BASE_DIR || "/htdocs/resultados";
+  const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
+
+  await crearCarpetaFTP(ruta);
+}
+
+export async function borrarCarpetaFTP(rutaCarpeta) {
+  const client = await conectarFTP();
+
+  try {
+    await client.removeDir(rutaCarpeta);
+    console.log(`🗑️ Carpeta FTP eliminada: ${rutaCarpeta}`);
+  } finally {
+    client.close();
+  }
+}
+
+export async function borrarCarpetaResultadoTorneo(slug) {
+  const baseDir = process.env.FTP_BASE_DIR || "/htdocs/resultados";
+  const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
+
+  await borrarCarpetaFTP(ruta);
+}

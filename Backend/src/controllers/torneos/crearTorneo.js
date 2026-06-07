@@ -1,6 +1,7 @@
 import Torneo from "../../models/Torneo.js";
 import { crearEventoCalendario } from "../../config/google.js";
 import cloudinary from "../../config/cloudinary.js";
+import { crearCarpetaResultadoTorneo } from "../../config/ftp.js";
 import streamifier from "streamifier";
 
 function generarSlug(nombre = "") {
@@ -8,7 +9,6 @@ function generarSlug(nombre = "") {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\d{4}/g, "")
     .replace(/\bfmj\b/g, "")
     .replace(/\btorneo\b/g, "")
     .replace(/\bcopa\b/g, "")
@@ -60,6 +60,15 @@ const crearTorneo = async (req, res) => {
     });
 
     const guardado = await torneo.save();
+
+    try {
+      await crearCarpetaResultadoTorneo(guardado.slug);
+    } catch (errorFTP) {
+      console.error(
+        "Torneo creado, pero falló la creación de carpeta FTP:",
+        errorFTP.message
+      );
+    }
 
     try {
       const eventoGoogle = await crearEventoCalendario(guardado);
