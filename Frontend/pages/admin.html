@@ -403,78 +403,98 @@
   </div>
 </section>
     <!-- TORNEOS -->
-    <section class="tab-pane fade" id="torneos">
-      <div class="card p-4 shadow-sm">
-        <h4 class="mb-4">Gestión de Torneos</h4>
+<section class="tab-pane fade" id="torneos">
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-4">Gestión de Torneos</h4>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <input type="text" id="filtroTorneos" class="form-control w-50" placeholder="Filtrar por nombre...">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <input
+        type="text"
+        id="filtroTorneos"
+        class="form-control w-50"
+        placeholder="Filtrar por nombre..."
+      >
 
-          <button class="btn btn-success" id="btnNuevoTorneo">
-            <i class="bi bi-plus-lg"></i> Agregar Torneo
-          </button>
+      <button class="btn btn-success" id="btnNuevoTorneo">
+        <i class="bi bi-plus-lg"></i> Agregar Torneo
+      </button>
+    </div>
+
+    <div class="card border p-4 mb-4" id="formTorneoContainer" style="display:none;">
+      <h5 class="mb-3">Formulario Torneo</h5>
+
+      <form id="formTorneo" enctype="multipart/form-data">
+        <input type="hidden" id="torneoId">
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Nombre</label>
+            <input type="text" id="torneoNombre" class="form-control" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Fecha</label>
+            <input type="date" id="torneoFecha" class="form-control" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Foto principal</label>
+            <input type="file" id="torneoFoto" class="form-control" accept="image/*">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Dirección</label>
+            <input type="text" id="torneoDireccion" class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Categorías</label>
+            <input
+              type="text"
+              id="torneoCategorias"
+              class="form-control"
+              placeholder="Ej: Senior, Junior, Infantil"
+            >
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Reglas</label>
+            <input type="text" id="torneoReglas" class="form-control">
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label>Link de YouTube</label>
+            <input
+              type="url"
+              id="torneoYoutubeUrl"
+              class="form-control"
+              placeholder="Ej: https://www.youtube.com/watch?v=..."
+            >
+            <small class="text-muted">
+              Puede ser una transmisión en vivo o un video ya publicado.
+            </small>
+          </div>
         </div>
 
-        <div class="card border p-4 mb-4" id="formTorneoContainer" style="display:none;">
-          <h5 class="mb-3">Formulario Torneo</h5>
-
-          <form id="formTorneo" enctype="multipart/form-data">
-            <input type="hidden" id="torneoId">
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>Nombre</label>
-                <input type="text" id="torneoNombre" class="form-control" required>
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Fecha</label>
-                <input type="date" id="torneoFecha" class="form-control" required>
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Foto principal</label>
-                <input type="file" id="torneoFoto" class="form-control" accept="image/*">
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Dirección</label>
-                <input type="text" id="torneoDireccion" class="form-control">
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Categorías</label>
-                <input type="text" id="torneoCategorias" class="form-control" placeholder="Ej: Senior, Junior, Infantil">
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Reglas</label>
-                <input type="text" id="torneoReglas" class="form-control">
-              </div>
-            </div>
-
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary">Guardar</button>
-              <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">Cancelar</button>
-            </div>
-          </form>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">Cancelar</button>
         </div>
+      </form>
+    </div>
 
-        <div class="clubes-header">
-          <div>Foto</div>
-          <div>Nombre</div>
-          <div>Fecha</div>
-          <div>Dirección</div>
-          <div>Categorías</div>
-          <div>Acciones</div>
-        </div>
+    <div class="clubes-header">
+      <div>Foto</div>
+      <div>Nombre</div>
+      <div>Fecha</div>
+      <div>Dirección</div>
+      <div>Categorías</div>
+      <div>Acciones</div>
+    </div>
 
-        <div id="torneosGrid" class="clubes-listado"></div>
-      </div>
-    </section>
-
+    <div id="torneosGrid" class="clubes-listado"></div>
   </div>
-</main>
+</section>
 
 <!-- MODAL EDITAR PUNTOS -->
 <div class="modal fade" id="modalEditarInscripcion" tabindex="-1">

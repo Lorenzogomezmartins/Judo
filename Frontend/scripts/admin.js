@@ -960,6 +960,7 @@ async function cargarTorneosAdmin(filtroNombre = "") {
         <div class="club-col">${formatearFechaAdmin(torneo.fecha)}</div>
         <div class="club-col">${torneo.direccion || "-"}</div>
         <div class="club-col">${formatearCategoriasAdmin(torneo.categorias)}</div>
+        <div class="club-col">
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
           <button 
@@ -1017,6 +1018,7 @@ async function guardarTorneo(e) {
   const direccion = document.getElementById("torneoDireccion").value.trim();
   const categoriasTexto = document.getElementById("torneoCategorias").value.trim();
   const reglas = document.getElementById("torneoReglas").value.trim();
+  const youtubeUrl = document.getElementById("torneoYoutubeUrl").value.trim();
   const fotoInput = document.getElementById("torneoFoto");
 
   if (!nombre || !fecha) {
@@ -1033,6 +1035,7 @@ async function guardarTorneo(e) {
   formData.append("fecha", fecha);
   formData.append("direccion", direccion);
   formData.append("reglas", reglas);
+  formData.append("youtubeUrl", youtubeUrl);
   formData.append("categorias", JSON.stringify(categorias));
 
   if (fotoInput.files.length > 0) {
@@ -1091,6 +1094,7 @@ async function editarTorneo(id) {
       ? torneo.categorias.join(", ")
       : (torneo.categorias || "");
     document.getElementById("torneoReglas").value = torneo.reglas || "";
+    document.getElementById("torneoYoutubeUrl").value = torneo.youtubeUrl || "";
 
   } catch (error) {
     console.error("Error cargando torneo para editar:", error);

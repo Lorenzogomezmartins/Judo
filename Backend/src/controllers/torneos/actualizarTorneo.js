@@ -56,8 +56,11 @@ const actualizarTorneo = async (req, res) => {
     }
 
     if (req.body.fecha) data.fecha = req.body.fecha;
-    if (req.body.direccion) data.direccion = req.body.direccion;
-    if (req.body.reglas) data.reglas = req.body.reglas;
+    if (req.body.direccion !== undefined) data.direccion = req.body.direccion;
+    if (req.body.reglas !== undefined) data.reglas = req.body.reglas;
+    if (req.body.youtubeUrl !== undefined) {
+      data.youtubeUrl = req.body.youtubeUrl.trim();
+    }
 
     data.tipo = "torneo";
 

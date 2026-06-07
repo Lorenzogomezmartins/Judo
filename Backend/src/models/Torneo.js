@@ -8,10 +8,10 @@ const torneoSchema = new mongoose.Schema(
     },
 
     tipo: {
-  type: String,
-  enum: ["torneo", "curso", "capacitacion", "evento"],
-  default: "torneo",
-},
+      type: String,
+      enum: ["torneo", "curso", "capacitacion", "evento"],
+      default: "torneo",
+    },
 
     slug: {
       type: String,
@@ -19,7 +19,6 @@ const torneoSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    
 
     fecha: {
       type: Date,
@@ -51,6 +50,11 @@ const torneoSchema = new mongoose.Schema(
     ],
 
     googleCalendarEventId: {
+      type: String,
+      default: "",
+    },
+
+    youtubeUrl: {
       type: String,
       default: "",
     },

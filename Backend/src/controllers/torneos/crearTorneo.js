@@ -56,6 +56,7 @@ const crearTorneo = async (req, res) => {
       reglas: req.body.reglas,
       categorias,
       fotos: fotoUrl ? [fotoUrl] : [],
+      youtubeUrl: req.body.youtubeUrl || "",
     });
 
     const guardado = await torneo.save();

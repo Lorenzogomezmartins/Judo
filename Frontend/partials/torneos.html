@@ -2,13 +2,13 @@
 
   <header class="torneos-header text-center mb-5">
     <span class="badge bg-danger-subtle text-danger mb-3 px-3 py-2">
-      Competencias FMJ
+      Actividades FMJ
     </span>
 
-    <h2 class="fw-bold mb-2">Torneos</h2>
+    <h2 class="fw-bold mb-2">Torneos, cursos y eventos</h2>
 
     <p class="text-muted mb-0">
-      Consultá todos los torneos cargados y sus resultados oficiales publicados desde JudoShiai.
+      Consultá torneos, cursos, capacitaciones, eventos, transmisiones y resultados oficiales.
     </p>
   </header>
 
@@ -16,8 +16,13 @@
   <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <div>
-        <h4 class="fw-bold mb-1">Torneos destacados</h4>
-        <p class="text-muted mb-0">Competencias cargadas en el sistema.</p>
+        <h4 class="fw-bold mb-1" id="tituloCarouselTorneos">
+          Torneos destacados
+        </h4>
+
+        <p class="text-muted mb-0" id="descripcionCarouselTorneos">
+          Competencias cargadas en el sistema.
+        </p>
       </div>
     </div>
 
@@ -55,7 +60,7 @@
   </section>
 
   <!-- BUSCADOR -->
-  <section class="row justify-content-center mb-5">
+  <section class="row justify-content-center mb-4">
     <div class="col-12 col-md-8 col-lg-6">
       <div class="input-group input-group-lg shadow-sm">
         <span class="input-group-text bg-white">
@@ -66,18 +71,60 @@
           type="text"
           id="buscadorTorneosActuales"
           class="form-control"
-          placeholder="Buscar torneo por nombre, lugar o categoría..."
+          placeholder="Buscar por nombre, lugar o categoría..."
         />
       </div>
     </div>
   </section>
 
-  <!-- CARDS DE TODOS LOS TORNEOS -->
+  <!-- FILTROS POR TIPO -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+      <button
+        class="btn btn-danger filtro-tipo-btn active"
+        type="button"
+        data-tipo="torneo"
+      >
+        Torneos
+      </button>
+
+      <button
+        class="btn btn-outline-danger filtro-tipo-btn"
+        type="button"
+        data-tipo="curso"
+      >
+        Cursos
+      </button>
+
+      <button
+        class="btn btn-outline-danger filtro-tipo-btn"
+        type="button"
+        data-tipo="capacitacion"
+      >
+        Capacitaciones
+      </button>
+
+      <button
+        class="btn btn-outline-danger filtro-tipo-btn"
+        type="button"
+        data-tipo="evento"
+      >
+        Eventos
+      </button>
+
+    </div>
+  </section>
+
+  <!-- CARDS -->
   <section>
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <div>
-        <h4 class="fw-bold mb-1">Todos los torneos</h4>
-        <p class="text-muted mb-0">
+        <h4 class="fw-bold mb-1" id="tituloListadoTorneos">
+          Torneos
+        </h4>
+
+        <p class="text-muted mb-0" id="descripcionListadoTorneos">
           Listado completo de torneos disponibles y finalizados.
         </p>
       </div>
