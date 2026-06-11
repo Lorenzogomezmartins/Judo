@@ -42,7 +42,19 @@ const torneoSchema = new mongoose.Schema(
     reglas: {
       type: String,
     },
-
+    
+    transmisiones: [
+  {
+    titulo: {
+      type: String,
+      default: "",
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+  },
+],
     categorias: [
       {
         type: String,
@@ -54,10 +66,7 @@ const torneoSchema = new mongoose.Schema(
       default: "",
     },
 
-    youtubeUrl: {
-      type: String,
-      default: "",
-    },
+
 
     activo: {
       type: Boolean,

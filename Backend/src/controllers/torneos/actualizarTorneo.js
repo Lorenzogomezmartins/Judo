@@ -1,7 +1,5 @@
 import Torneo from "../../models/Torneo.js";
 import { actualizarEventoCalendario } from "../../config/google.js";
-import cloudinary from "../../config/cloudinary.js";
-import streamifier from "streamifier";
 
 function generarSlug(nombre = "") {
   return nombre
@@ -12,7 +10,26 @@ function generarSlug(nombre = "") {
     .replace(/\btorneo\b/g, "")
     .replace(/\bcopa\b/g, "")
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+async function generarSlugUnico(nombre, idActual) {
+  const slugBase = generarSlug(nombre);
+  let slugFinal = slugBase;
+  let contador = 1;
+
+  while (
+    await Torneo.findOne({
+      slug: slugFinal,
+      _id: { $ne: idActual },
+    })
+  ) {
+    contador++;
+    slugFinal = `${slugBase}-${contador}`;
+  }
+
+  return slugFinal;
 }
 
 function parsearCategorias(categorias) {
@@ -29,20 +46,23 @@ function parsearCategorias(categorias) {
   }
 }
 
-function subirImagenCloudinary(file) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "fmj/torneos",
-      },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
+function parsearTransmisiones(transmisiones) {
+  if (!transmisiones) return [];
 
-    streamifier.createReadStream(file.buffer).pipe(stream);
-  });
+  try {
+    const parsed = JSON.parse(transmisiones);
+
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map((transmision) => ({
+        titulo: transmision.titulo || "",
+        url: transmision.url || "",
+      }))
+      .filter((transmision) => transmision.url);
+  } catch {
+    return [];
+  }
 }
 
 const actualizarTorneo = async (req, res) => {
@@ -50,25 +70,25 @@ const actualizarTorneo = async (req, res) => {
     const data = {};
 
     if (req.body.nombre) {
-  data.nombre = req.body.nombre;
-}
-
-    if (req.body.fecha) data.fecha = req.body.fecha;
-    if (req.body.direccion !== undefined) data.direccion = req.body.direccion;
-    if (req.body.reglas !== undefined) data.reglas = req.body.reglas;
-    if (req.body.youtubeUrl !== undefined) {
-      data.youtubeUrl = req.body.youtubeUrl.trim();
+      data.nombre = req.body.nombre;
+      data.slug = await generarSlugUnico(req.body.nombre, req.params.id);
     }
 
-    data.tipo = "torneo";
+    if (req.body.fecha) data.fecha = req.body.fecha;
+    if (req.body.descripcion !== undefined) data.descripcion = req.body.descripcion;
+    if (req.body.direccion !== undefined) data.direccion = req.body.direccion;
+    if (req.body.reglas !== undefined) data.reglas = req.body.reglas;
 
     if (req.body.categorias !== undefined) {
       data.categorias = parsearCategorias(req.body.categorias);
     }
 
+    if (req.body.transmisiones !== undefined) {
+      data.transmisiones = parsearTransmisiones(req.body.transmisiones);
+    }
+
     if (req.file) {
-      const resultado = await subirImagenCloudinary(req.file);
-      data.fotos = [resultado.secure_url];
+      data.fotos = [req.file.path];
     }
 
     const torneo = await Torneo.findByIdAndUpdate(req.params.id, data, {
@@ -77,7 +97,9 @@ const actualizarTorneo = async (req, res) => {
     });
 
     if (!torneo) {
-      return res.status(404).json({ mensaje: "Torneo no encontrado" });
+      return res.status(404).json({
+        mensaje: "Torneo no encontrado",
+      });
     }
 
     try {
@@ -94,7 +116,10 @@ const actualizarTorneo = async (req, res) => {
       torneo,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      mensaje: "Error al actualizar torneo",
+      error: error.message,
+    });
   }
 };
 

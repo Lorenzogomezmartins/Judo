@@ -1018,25 +1018,53 @@ async function guardarTorneo(e) {
   const direccion = document.getElementById("torneoDireccion").value.trim();
   const categoriasTexto = document.getElementById("torneoCategorias").value.trim();
   const reglas = document.getElementById("torneoReglas").value.trim();
-  const youtubeUrl = document.getElementById("torneoYoutubeUrl").value.trim();
   const fotoInput = document.getElementById("torneoFoto");
 
+  const transmisionesTexto = document
+    .getElementById("torneoTransmisiones")
+    .value
+    .trim();
+
+  const transmisiones = transmisionesTexto
+  ? transmisionesTexto
+      .split("\n")
+      .map((linea, index) => {
+        const texto = linea.trim();
+
+        if (!texto) return null;
+
+        const match = texto.match(/https?:\/\/\S+/);
+
+        if (!match) return null;
+
+        const url = match[0];
+
+        return {
+          titulo: `Transmisión ${index + 1}`,
+          url
+        };
+      })
+      .filter(Boolean)
+  : [];
+
+  console.log("VERSION NUEVA PARSEO URLS SOLAS");
   if (!nombre || !fecha) {
     alert("Nombre y fecha son obligatorios");
     return;
   }
 
   const categorias = categoriasTexto
-    ? categoriasTexto.split(",").map(c => c.trim()).filter(Boolean)
+    ? categoriasTexto.split(",").map((c) => c.trim()).filter(Boolean)
     : [];
 
   const formData = new FormData();
+
   formData.append("nombre", nombre);
   formData.append("fecha", fecha);
   formData.append("direccion", direccion);
   formData.append("reglas", reglas);
-  formData.append("youtubeUrl", youtubeUrl);
   formData.append("categorias", JSON.stringify(categorias));
+  formData.append("transmisiones", JSON.stringify(transmisiones));
 
   if (fotoInput.files.length > 0) {
     formData.append("foto", fotoInput.files[0]);
@@ -1046,25 +1074,35 @@ async function guardarTorneo(e) {
     const url = id ? `${API_TORNEOS}/${id}` : API_TORNEOS;
     const method = id ? "PUT" : "POST";
 
+    console.log("Transmisiones texto:", transmisionesTexto);
+    console.log("Transmisiones parseadas:", transmisiones);
+
     const response = await fetchProtegido(url, {
       method,
-      body: formData
+      body: formData,
     });
 
     const resultado = await response.json();
 
     if (!response.ok) {
-      throw new Error(resultado.mensaje || resultado.error || "Error al guardar torneo");
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error al guardar torneo"
+      );
     }
 
-    alert(id ? "Torneo actualizado correctamente" : "Torneo creado correctamente");
+    alert(
+      id
+        ? "Torneo actualizado correctamente"
+        : "Torneo creado correctamente"
+    );
 
     document.getElementById("formTorneo").reset();
     document.getElementById("torneoId").value = "";
 
     cerrarFormularioTorneo();
     cargarTorneosAdmin();
-
   } catch (error) {
     console.error("Error guardando torneo:", error);
     alert("Error: " + error.message);
@@ -1094,7 +1132,15 @@ async function editarTorneo(id) {
       ? torneo.categorias.join(", ")
       : (torneo.categorias || "");
     document.getElementById("torneoReglas").value = torneo.reglas || "";
-    document.getElementById("torneoYoutubeUrl").value = torneo.youtubeUrl || "";
+    document.getElementById("torneoTransmisiones").value =
+  Array.isArray(torneo.transmisiones)
+    ? torneo.transmisiones
+        .map((transmision) => {
+          return `${transmision.titulo || ""} | ${transmision.url || ""}`;
+        })
+        .join("\n")
+    : "";
+    
 
   } catch (error) {
     console.error("Error cargando torneo para editar:", error);

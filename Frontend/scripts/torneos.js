@@ -55,12 +55,12 @@ function generarSlugDesdeNombre(nombre = "") {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\d{4}/g, "")
     .replace(/\bfmj\b/g, "")
     .replace(/\btorneo\b/g, "")
     .replace(/\bcopa\b/g, "")
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 function obtenerSlugResultado(torneo) {
@@ -95,6 +95,41 @@ function obtenerDescripcionTipo(tipo) {
   }
 }
 
+function obtenerNombreTipoSingular(tipo) {
+  switch (tipo) {
+    case "curso":
+      return "Curso";
+    case "capacitacion":
+      return "Capacitación";
+    case "evento":
+      return "Evento";
+    case "torneo":
+    default:
+      return "Torneo";
+  }
+}
+
+function renderBotonesTransmisiones(torneo) {
+  if (!Array.isArray(torneo.transmisiones) || torneo.transmisiones.length === 0) {
+    return "";
+  }
+
+  return torneo.transmisiones
+    .filter((transmision) => transmision.url)
+    .map((transmision, index) => `
+      <a
+        href="${transmision.url}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-outline-danger"
+      >
+        <i class="bi bi-youtube"></i>
+        ${transmision.titulo || `Ver transmisión ${index + 1}`}
+      </a>
+    `)
+    .join("");
+}
+
 // ============================
 // CARD
 // ============================
@@ -119,7 +154,7 @@ function crearCardTorneo(torneo, esAnterior = false) {
           </h5>
 
           <p class="mb-2">
-            <strong>Tipo:</strong> ${obtenerNombreTipoPlural(torneo.tipo || "torneo").slice(0, -1)}
+            <strong>Tipo:</strong> ${obtenerNombreTipoSingular(torneo.tipo || "torneo")}
           </p>
 
           <p class="mb-2">
@@ -135,21 +170,7 @@ function crearCardTorneo(torneo, esAnterior = false) {
           </p>
 
           <div class="mt-auto d-grid gap-2">
-            ${
-              torneo.youtubeUrl
-                ? `
-                  <a
-                    href="${torneo.youtubeUrl}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn btn-outline-danger"
-                  >
-                    <i class="bi bi-youtube"></i>
-                    Ver transmisión / video
-                  </a>
-                `
-                : ""
-            }
+            ${renderBotonesTransmisiones(torneo)}
 
             ${
               esAnterior && torneo.resultadosSubidos
@@ -223,6 +244,7 @@ function renderTorneosAnteriores(torneos) {
         (torneo.tipo || "torneo") === "torneo" &&
         esTorneoAnterior(torneo.fecha)
     )
+    .filter((torneo) => coincideBusqueda(torneo, textoBusquedaActual))
     .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   contenedor.innerHTML = "";
@@ -295,21 +317,7 @@ function renderCarousel(torneos) {
         </p>
 
         <div class="d-flex justify-content-center gap-2 flex-wrap">
-          ${
-            torneo.youtubeUrl
-              ? `
-                <a
-                  href="${torneo.youtubeUrl}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-outline-danger"
-                >
-                  <i class="bi bi-youtube"></i>
-                  Ver transmisión
-                </a>
-              `
-              : ""
-          }
+          ${renderBotonesTransmisiones(torneo)}
 
           ${
             torneo.resultadosSubidos
@@ -363,13 +371,9 @@ function filtrarActuales(e) {
 }
 
 function filtrarAnteriores(e) {
-  const texto = e.target.value.toLowerCase().trim();
+  textoBusquedaActual = e.target.value.toLowerCase().trim();
 
-  const filtrados = cacheTorneos.filter((torneo) => {
-    return esTorneoAnterior(torneo.fecha) && coincideBusqueda(torneo, texto);
-  });
-
-  renderTorneosAnteriores(filtrados);
+  renderTorneosAnteriores(cacheTorneos);
 }
 
 function activarBuscador() {
@@ -401,6 +405,11 @@ function activarFiltrosTipo() {
 
       boton.classList.add("active", "btn-danger");
       boton.classList.remove("btn-outline-danger");
+
+      textoBusquedaActual = "";
+
+      const inputActuales = document.getElementById("buscadorTorneosActuales");
+      if (inputActuales) inputActuales.value = "";
 
       actualizarTextosListado();
       renderTorneosActuales(cacheTorneos);

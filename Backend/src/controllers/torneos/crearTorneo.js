@@ -1,8 +1,5 @@
 import Torneo from "../../models/Torneo.js";
 import { crearEventoCalendario } from "../../config/google.js";
-import cloudinary from "../../config/cloudinary.js";
-import { crearCarpetaResultadoTorneo } from "../../config/ftp.js";
-import streamifier from "streamifier";
 
 function generarSlug(nombre = "") {
   return nombre
@@ -13,62 +10,75 @@ function generarSlug(nombre = "") {
     .replace(/\btorneo\b/g, "")
     .replace(/\bcopa\b/g, "")
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
-function subirImagenCloudinary(file) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "fmj/torneos",
-      },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
+async function generarSlugUnico(nombre) {
+  const slugBase = generarSlug(nombre);
+  let slugFinal = slugBase;
+  let contador = 1;
 
-    streamifier.createReadStream(file.buffer).pipe(stream);
-  });
+  while (await Torneo.findOne({ slug: slugFinal })) {
+    contador++;
+    slugFinal = `${slugBase}-${contador}`;
+  }
+
+  return slugFinal;
+}
+
+function parsearCategorias(categorias) {
+  if (!categorias) return [];
+
+  try {
+    const parsed = JSON.parse(categorias);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return categorias
+      .split(",")
+      .map((cat) => cat.trim())
+      .filter(Boolean);
+  }
+}
+
+function parsearTransmisiones(transmisiones) {
+  if (!transmisiones) return [];
+
+  try {
+    const parsed = JSON.parse(transmisiones);
+
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map((transmision) => ({
+        titulo: transmision.titulo || "",
+        url: transmision.url || "",
+      }))
+      .filter((transmision) => transmision.url);
+  } catch {
+    return [];
+  }
 }
 
 const crearTorneo = async (req, res) => {
   try {
-    const categorias = req.body.categorias
-      ? JSON.parse(req.body.categorias)
-      : [];
-
-    const slug = generarSlug(req.body.nombre);
-
-    let fotoUrl = "";
-
-    if (req.file) {
-      const resultado = await subirImagenCloudinary(req.file);
-      fotoUrl = resultado.secure_url;
-    }
+    const categorias = parsearCategorias(req.body.categorias);
+    const transmisiones = parsearTransmisiones(req.body.transmisiones);
+    const slug = await generarSlugUnico(req.body.nombre);
 
     const torneo = new Torneo({
       nombre: req.body.nombre,
-      tipo: "torneo",
       slug,
       fecha: req.body.fecha,
-      direccion: req.body.direccion,
-      reglas: req.body.reglas,
+      descripcion: req.body.descripcion || "",
+      direccion: req.body.direccion || "",
+      reglas: req.body.reglas || "",
       categorias,
-      fotos: fotoUrl ? [fotoUrl] : [],
-      youtubeUrl: req.body.youtubeUrl || "",
+      transmisiones,
+      fotos: req.file ? [req.file.path] : [],
     });
 
     const guardado = await torneo.save();
-
-    try {
-      await crearCarpetaResultadoTorneo(guardado.slug);
-    } catch (errorFTP) {
-      console.error(
-        "Torneo creado, pero falló la creación de carpeta FTP:",
-        errorFTP.message
-      );
-    }
 
     try {
       const eventoGoogle = await crearEventoCalendario(guardado);
@@ -87,7 +97,10 @@ const crearTorneo = async (req, res) => {
       torneo: guardado,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      mensaje: "Error al crear torneo",
+      error: error.message,
+    });
   }
 };
 

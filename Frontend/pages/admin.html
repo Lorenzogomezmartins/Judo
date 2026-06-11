@@ -558,22 +558,27 @@
           </div>
 
           <div class="col-md-12 mb-3">
-            <label>Link de YouTube</label>
-            <input
-              type="url"
-              id="torneoYoutubeUrl"
+            <label>Transmisiones / videos YouTube</label>
+
+            <textarea
+              id="torneoTransmisiones"
               class="form-control"
-              placeholder="Ej: https://www.youtube.com/watch?v=..."
-            >
+              rows="5"
+              placeholder="Tatami 1 | https://www.youtube.com/watch?v=...&#10;Tatami 2 | https://www.youtube.com/watch?v=...&#10;Tatami 3 | https://www.youtube.com/watch?v=..."
+            ></textarea>
+
             <small class="text-muted">
-              Puede ser una transmisión en vivo o un video ya publicado.
+              Una transmisión por línea. Formato:
+              Título | URL. Puede ser vivo o video ya publicado.
             </small>
           </div>
         </div>
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary">Guardar</button>
-          <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">Cancelar</button>
+          <button type="button" class="btn btn-secondary" id="btnCancelarTorneo">
+            Cancelar
+          </button>
         </div>
       </form>
     </div>
