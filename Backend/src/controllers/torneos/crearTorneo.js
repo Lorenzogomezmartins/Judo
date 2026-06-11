@@ -1,5 +1,6 @@
 import Torneo from "../../models/Torneo.js";
 import { crearEventoCalendario } from "../../config/google.js";
+import { crearCarpetaResultadoTorneo } from "../../config/ftp.js";
 
 function generarSlug(nombre = "") {
   return nombre
@@ -68,6 +69,7 @@ const crearTorneo = async (req, res) => {
 
     const torneo = new Torneo({
       nombre: req.body.nombre,
+      tipo: req.body.tipo || "torneo",
       slug,
       fecha: req.body.fecha,
       descripcion: req.body.descripcion || "",
@@ -79,6 +81,15 @@ const crearTorneo = async (req, res) => {
     });
 
     const guardado = await torneo.save();
+
+    try {
+      await crearCarpetaResultadoTorneo(guardado.slug);
+    } catch (errorFTP) {
+      console.error(
+        "Torneo creado, pero falló la creación de carpeta FTP:",
+        errorFTP.message
+      );
+    }
 
     try {
       const eventoGoogle = await crearEventoCalendario(guardado);
