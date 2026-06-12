@@ -43,11 +43,10 @@ function formatearCategorias(categorias) {
 function formatearFecha(fecha) {
   if (!fecha) return "Sin fecha";
 
-  return new Date(fecha).toLocaleDateString("es-AR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const fechaTexto = String(fecha).split("T")[0];
+  const [anio, mes, dia] = fechaTexto.split("-");
+
+  return `${dia}/${mes}/${anio}`;
 }
 
 function generarSlugDesdeNombre(nombre = "") {

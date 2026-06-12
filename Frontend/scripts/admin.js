@@ -1125,8 +1125,8 @@ async function editarTorneo(id) {
     document.getElementById("torneoId").value = torneo._id || "";
     document.getElementById("torneoNombre").value = torneo.nombre || "";
     document.getElementById("torneoFecha").value = torneo.fecha
-      ? new Date(torneo.fecha).toISOString().split("T")[0]
-      : "";
+  ? String(torneo.fecha).split("T")[0]
+  : "";
     document.getElementById("torneoDireccion").value = torneo.direccion || "";
     document.getElementById("torneoCategorias").value = Array.isArray(torneo.categorias)
       ? torneo.categorias.join(", ")
@@ -1175,7 +1175,11 @@ async function eliminarTorneo(id) {
 // HELPERS
 function formatearFechaAdmin(fecha) {
   if (!fecha) return "-";
-  return new Date(fecha).toLocaleDateString("es-AR");
+
+  const fechaTexto = String(fecha).split("T")[0];
+  const [anio, mes, dia] = fechaTexto.split("-");
+
+  return `${dia}/${mes}/${anio}`;
 }
 
 function formatearCategoriasAdmin(categorias) {
