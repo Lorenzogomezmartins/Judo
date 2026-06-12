@@ -120,7 +120,7 @@ function renderBotonesTransmisiones(torneo) {
         href="${transmision.url}"
         target="_blank"
         rel="noopener noreferrer"
-        class="btn btn-outline-danger"
+        class="btn btn-danger"
       >
         <i class="bi bi-youtube"></i>
         ${transmision.titulo || `Ver transmisión ${index + 1}`}

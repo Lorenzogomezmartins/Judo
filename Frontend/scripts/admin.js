@@ -1033,18 +1033,21 @@ async function guardarTorneo(e) {
 
         if (!texto) return null;
 
-        const match = texto.match(/https?:\/\/\S+/);
+        if (texto.includes("|")) {
+          const [titulo, url] = texto.split("|");
 
-        if (!match) return null;
-
-        const url = match[0];
+          return {
+            titulo: titulo.trim(),
+            url: url.trim(),
+          };
+        }
 
         return {
-          titulo: `Transmisión ${index + 1}`,
-          url
+          titulo: "",
+          url: texto,
         };
       })
-      .filter(Boolean)
+      .filter((t) => t.url)
   : [];
 
   console.log("VERSION NUEVA PARSEO URLS SOLAS");
