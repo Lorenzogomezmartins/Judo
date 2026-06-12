@@ -172,26 +172,14 @@ function crearCardTorneo(torneo, esAnterior = false) {
           <div class="mt-auto d-grid gap-2">
             ${renderBotonesTransmisiones(torneo)}
 
-            ${
-              esAnterior && torneo.resultadosSubidos
-                ? `
-                  <a
-                    href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn btn-danger"
-                  >
-                    Ver resultados
-                  </a>
-                `
-                : !esAnterior
-                  ? `
-                    <span class="badge bg-success py-2">
-                      Evento disponible
-                    </span>
-                  `
-                  : ""
-            }
+            <a
+  href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="btn btn-danger"
+>
+  Ver resultados
+</a>
           </div>
         </div>
       </div>
@@ -319,20 +307,14 @@ function renderCarousel(torneos) {
         <div class="d-flex justify-content-center gap-2 flex-wrap">
           ${renderBotonesTransmisiones(torneo)}
 
-          ${
-            torneo.resultadosSubidos
-              ? `
-                <a
-                  href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-danger"
-                >
-                  Ver resultados
-                </a>
-              `
-              : ""
-          }
+          <a
+  href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="btn btn-danger"
+>
+  Ver resultados
+</a>
         </div>
       </div>
     </div>
