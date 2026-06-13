@@ -1095,11 +1095,13 @@ async function guardarTorneo(e) {
       );
     }
 
-    alert(
-      id
-        ? "Torneo actualizado correctamente"
-        : "Torneo creado correctamente"
-    );
+    const slug = resultado?.torneo?.slug || "NO_GENERADO";
+
+alert(
+  `${id ? "Torneo actualizado correctamente" : "Torneo creado correctamente"}\n\n` +
+  `Ruta para subir resultados:\n` +
+  `/htdocs/resultados/${slug}/`
+);
 
     document.getElementById("formTorneo").reset();
     document.getElementById("torneoId").value = "";
