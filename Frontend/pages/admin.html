@@ -80,6 +80,12 @@
         Torneos
       </button>
     </li>
+
+    <li class="nav-item">
+  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#galeria" type="button">
+    Galería
+  </button>
+</li>
   </ul>
 
   <div class="tab-content">
@@ -183,7 +189,25 @@
           </ol>
         </div>
       </div>
+      <!-- GALERÍA -->
+      <div class="col-12 col-md-6">
+        <div class="border rounded-4 p-3 h-100">
+          <h5 class="fw-bold mb-3">Sección Galería</h5>
+          <ol class="mb-0">
+            <li>Tocar <strong>Agregar Foto</strong>.</li>
+            <li>Subir una imagen desde la computadora.</li>
+            <li>El <strong>título</strong> es opcional y sirve para buscar fotos.</li>
+            <li>La <strong>fecha</strong> también es opcional.</li>
+            <li>Guardar para que la foto aparezca en la galería pública.</li>
+            <li>Las fotos pueden recibir <strong>Me gusta</strong>.</li>
+            <li>En el inicio se muestran las <strong>5 fotos con más Me gusta</strong>.</li>
+            <li>Usar editar para cambiar título, fecha o imagen.</li>
+            <li>Usar eliminar si la foto ya no debe mostrarse.</li>
+          </ol>
+        </div>
+      </div>
 
+      
     </div>
   </div>
 </section>
@@ -596,6 +620,68 @@
   </div>
 </section>
 
+
+<!-- GALERÍA -->
+<section class="tab-pane fade" id="galeria">
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-4">Gestión de Galería</h4>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <input
+        type="text"
+        id="filtroGaleria"
+        class="form-control w-50"
+        placeholder="Filtrar por título..."
+      >
+
+      <button class="btn btn-success" id="btnNuevaFotoGaleria">
+        <i class="bi bi-plus-lg"></i> Agregar Foto
+      </button>
+    </div>
+
+    <div class="card border p-4 mb-4" id="formGaleriaContainer" style="display:none;">
+      <h5 class="mb-3">Formulario Galería</h5>
+
+      <form id="formGaleria" enctype="multipart/form-data">
+        <input type="hidden" id="galeriaId">
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Título opcional</label>
+            <input type="text" id="galeriaTitulo" class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Fecha opcional</label>
+            <input type="date" id="galeriaFecha" class="form-control">
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label>Imagen</label>
+            <input type="file" id="galeriaImagen" class="form-control" accept="image/*">
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" id="btnCancelarGaleria">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="clubes-header">
+      <div>Foto</div>
+      <div>Título</div>
+      <div>Fecha</div>
+      <div>Likes</div>
+      <div>Acciones</div>
+    </div>
+
+    <div id="galeriaGrid" class="clubes-listado"></div>
+  </div>
+</section>
 <!-- MODAL EDITAR PUNTOS -->
 <div class="modal fade" id="modalEditarInscripcion" tabindex="-1">
   <div class="modal-dialog modal-md modal-dialog-centered">
@@ -642,6 +728,8 @@
           </button>
         </div>
       </form>
+
+      
 
     </div>
   </div>

@@ -9,6 +9,7 @@ import TorneosRoutes from './torneo.routes.js';
 import inscripcionRoutes from './inscripcion.routes.js';
 import resultadosRoutes from './resultados.routes.js';
 import rankingRoutes from './ranking.routes.js';
+import galeriaRoutes from "./galeria.routes.js";
 
 import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
 
@@ -31,6 +32,7 @@ router.use('/torneos', TorneosRoutes);
 router.use('/inscripciones', inscripcionRoutes);
 router.use('/resultados', resultadosRoutes);
 router.use('/ranking', rankingRoutes);
+router.use("/galeria", galeriaRoutes);
 
 // Ruta de prueba protegida
 router.get('/admin/verificar', authMiddleware, adminOnly, (req, res) => {
@@ -39,15 +41,4 @@ router.get('/admin/verificar', authMiddleware, adminOnly, (req, res) => {
     user: req.user,
   });
 });
-
-console.log('✅ Rutas montadas: /patrocinadores');
-console.log('✅ Rutas montadas: /profesores');
-console.log('✅ Rutas montadas: /clubes');
-console.log('✅ Rutas montadas: /Administradores');
-console.log('✅ Rutas montadas: /usuarios');
-console.log('✅ Rutas montadas: /torneos');
-console.log('✅ Rutas montadas: /inscripciones');
-console.log('✅ Rutas montadas: /resultados');
-console.log('✅ Rutas montadas: /ranking');
-
 export default router;

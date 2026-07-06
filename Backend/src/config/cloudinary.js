@@ -9,11 +9,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export function subirBufferACloudinary(buffer, publicId) {
+export function subirBufferACloudinary(
+  buffer,
+  publicId,
+  folder = "fmj/usuarios"
+) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: "fmj/usuarios",
+        folder,
         public_id: publicId,
         overwrite: true,
         resource_type: "image",

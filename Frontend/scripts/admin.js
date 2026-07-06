@@ -5,6 +5,7 @@ const BACKEND_URL = "";
 const API_PROFESORES = "/api/profesores";
 const API_VERIFICAR_ADMIN = "/api/admin/verificar";
 const API_RANKING = "/api/ranking";
+const API_GALERIA = "/api/galeria";
 
 // ============================
 // SEGURIDAD ADMIN
@@ -205,7 +206,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       cargarProfesoresAdmin(e.target.value);
     });
   }
-
   // ============================
   // TORNEOS
   // ============================
@@ -216,7 +216,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+ // ============================
+  // GALERIA
+  // ============================
+cargarGaleriaAdmin();
 
+const btnNuevaFotoGaleria = document.getElementById("btnNuevaFotoGaleria");
+if (btnNuevaFotoGaleria) {
+  btnNuevaFotoGaleria.addEventListener("click", abrirFormularioGaleria);
+}
+
+const btnCancelarGaleria = document.getElementById("btnCancelarGaleria");
+if (btnCancelarGaleria) {
+  btnCancelarGaleria.addEventListener("click", cerrarFormularioGaleria);
+}
+
+const formGaleria = document.getElementById("formGaleria");
+if (formGaleria) {
+  formGaleria.addEventListener("submit", guardarFotoGaleria);
+}
+
+const filtroGaleria = document.getElementById("filtroGaleria");
+if (filtroGaleria) {
+  filtroGaleria.addEventListener("input", (e) => {
+    cargarGaleriaAdmin(e.target.value);
+  });
+}
 /* ============================= 
    CLUBES
 ============================= */
@@ -1193,11 +1218,6 @@ function formatearCategoriasAdmin(categorias) {
   return categorias;
 }
 
-
-
-
-
-
 /* ============================= 
    RANKING
 ============================= */
@@ -1335,5 +1355,208 @@ async function cargarInscripcionesAdmin() {
 
     container.innerHTML =
       "<p>Error al cargar ranking.</p>";
+  }
+}
+
+
+
+/* ============================= 
+   GALERÍA
+============================= */
+
+async function cargarGaleriaAdmin(filtroTitulo = "") {
+  const container = document.getElementById("galeriaGrid");
+  if (!container) return;
+
+  container.innerHTML = "<p>Cargando galería...</p>";
+
+  try {
+    const query = filtroTitulo
+      ? `?titulo=${encodeURIComponent(filtroTitulo)}`
+      : "";
+
+    const response = await fetch(`${API_GALERIA}${query}`);
+
+    if (!response.ok) {
+      throw new Error("No se pudo obtener la galería");
+    }
+
+    const fotos = await response.json();
+
+    if (!Array.isArray(fotos) || !fotos.length) {
+      container.innerHTML = "<p>No hay fotos cargadas.</p>";
+      return;
+    }
+
+    container.innerHTML = "";
+
+    fotos.forEach((foto) => {
+      const row = document.createElement("div");
+      row.classList.add("club-admin-row");
+
+      row.innerHTML = `
+        <div class="club-admin-logo">
+          <img src="${foto.imagen}" alt="${foto.titulo || "Foto galería"}">
+        </div>
+
+        <div class="club-col">
+          ${foto.titulo || "-"}
+        </div>
+
+        <div class="club-col">
+  ${formatearFechaAdmin(foto.fecha)}
+</div>
+
+<div class="club-col">
+  ❤️ ${Array.isArray(foto.likes) ? foto.likes.length : 0}
+</div>
+
+<div class="club-admin-actions d-flex gap-2 align-items-center">
+          <button 
+            class="btn btn-outline-primary btn-sm"
+            onclick="editarFotoGaleria('${foto._id}')">
+            <i class="bi bi-pencil"></i>
+          </button>
+
+          <button 
+            class="btn btn-outline-danger btn-sm"
+            onclick="eliminarFotoGaleria('${foto._id}')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      `;
+
+      container.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Error cargando galería:", error);
+    container.innerHTML = "<p>Error al cargar la galería.</p>";
+  }
+}
+
+function abrirFormularioGaleria() {
+  const container = document.getElementById("formGaleriaContainer");
+  if (!container) return;
+
+  container.style.display = "block";
+  container.scrollIntoView({ behavior: "smooth" });
+
+  const form = document.getElementById("formGaleria");
+  if (form) form.reset();
+
+  document.getElementById("galeriaId").value = "";
+}
+
+function cerrarFormularioGaleria() {
+  const container = document.getElementById("formGaleriaContainer");
+  if (!container) return;
+
+  container.style.display = "none";
+
+  const form = document.getElementById("formGaleria");
+  if (form) form.reset();
+
+  document.getElementById("galeriaId").value = "";
+}
+
+async function guardarFotoGaleria(e) {
+  e.preventDefault();
+
+  const id = document.getElementById("galeriaId").value.trim();
+  const titulo = document.getElementById("galeriaTitulo").value.trim();
+  const fecha = document.getElementById("galeriaFecha").value;
+  const imagenInput = document.getElementById("galeriaImagen");
+
+  if (!id && imagenInput.files.length === 0) {
+    alert("La imagen es obligatoria al crear una foto");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("titulo", titulo);
+
+if (fecha) {
+  formData.append("fecha", fecha);
+}
+
+  if (imagenInput.files.length > 0) {
+    formData.append("imagen", imagenInput.files[0]);
+  }
+
+  try {
+    const url = id ? `${API_GALERIA}/${id}` : API_GALERIA;
+    const method = id ? "PUT" : "POST";
+
+    const response = await fetchProtegido(url, {
+      method,
+      body: formData,
+    });
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error al guardar la foto"
+      );
+    }
+
+    alert(id ? "Foto actualizada correctamente" : "Foto subida correctamente");
+
+    cerrarFormularioGaleria();
+    cargarGaleriaAdmin();
+  } catch (error) {
+    console.error("Error guardando foto:", error);
+    alert("Error: " + error.message);
+  }
+}
+
+async function editarFotoGaleria(id) {
+  try {
+    const response = await fetch(`${API_GALERIA}/${id}`);
+
+    if (!response.ok) {
+      throw new Error("No se pudo obtener la foto");
+    }
+
+    const foto = await response.json();
+
+    abrirFormularioGaleria();
+
+    document.getElementById("galeriaId").value = foto._id || "";
+    document.getElementById("galeriaTitulo").value = foto.titulo || "";
+    document.getElementById("galeriaFecha").value = foto.fecha
+      ? String(foto.fecha).split("T")[0]
+      : "";
+  } catch (error) {
+    console.error("Error cargando foto:", error);
+    alert("No se pudo cargar la foto");
+  }
+}
+
+async function eliminarFotoGaleria(id) {
+  if (!confirm("¿Seguro que querés eliminar esta foto?")) return;
+
+  try {
+    const response = await fetchProtegido(`${API_GALERIA}/${id}`, {
+      method: "DELETE",
+    });
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error al eliminar la foto"
+      );
+    }
+
+    alert("Foto eliminada correctamente");
+    cargarGaleriaAdmin();
+  } catch (error) {
+    console.error("Error eliminando foto:", error);
+    alert("No se pudo eliminar la foto");
   }
 }

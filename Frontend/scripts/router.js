@@ -7,11 +7,16 @@ import { cargarProfesores } from "./profesores.js";
 import { cargarPatrocinadores } from "./patrocinadores.js";
 import { iniciarLoginAdmin } from "./loginAdmin.js";
 import { cargarRankingUsuarios } from "./usuarios.js";
+import {
+  cargarGaleria,
+  cargarGaleriaHome,
+} from "./galeria.js";
 
 // ================= RUTAS =================
 
 const rutas = {
   home: "../partials/home.html",
+  galeria: "../partials/galeria.html",
   calendario: "../partials/calendario.html",
   ranking: "../partials/ranking.html",
   torneos: "../partials/torneos.html",
@@ -61,9 +66,18 @@ async function cargarVista(vista) {
     contenedor.innerHTML = html;
 
     switch (vistaFinal) {
-      case "calendario":
-        await inicializarCalendario();
-        break;
+  case "home":
+    await cargarGaleriaHome();
+    break;
+
+  case "galeria":
+    await cargarGaleria();
+    break;
+
+  case "calendario":
+    await inicializarCalendario();
+    break;
+        
 
       case "clubes":
         await cargarClubes();

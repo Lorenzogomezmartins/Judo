@@ -1,6 +1,4 @@
-<!-- CONTENIDO HOME -->
 <section class="home-contenido text-center">
-
   <h2>Bienvenidos</h2>
 
   <p class="mt-3">
@@ -14,84 +12,35 @@
     alt="FMJ Logo"
     class="logo-contenido my-4"
   >
-
 </section>
 
-<!-- CARRUSEL -->
-<section class="carousel-container">
+<section class="galeria-home">
+  <div class="galeria-home-header">
+    <span class="galeria-home-etiqueta">Galería FMJ</span>
 
-  <div
-    id="carouselExampleAutoplaying"
-    class="carousel slide"
-    data-bs-ride="carousel"
-    data-bs-interval="3000"
-    data-bs-pause="false" 
-  >
+    <h3>Fotos favoritas de la comunidad</h3>
 
-    <div class="carousel-inner">
+    <p>
+      Las 5 fotografías con mayor cantidad de "Me gusta" otorgados por la comunidad FMJ.
+    </p>
 
-      <div class="carousel-item active">
-        <img
-          src="../assets/imagenes/Carrusel1.jpg"
-          class="d-block w-100"
-          alt="Torneo FMJ"
-        >
-      </div>
-
-      <div class="carousel-item">
-        <img
-          src="../assets/imagenes/Carrusel2.jpg"
-          class="d-block w-100"
-          alt="Entrenamiento"
-        >
-      </div>
-
-      <div class="carousel-item">
-        <img
-          src="../assets/imagenes/Carrusel3.jpg"
-          class="d-block w-100"
-          alt="Evento FMJ"
-        >
-      </div>
-
-      <div class="carousel-item">
-        <img
-          src="../assets/imagenes/Carrusel4.jpeg"
-          class="d-block w-100"
-          alt="Evento FMJ"
-        >
-      </div>
-
-      <div class="carousel-item">
-        <img
-          src="../assets/imagenes/Carrusel5.jpg"
-          class="d-block w-100"
-          alt="Evento FMJ"
-        >
-      </div>
-
-    </div>
-
-    <!-- CONTROLES -->
-    <button
-      class="carousel-control-prev"
-      type="button"
-      data-bs-target="#carouselExampleAutoplaying"
-      data-bs-slide="prev"
-    >
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-
-    <button
-      class="carousel-control-next"
-      type="button"
-      data-bs-target="#carouselExampleAutoplaying"
-      data-bs-slide="next"
-    >
-      <span class="carousel-control-next-icon"></span>
-    </button>
-
+    <a href="#/galeria" class="galeria-home-link">
+      Ver galería completa
+      <i class="bi bi-arrow-right"></i>
+    </a>
   </div>
 
-</section>
+  <div class="galeria-home-slider">
+    <button class="galeria-arrow galeria-prev" id="galeriaPrev" type="button">
+      <i class="bi bi-chevron-left"></i>
+    </button>
 
+    <div id="galeriaHomeGrid" class="galeria-home-grid">
+      <p>Cargando fotografías...</p>
+    </div>
+
+    <button class="galeria-arrow galeria-next" id="galeriaNext" type="button">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</section>
