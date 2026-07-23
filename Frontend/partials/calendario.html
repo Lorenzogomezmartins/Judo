@@ -1,91 +1,480 @@
+
 <div class="calendar-page">
 
-  <!-- ================= ACCIONES GOOGLE CALENDAR ================= -->
-  <div class="calendar-actions">
+  <!-- =========================================
+       HERO / PRESENTACIÓN
+  ========================================== -->
+  <section class="calendar-hero">
 
-    <a
-      href="https://calendar.google.com/calendar/u/0?cid=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39@group.calendar.google.com"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="calendar-btn google-btn"
-    >
-      📅 Agregar calendario FMJ a mi Google Calendar
-    </a>
+    <div class="calendar-hero-decoration calendar-hero-decoration-one"></div>
+    <div class="calendar-hero-decoration calendar-hero-decoration-two"></div>
 
-    <a
-      href="https://calendar.google.com/calendar/embed?src=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39%40group.calendar.google.com&ctz=America%2FArgentina%2FBuenos_Aires"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="calendar-btn public-btn"
-    >
-      🌐 Ver calendario público
-    </a>
+    <div class="calendar-hero-content">
 
-  </div>
+      <span class="calendar-eyebrow">
+        Federación Metropolitana de Judo
+      </span>
 
-  <!-- ================= CALENDARIO + LEYENDA ================= -->
-  <div class="calendar-layout">
+      <h1 class="calendar-title">
+        Calendario oficial FMJ
+      </h1>
 
-    <!-- CALENDARIO -->
-    <section class="calendar-container">
+      <p class="calendar-description">
+        Consultá las fechas de torneos, cursos, capacitaciones y eventos
+        organizados por la Federación Metropolitana de Judo.
+      </p>
 
-      <div class="calendar-controls">
-        <button id="prevMonth">◀</button>
-        <h2 id="monthYear"></h2>
-        <button id="nextMonth">▶</button>
+      <!-- ACCIONES GOOGLE CALENDAR -->
+      <div class="calendar-actions">
+
+        <a
+          href="https://calendar.google.com/calendar/u/0?cid=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39@group.calendar.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="calendar-btn calendar-btn-primary"
+        >
+          <span class="calendar-btn-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+              <path d="M16 3v4"></path>
+              <path d="M8 3v4"></path>
+              <path d="M3 10h18"></path>
+              <path d="M12 14v4"></path>
+              <path d="M10 16h4"></path>
+            </svg>
+          </span>
+
+          <span class="calendar-btn-text">
+            <strong>Agregar a Google Calendar</strong>
+            <small>Recibí automáticamente las fechas</small>
+          </span>
+        </a>
+
+        <a
+          href="https://calendar.google.com/calendar/embed?src=facea62006be9085368042363e653ced119ed66bec97eacb4ca45a80defddb39%40group.calendar.google.com&ctz=America%2FArgentina%2FBuenos_Aires"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="calendar-btn calendar-btn-secondary"
+        >
+          <span class="calendar-btn-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M3 12h18"></path>
+              <path d="M12 3a15 15 0 0 1 0 18"></path>
+              <path d="M12 3a15 15 0 0 0 0 18"></path>
+            </svg>
+          </span>
+
+          <span class="calendar-btn-text">
+            <strong>Ver calendario público</strong>
+            <small>Abrir la versión de Google</small>
+          </span>
+        </a>
+
       </div>
 
-      <div class="weekdays">
-        <div>Lun</div>
-        <div>Mar</div>
-        <div>Mié</div>
-        <div>Jue</div>
-        <div>Vie</div>
-        <div>Sáb</div>
-        <div>Dom</div>
+    </div>
+
+    <div class="calendar-hero-mark" aria-hidden="true">
+      <span>柔道</span>
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       INFORMACIÓN Y LEYENDA
+  ========================================== -->
+  <section class="calendar-summary">
+
+    <div class="calendar-summary-copy">
+      <span class="calendar-section-label">
+        Agenda deportiva
+      </span>
+
+      <h2>
+        Todos los eventos en un solo lugar
+      </h2>
+
+      <p>
+        Navegá entre los meses y seleccioná cualquier evento para consultar
+        su fecha, ubicación y categorías.
+      </p>
+    </div>
+
+    <div class="calendar-legend" aria-label="Referencias del calendario">
+
+      <div class="legend-item">
+        <span class="legend-color green"></span>
+
+        <span class="legend-content">
+          <strong>Próximos</strong>
+          <small>Torneos disponibles</small>
+        </span>
       </div>
 
-      <div id="calendarDays" class="days"></div>
+      <div class="legend-item">
+        <span class="legend-color yellow"></span>
 
-    </section>
+        <span class="legend-content">
+          <strong>Actividades</strong>
+          <small>Cursos y capacitaciones</small>
+        </span>
+      </div>
+
+      <div class="legend-item">
+        <span class="legend-color red"></span>
+
+        <span class="legend-content">
+          <strong>Finalizados</strong>
+          <small>Eventos anteriores</small>
+        </span>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       CALENDARIO
+  ========================================== -->
+  <section class="calendar-layout">
+
+    <div class="calendar-container">
+
+      <!-- ENCABEZADO DEL CALENDARIO -->
+      <div class="calendar-topbar">
+
+        <div class="calendar-topbar-title">
+          <span class="calendar-topbar-eyebrow">
+            Calendario mensual
+          </span>
+
+          <h2 id="monthYear">
+            Calendario
+          </h2>
+        </div>
+
+        <div class="calendar-controls">
+
+          <button
+            type="button"
+            id="prevMonth"
+            class="calendar-control-btn"
+            aria-label="Ver mes anterior"
+            title="Mes anterior"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            id="nextMonth"
+            class="calendar-control-btn"
+            aria-label="Ver mes siguiente"
+            title="Mes siguiente"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- DÍAS DE LA SEMANA -->
+      <div class="weekdays" aria-hidden="true">
+        <div>
+          <span class="weekday-full">Lunes</span>
+          <span class="weekday-short">Lun</span>
+        </div>
+
+        <div>
+          <span class="weekday-full">Martes</span>
+          <span class="weekday-short">Mar</span>
+        </div>
+
+        <div>
+          <span class="weekday-full">Miércoles</span>
+          <span class="weekday-short">Mié</span>
+        </div>
+
+        <div>
+          <span class="weekday-full">Jueves</span>
+          <span class="weekday-short">Jue</span>
+        </div>
+
+        <div>
+          <span class="weekday-full">Viernes</span>
+          <span class="weekday-short">Vie</span>
+        </div>
+
+        <div class="weekend">
+          <span class="weekday-full">Sábado</span>
+          <span class="weekday-short">Sáb</span>
+        </div>
+
+        <div class="weekend">
+          <span class="weekday-full">Domingo</span>
+          <span class="weekday-short">Dom</span>
+        </div>
+      </div>
+
+
+      <!-- DÍAS GENERADOS POR JAVASCRIPT -->
+      <div
+        id="calendarDays"
+        class="days"
+        aria-live="polite"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       AYUDA INFERIOR
+  ========================================== -->
+  <section class="calendar-help">
+
+    <div class="calendar-help-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.9"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 11v5"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </div>
+
+    <div>
+      <strong>¿Cómo consultar un evento?</strong>
+
+      <p>
+        Tocá o hacé clic sobre el nombre de un torneo, curso o capacitación
+        para abrir su información completa.
+      </p>
+    </div>
+
+  </section>
+
 </div>
 
-<!-- =========================
-     MODAL DETALLE TORNEO
-========================= -->
-<div id="eventModal" class="torneo-modal-overlay hidden">
+
+<!-- =========================================
+     MODAL DETALLE DEL EVENTO
+========================================== -->
+<div
+  id="eventModal"
+  class="torneo-modal-overlay hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="eventTitle"
+>
 
   <div class="torneo-modal">
 
-    <span id="closeModal" class="close-modal">
-      ✖
-    </span>
-
-    <img
-      id="eventImage"
-      class="torneo-image"
-      src=""
-      alt="Imagen torneo"
-      style="display: none;"
+    <button
+      type="button"
+      id="closeModal"
+      class="close-modal"
+      aria-label="Cerrar información del evento"
     >
+      <svg
+        viewBox="0 0 24 24"
+        width="23"
+        height="23"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 6 6 18"></path>
+        <path d="m6 6 12 12"></path>
+      </svg>
+    </button>
 
-    <h2 id="eventTitle"></h2>
 
-    <div class="torneo-info">
+    <!-- IMAGEN DEL EVENTO -->
+    <div class="torneo-image-wrapper">
 
-      <div class="info-item">
-        <strong>📅 Fecha:</strong>
-        <span id="eventFecha"></span>
+      <img
+        id="eventImage"
+        class="torneo-image"
+        src=""
+        alt="Imagen del evento"
+        style="display: none;"
+      >
+
+      <div class="torneo-image-overlay"></div>
+
+      <span class="torneo-modal-badge">
+        Evento FMJ
+      </span>
+
+    </div>
+
+
+    <!-- INFORMACIÓN DEL EVENTO -->
+    <div class="torneo-modal-content">
+
+      <div class="torneo-modal-heading">
+
+        <span class="torneo-modal-eyebrow">
+          Federación Metropolitana de Judo
+        </span>
+
+        <h2 id="eventTitle"></h2>
+
       </div>
 
-      <div class="info-item">
-        <strong>📍 Lugar:</strong>
-        <span id="eventDireccion"></span>
+
+      <div class="torneo-info">
+
+        <div class="info-item">
+
+          <span class="info-icon date-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+              <path d="M16 3v4"></path>
+              <path d="M8 3v4"></path>
+              <path d="M3 10h18"></path>
+            </svg>
+          </span>
+
+          <div class="info-content">
+            <strong>Fecha</strong>
+            <span id="eventFecha"></span>
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <span class="info-icon location-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="2.5"></circle>
+            </svg>
+          </span>
+
+          <div class="info-content">
+            <strong>Lugar</strong>
+            <span id="eventDireccion"></span>
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <span class="info-icon category-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 5h6v6H4z"></path>
+              <path d="M14 5h6v6h-6z"></path>
+              <path d="M4 15h6v4H4z"></path>
+              <path d="M14 15h6v4h-6z"></path>
+            </svg>
+          </span>
+
+          <div class="info-content">
+            <strong>Categorías</strong>
+            <span id="eventCategorias"></span>
+          </div>
+
+        </div>
+
       </div>
 
-      <div class="info-item">
-        <strong>🥋 Categorías:</strong>
-        <span id="eventCategorias"></span>
+
+      <div class="torneo-modal-footer">
+
+        <span class="torneo-modal-footer-mark">
+          FMJ
+        </span>
+
+        <p>
+          Calendario oficial de actividades deportivas.
+        </p>
+
       </div>
 
     </div>
@@ -93,3 +482,4 @@
   </div>
 
 </div>
+

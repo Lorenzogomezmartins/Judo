@@ -1,138 +1,548 @@
-<section class="contenido container my-5 torneos-page">
+<section class="torneos-page">
 
-  <header class="torneos-header text-center mb-5">
-    <span class="badge bg-danger-subtle text-danger mb-3 px-3 py-2">
-      Actividades FMJ
-    </span>
+  <!-- =========================================
+       HERO PRINCIPAL
+  ========================================== -->
+  <header class="torneos-hero">
 
-    <h2 class="fw-bold mb-2">Torneos, cursos y eventos</h2>
+    <div class="torneos-hero-decoration torneos-decoration-one"></div>
+    <div class="torneos-hero-decoration torneos-decoration-two"></div>
 
-    <p class="text-muted mb-0">
-      Consultá torneos, cursos, capacitaciones, eventos, transmisiones y resultados oficiales.
-    </p>
+    <div class="torneos-hero-content">
+
+      <span class="torneos-eyebrow">
+        Federación Metropolitana de Judo
+      </span>
+
+      <h1 class="torneos-title">
+        Torneos, cursos y eventos
+      </h1>
+
+      <p class="torneos-description">
+        Consultá las competencias, capacitaciones, actividades especiales,
+        transmisiones y resultados oficiales de la FMJ.
+      </p>
+
+      <div class="torneos-hero-info">
+
+        <div class="torneos-info-item">
+          <span class="torneos-info-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M8 21h8"></path>
+              <path d="M12 17v4"></path>
+              <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
+              <path d="M5 6H3v2a4 4 0 0 0 4 4"></path>
+              <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
+            </svg>
+          </span>
+
+          <span>
+            Competencias oficiales
+          </span>
+        </div>
+
+        <div class="torneos-info-item">
+          <span class="torneos-info-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+              <path d="M16 3v4"></path>
+              <path d="M8 3v4"></path>
+              <path d="M3 10h18"></path>
+            </svg>
+          </span>
+
+          <span>
+            Agenda actualizada
+          </span>
+        </div>
+
+        <div class="torneos-info-item">
+          <span class="torneos-info-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m15 10 4.5-2.5v9L15 14"></path>
+              <rect x="3" y="6" width="12" height="12" rx="2"></rect>
+            </svg>
+          </span>
+
+          <span>
+            Transmisiones y resultados
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="torneos-hero-mark" aria-hidden="true">
+      <span>大会</span>
+    </div>
+
   </header>
 
-  <!-- CARRUSEL -->
-  <section class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-      <div>
-        <h4 class="fw-bold mb-1" id="tituloCarouselTorneos">
-          Torneos destacados
-        </h4>
 
-        <p class="text-muted mb-0" id="descripcionCarouselTorneos">
+  <!-- =========================================
+       INTRODUCCIÓN
+  ========================================== -->
+  <section class="torneos-intro">
+
+    <div class="torneos-intro-copy">
+
+      <span class="torneos-section-label">
+        Actividades FMJ
+      </span>
+
+      <h2>
+        Toda la actividad deportiva en un solo lugar
+      </h2>
+
+      <p>
+        Explorá los próximos torneos, revisá eventos anteriores y accedé
+        a transmisiones, información y resultados oficiales.
+      </p>
+
+    </div>
+
+    <div class="torneos-intro-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        width="34"
+        height="34"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M8 21h8"></path>
+        <path d="M12 17v4"></path>
+        <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
+        <path d="M5 6H3v2a4 4 0 0 0 4 4"></path>
+        <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
+      </svg>
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       CARRUSEL DESTACADO
+  ========================================== -->
+  <section class="torneos-carousel-section">
+
+    <div class="torneos-section-header">
+
+      <div>
+        <span class="torneos-section-eyebrow">
+          Selección destacada
+        </span>
+
+        <h2 id="tituloCarouselTorneos">
+          Torneos destacados
+        </h2>
+
+        <p id="descripcionCarouselTorneos">
           Competencias cargadas en el sistema.
         </p>
       </div>
+
+      <div class="torneos-section-badge">
+        <span class="torneos-live-dot"></span>
+        Actividad FMJ
+      </div>
+
     </div>
+
 
     <div
       id="carouselTorneos"
-      class="carousel slide shadow rounded-4 overflow-hidden"
+      class="carousel slide torneos-carousel"
       data-bs-ride="carousel"
     >
-      <div id="carouselTorneosInner" class="carousel-inner">
+
+      <div
+        id="carouselTorneosInner"
+        class="carousel-inner"
+      >
+
         <div class="carousel-item active">
-          <div class="alert alert-info text-center m-0">
-            Cargando carrusel...
+
+          <div class="torneos-carousel-loading">
+
+            <span class="torneos-loading-spinner"></span>
+
+            <div>
+              <strong>
+                Cargando actividades destacadas
+              </strong>
+
+              <p>
+                Estamos preparando la información del carrusel.
+              </p>
+            </div>
+
           </div>
+
         </div>
+
       </div>
 
+
       <button
-        class="carousel-control-prev"
+        class="carousel-control-prev torneos-carousel-control torneos-carousel-prev"
         type="button"
         data-bs-target="#carouselTorneos"
         data-bs-slide="prev"
+        aria-label="Ver actividad anterior"
       >
-        <span class="carousel-control-prev-icon"></span>
+        <span class="torneos-carousel-arrow" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            width="25"
+            height="25"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m15 18-6-6 6-6"></path>
+          </svg>
+        </span>
       </button>
 
+
       <button
-        class="carousel-control-next"
+        class="carousel-control-next torneos-carousel-control torneos-carousel-next"
         type="button"
         data-bs-target="#carouselTorneos"
         data-bs-slide="next"
+        aria-label="Ver actividad siguiente"
       >
-        <span class="carousel-control-next-icon"></span>
+        <span class="torneos-carousel-arrow" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            width="25"
+            height="25"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m9 18 6-6-6-6"></path>
+          </svg>
+        </span>
       </button>
+
     </div>
+
   </section>
 
-  <!-- BUSCADOR -->
-  <section class="row justify-content-center mb-4">
-    <div class="col-12 col-md-8 col-lg-6">
-      <div class="input-group input-group-lg shadow-sm">
-        <span class="input-group-text bg-white">
-          🔎
+
+  <!-- =========================================
+       BUSCADOR Y FILTROS
+  ========================================== -->
+  <section class="torneos-tools">
+
+    <div class="torneos-tools-header">
+
+      <div>
+        <span class="torneos-tools-eyebrow">
+          Explorar actividades
         </span>
 
-        <input
-          type="text"
-          id="buscadorTorneosActuales"
-          class="form-control"
-          placeholder="Buscar por nombre, lugar o categoría..."
-        />
+        <h3>
+          Buscá y filtrá el contenido
+        </h3>
       </div>
-    </div>
-  </section>
 
-  <!-- FILTROS POR TIPO -->
-  <section class="mb-5">
-    <div class="d-flex justify-content-center gap-2 flex-wrap">
-
-      <button
-        class="btn btn-danger filtro-tipo-btn active"
-        type="button"
-        data-tipo="torneo"
-      >
-        Torneos
-      </button>
-
-      <button
-        class="btn btn-outline-danger filtro-tipo-btn"
-        type="button"
-        data-tipo="curso"
-      >
-        Cursos
-      </button>
-
-      <button
-        class="btn btn-outline-danger filtro-tipo-btn"
-        type="button"
-        data-tipo="capacitacion"
-      >
-        Capacitaciones
-      </button>
-
-      <button
-        class="btn btn-outline-danger filtro-tipo-btn"
-        type="button"
-        data-tipo="evento"
-      >
-        Eventos
-      </button>
+      <span class="torneos-tools-status">
+        Información oficial
+      </span>
 
     </div>
+
+
+    <div class="torneos-tools-content">
+
+      <!-- BUSCADOR -->
+      <div class="torneos-search-field">
+
+        <label for="buscadorTorneosActuales">
+          Buscar actividad
+        </label>
+
+        <div class="torneos-search-wrapper">
+
+          <span class="torneos-search-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </span>
+
+          <input
+            type="text"
+            id="buscadorTorneosActuales"
+            placeholder="Buscar por nombre, lugar o categoría..."
+            autocomplete="off"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- FILTROS POR TIPO -->
+      <div class="torneos-filter-field">
+
+        <span class="torneos-filter-label">
+          Tipo de actividad
+        </span>
+
+        <div class="torneos-filter-buttons">
+
+          <button
+            class="filtro-tipo-btn active"
+            type="button"
+            data-tipo="torneo"
+          >
+            <span class="torneos-filter-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M8 21h8"></path>
+                <path d="M12 17v4"></path>
+                <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
+                <path d="M5 6H3v2a4 4 0 0 0 4 4"></path>
+                <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
+              </svg>
+            </span>
+
+            Torneos
+          </button>
+
+
+          <button
+            class="filtro-tipo-btn"
+            type="button"
+            data-tipo="curso"
+          >
+            <span class="torneos-filter-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m3 7 9-4 9 4-9 4Z"></path>
+                <path d="M7 9.5V15c0 1.7 2.2 3 5 3s5-1.3 5-3V9.5"></path>
+                <path d="M21 7v6"></path>
+              </svg>
+            </span>
+
+            Cursos
+          </button>
+
+
+          <button
+            class="filtro-tipo-btn"
+            type="button"
+            data-tipo="capacitacion"
+          >
+            <span class="torneos-filter-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                <path d="M8 9h8"></path>
+                <path d="M8 13h5"></path>
+                <path d="M8 17h3"></path>
+              </svg>
+            </span>
+
+            Capacitaciones
+          </button>
+
+
+          <button
+            class="filtro-tipo-btn"
+            type="button"
+            data-tipo="evento"
+          >
+            <span class="torneos-filter-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+                <path d="M16 3v4"></path>
+                <path d="M8 3v4"></path>
+                <path d="M3 10h18"></path>
+                <path d="m9 15 2 2 4-4"></path>
+              </svg>
+            </span>
+
+            Eventos
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </section>
 
-  <!-- CARDS -->
-  <section>
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+
+  <!-- =========================================
+       LISTADO DE ACTIVIDADES
+  ========================================== -->
+  <section class="torneos-list-section">
+
+    <div class="torneos-section-header torneos-list-header">
+
       <div>
-        <h4 class="fw-bold mb-1" id="tituloListadoTorneos">
-          Torneos
-        </h4>
+        <span class="torneos-section-eyebrow">
+          Actividades disponibles
+        </span>
 
-        <p class="text-muted mb-0" id="descripcionListadoTorneos">
+        <h2 id="tituloListadoTorneos">
+          Torneos
+        </h2>
+
+        <p id="descripcionListadoTorneos">
           Listado completo de torneos disponibles y finalizados.
         </p>
       </div>
+
+      <div class="torneos-list-icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          width="27"
+          height="27"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 6h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 18h16"></path>
+          <circle cx="2" cy="6" r=".5" fill="currentColor"></circle>
+          <circle cx="2" cy="12" r=".5" fill="currentColor"></circle>
+          <circle cx="2" cy="18" r=".5" fill="currentColor"></circle>
+        </svg>
+      </div>
+
     </div>
 
-    <div id="listaTorneosActuales" class="row g-4">
-      <!-- Cards dinámicas -->
+
+    <div
+      id="listaTorneosActuales"
+      class="torneos-grid"
+    >
+      <!-- Cards dinámicas generadas por JavaScript -->
     </div>
+
+  </section>
+
+
+  <!-- =========================================
+       INFORMACIÓN INFERIOR
+  ========================================== -->
+  <section class="torneos-help">
+
+    <span class="torneos-help-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.9"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 11v5"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+    </span>
+
+    <div>
+      <strong>
+        Información sobre las actividades
+      </strong>
+
+      <p>
+        Seleccioná una actividad para consultar sus detalles, categorías,
+        ubicación, transmisiones disponibles y resultados oficiales.
+      </p>
+    </div>
+
   </section>
 
 </section>
+

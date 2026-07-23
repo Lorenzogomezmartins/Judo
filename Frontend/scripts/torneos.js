@@ -136,52 +136,79 @@ function renderBotonesTransmisiones(torneo) {
 function crearCardTorneo(torneo, esAnterior = false) {
   const slug = obtenerSlugResultado(torneo);
 
+  const categorias = Array.isArray(torneo.categorias)
+    ? torneo.categorias
+        .map(
+          (categoria) => `
+            <span class="torneo-categoria">
+              ${categoria}
+            </span>
+          `
+        )
+        .join("")
+    : "";
+
   return `
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card h-100 shadow border-0 rounded-4 overflow-hidden">
-        <img
-          src="${obtenerImagenTorneo(torneo)}"
-          class="card-img-top"
-          alt="${torneo.nombre || "Evento"}"
-          style="height: 220px; object-fit: cover;"
-          onerror="this.src='../assets/Logos/Logo1.png'"
-        >
+    <div class="torneo-card">
 
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title fw-bold">
-            ${torneo.nombre || "Evento sin nombre"}
-          </h5>
+      <img
+        src="${obtenerImagenTorneo(torneo)}"
+        alt="${torneo.nombre || "Evento"}"
+        onerror="this.src='../assets/Logos/Logo1.png'"
+      >
 
-          <p class="mb-2">
-            <strong>Tipo:</strong> ${obtenerNombreTipoSingular(torneo.tipo || "torneo")}
-          </p>
+      <div class="torneo-card-body">
 
-          <p class="mb-2">
-            <strong>Fecha:</strong> ${formatearFecha(torneo.fecha)}
-          </p>
+        <div class="d-flex justify-content-between align-items-center mb-3">
 
-          <p class="mb-2">
-            <strong>Dirección:</strong> ${torneo.direccion || torneo.sede || "A confirmar"}
-          </p>
+          <span class="torneo-badge ${torneo.tipo || "torneo"}">
+            ${obtenerNombreTipoSingular(torneo.tipo || "torneo")}
+          </span>
 
-          <p class="mb-3">
-            <strong>Categorías:</strong> ${formatearCategorias(torneo.categorias)}
-          </p>
+          <span class="torneo-fecha">
+            📅 ${formatearFecha(torneo.fecha)}
+          </span>
 
-          <div class="mt-auto d-grid gap-2">
-            ${renderBotonesTransmisiones(torneo)}
-
-            <a
-  href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="btn btn-danger"
->
-  Ver resultados
-</a>
-          </div>
         </div>
+
+        <h3>
+          ${torneo.nombre || "Evento sin nombre"}
+        </h3>
+
+        <div class="torneo-info">
+
+          <div class="torneo-info-item">
+            📍
+            <span>
+              ${torneo.direccion || torneo.sede || "A confirmar"}
+            </span>
+          </div>
+
+        </div>
+
+        <div class="torneo-categorias">
+
+          ${categorias}
+
+        </div>
+
+        <div class="torneo-actions">
+
+          ${renderBotonesTransmisiones(torneo)}
+
+          <a
+            href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="torneo-btn torneo-btn-primary"
+          >
+            Ver resultados
+          </a>
+
+        </div>
+
       </div>
+
     </div>
   `;
 }
