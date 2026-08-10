@@ -101,6 +101,20 @@ export async function cargarProfesores() {
                   Sin capacitaciones registradas
                 </p>
               `
+                    }
+
+          ${
+            profesor.cv
+              ? `
+                <a
+                  href="${profesor.cv}"
+                  target="_blank"
+                  class="btn btn-outline-primary mt-3 w-100"
+                >
+                  Descargar CV
+                </a>
+              `
+              : ""
           }
 
         </div>

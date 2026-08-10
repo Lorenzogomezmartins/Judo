@@ -1,4 +1,8 @@
 import Profesor from "../../models/profesor.js";
+import {
+  subirBufferACloudinary,
+  subirCvACloudinary,
+} from "../../config/cloudinary.js";
 
 const actualizarProfesor = async (req, res) => {
   try {
@@ -8,9 +12,19 @@ const actualizarProfesor = async (req, res) => {
       data.capacitaciones = JSON.parse(data.capacitaciones);
     }
 
-    if (req.file) {
-      data.foto = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-    }
+    if (req.files?.foto) {
+  const imagen = await subirBufferACloudinary(
+    req.files.foto[0].buffer,
+    `profesor_${Date.now()}`
+  );
+
+  data.foto = imagen.secure_url;
+}
+
+if (req.files?.cv) {
+  const archivo = await subirCvACloudinary(req.files.cv[0]);
+  data.cv = archivo.secure_url;
+}
 
     const profesor = await Profesor.findByIdAndUpdate(
       req.params.id,
@@ -29,10 +43,14 @@ const actualizarProfesor = async (req, res) => {
 
     res.json(profesor);
   } catch (error) {
-    res.status(500).json({
-      mensaje: error.message,
-    });
-  }
+  console.error("ERROR ACTUALIZAR PROFESOR:");
+  console.error(error);
+
+  res.status(500).json({
+    mensaje: error.message,
+    stack: error.stack,
+  });
+}
 };
 
 export default actualizarProfesor;

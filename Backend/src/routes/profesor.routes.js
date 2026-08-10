@@ -21,7 +21,10 @@ router.post(
   '/',
   authMiddleware,
   adminOnly,
-  uploadFotoProfesor.single('foto'),
+  uploadFotoProfesor.fields([
+    { name: "foto", maxCount: 1 },
+    { name: "cv", maxCount: 1 },
+  ]),
   crearProfesor
 );
 
@@ -29,10 +32,12 @@ router.put(
   '/:id',
   authMiddleware,
   adminOnly,
-  uploadFotoProfesor.single('foto'),
+  uploadFotoProfesor.fields([
+    { name: "foto", maxCount: 1 },
+    { name: "cv", maxCount: 1 },
+  ]),
   actualizarProfesor
 );
-
 router.delete(
   '/:id',
   authMiddleware,

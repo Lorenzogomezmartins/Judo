@@ -759,6 +759,7 @@ async function guardarProfesor(e) {
   const club = document.getElementById("profesorClub").value.trim();
   const descripcion = document.getElementById("profesorDescripcion").value.trim();
   const fotoInput = document.getElementById("profesorFoto");
+  const cvInput = document.getElementById("profesorCv");
 
   const capacitacionesTexto = document
   .getElementById("profesorCapacitaciones")
@@ -815,6 +816,9 @@ const capacitaciones = capacitacionesTexto
     if (fotoInput.files.length > 0) {
       formData.append("foto", fotoInput.files[0]);
     }
+    if (cvInput.files.length > 0) {
+  formData.append("cv", cvInput.files[0]);
+}
 
     const url = id
       ? `${API_PROFESORES}/${id}`
@@ -828,8 +832,10 @@ const capacitaciones = capacitacionesTexto
     });
 
     if (!response.ok) {
-      throw new Error("Error guardando profesor");
-    }
+  const error = await response.json();
+  console.log(error);
+  throw new Error(error.mensaje || "Error guardando profesor");
+}
 
     alert(
       id

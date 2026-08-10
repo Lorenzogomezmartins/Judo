@@ -1,4 +1,8 @@
 import Profesor from "../../models/profesor.js";
+import {
+  subirBufferACloudinary,
+  subirCvACloudinary,
+} from "../../config/cloudinary.js";
 
 const crearProfesor = async (req, res) => {
   try {
@@ -16,21 +20,33 @@ const crearProfesor = async (req, res) => {
       capacitaciones = JSON.parse(req.body.capacitaciones);
     }
 
-    let fotoBase64 = null;
 
-    if (req.file) {
-      fotoBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-    }
+    let foto = null;
+let cv = null;
+
+if (req.files?.foto) {
+  const imagen = await subirBufferACloudinary(
+    req.files.foto[0].buffer,
+    `profesor_${Date.now()}`
+  );
+
+  foto = imagen.secure_url;
+}
+
+if (req.files?.cv) {
+  const archivo = await subirCvACloudinary(req.files.cv[0]);
+  cv = archivo.secure_url;
+}
 
     const profesor = new Profesor({
-      nombre,
-      apellido,
-      club,
-      descripcion,
-      foto: fotoBase64,
-      capacitaciones,
-    });
-
+  nombre,
+  apellido,
+  club,
+  descripcion,
+  foto,
+  cv,
+  capacitaciones,
+});
     await profesor.save();
 
     res.status(201).json(profesor);

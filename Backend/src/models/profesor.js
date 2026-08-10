@@ -55,6 +55,11 @@ const profesorSchema = new mongoose.Schema(
       trim: true,
     },
 
+    cv: {
+  type: String,
+  default: null,
+},
+
     capacitaciones: {
       type: [capacitacionSchema],
       default: [],

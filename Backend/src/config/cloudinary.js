@@ -32,4 +32,27 @@ export function subirBufferACloudinary(
   });
 }
 
+
+export function subirCvACloudinary(file) {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "fmj/cvs",
+        resource_type: "raw",
+        use_filename: true,
+        unique_filename: false,
+        filename_override: file.originalname,
+      },
+      (error, result) => {
+        if (error) return reject(error);
+
+        result.secure_url += `?fl_attachment=${encodeURIComponent(file.originalname)}`;
+
+        resolve(result);
+      }
+    );
+
+    uploadStream.end(file.buffer);
+  });
+}
 export default cloudinary;
