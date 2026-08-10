@@ -1,5 +1,5 @@
 // src/controllers/clubes/eliminarClub.js
-import Club from '../../models/Club.js';
+import Club from '../../models/club.js';
 
 const eliminarClub = async (req, res) => {
   try {

@@ -1,35 +1,25 @@
-// src/middlewares/uploadFotoProfesor.js
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import multer from "multer";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ruta real al Frontend/assets/Profesores
-const uploadPath = path.join(__dirname, '../../Frontend/assets/Profesores');
-
-// Crear carpeta si no existe
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) cb(null, true);
-  else cb(new Error('Solo imágenes'), false);
+  if (
+    file.mimetype.startsWith("image/") ||
+    file.mimetype === "application/pdf" ||
+    file.mimetype === "application/msword" ||
+    file.mimetype ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Solo se permiten imágenes, PDF o Word"), false);
+  }
 };
 
 export const uploadFotoProfesor = multer({
   storage,
   fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
 });

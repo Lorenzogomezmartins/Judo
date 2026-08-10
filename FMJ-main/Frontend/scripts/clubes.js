@@ -1,16 +1,16 @@
-async function cargarClubes() {
+export async function cargarClubes() {
   const grid = document.getElementById("clubesGrid");
   if (!grid) return;
 
   try {
-    const res = await fetch("http://localhost:3000/api/clubes");
+    const res = await fetch("/api/clubes");
     const clubes = await res.json();
 
     grid.innerHTML = "";
 
     clubes.forEach(c => {
-      const logoUrl = `http://localhost:3000${c.logo}`;
-
+  const logoUrl = c.logo || "/assets/imagenes/default.png";
+  
       const club = document.createElement("div");
       club.className = "club-logo-container";
 

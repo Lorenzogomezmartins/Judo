@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 
 import apiRoutes from './src/routes/RoutesMain.js';
 import connectDB from './src/config/db.js';
+import sincronizarResultadosFTPAutomatico from "./src/controllers/resultados/sincronizarResultadosFTPAutomatico.js";
+import { ejecutarImportacionRanking } from "./src/controllers/ranking/importarRanking.controller.js";
 
 dotenv.config();
 connectDB();
@@ -16,17 +18,59 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+// CORS
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-//  Servir TODO el frontend
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/* =========================
+   FRONTEND / ASSETS
+   Sirve todo lo que está dentro de Frontend
+   Ej: /assets/clubes/foto.jpg
+========================= */
+
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
-//  API
+/* =========================
+   VERIFICACIÓN RÁPIDA
+========================= */
+
+app.get('/test', (req, res) => {
+  res.json({ mensaje: "Servidor funcionando correctamente" });
+});
+
+/* =========================
+   API
+========================= */
+
 app.use('/api', apiRoutes);
 
-//  HOME = pages/main.html
+
+/* =========================
+   FTP AUTOMÁTICO
+========================= */
+
+setInterval(async () => {
+  try {
+    console.log("⏳ Revisando FTP automáticamente...");
+    await sincronizarResultadosFTPAutomatico();
+  } catch (error) {
+    console.error("❌ Error en FTP automático:", error.message);
+  }
+}, 5 * 60 * 1000);
+
+
+
+/* =========================
+   HOME
+========================= */
+
 app.get('/', (req, res) => {
   res.sendFile(
     path.join(__dirname, '../Frontend/pages/main.html')

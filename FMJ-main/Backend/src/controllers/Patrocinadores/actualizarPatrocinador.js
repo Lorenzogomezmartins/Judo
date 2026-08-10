@@ -1,4 +1,3 @@
-// controllers/patrocinadores/actualizarPatrocinador.js
 import Patrocinador from '../../models/patrocinador.js';
 
 const actualizarPatrocinador = async (req, res) => {
@@ -6,7 +5,7 @@ const actualizarPatrocinador = async (req, res) => {
     const data = { ...req.body };
 
     if (req.file) {
-      data.logo = req.file.filename;
+      data.logo = `/assets/Patrocinadores/${req.file.filename}`;
     }
 
     const patrocinador = await Patrocinador.findByIdAndUpdate(
@@ -16,10 +15,13 @@ const actualizarPatrocinador = async (req, res) => {
     );
 
     if (!patrocinador) {
-      return res.status(404).json({ mensaje: 'Patrocinador no encontrado' });
+      return res.status(404).json({
+        mensaje: 'Patrocinador no encontrado'
+      });
     }
 
     res.json(patrocinador);
+
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
   }

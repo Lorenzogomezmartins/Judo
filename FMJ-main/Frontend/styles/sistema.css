@@ -1,0 +1,224 @@
+/* =====================================================
+   CONTENEDOR GENERAL
+===================================================== */
+
+.sistema {
+  padding: 70px 0;
+  background:
+    linear-gradient(
+      180deg,
+      #f8f9fa 0%,
+      #ffffff 100%
+    );
+}
+
+.sistema-container {
+  max-width: 1200px;
+}
+
+
+/* =====================================================
+   TARJETAS
+===================================================== */
+
+.sistema-card {
+  background: white;
+
+  border-radius: 24px;
+
+  padding: 32px;
+
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.07);
+
+  margin-bottom: 28px;
+
+  border: 1px solid #ececec;
+}
+
+.sistema-card h4,
+.sistema-card h5 {
+  color: #111827;
+
+  font-weight: 800;
+
+  margin-bottom: 14px;
+
+  letter-spacing: 0.3px;
+}
+
+.sistema-card h4 {
+  font-size: 1.6rem;
+}
+
+.sistema-card h5 {
+  font-size: 1.2rem;
+}
+
+.sistema-card p {
+  color: #374151;
+
+  font-size: 1.03rem;
+
+  line-height: 1.9;
+
+  margin-bottom: 0;
+
+  font-weight: 500;
+}
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.sistema-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 10px;
+}
+
+.sistema-card-mini {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.sistema-card-mini:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.1);
+}
+
+/* =====================================================
+   DOCUMENTACIÓN
+===================================================== */
+
+.docs-lista {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin:
+    24px 0;
+}
+
+.docs-lista span {
+  background:
+    linear-gradient(
+      135deg,
+      #fff5f5,
+      #ffe5e5
+    );
+
+  color: #8f0000;
+
+  padding:
+    12px 18px;
+
+  border-radius: 14px;
+
+  font-weight: 700;
+
+  font-size: 0.96rem;
+
+  border: 1px solid #ffd3d3;
+}
+
+/* =====================================================
+   DESCARGA
+===================================================== */
+
+.sistema-descarga {
+  text-align: center;
+}
+
+.sistema-btn-descarga {
+  margin-top: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b30000,
+      #7a0000
+    );
+
+  color: white !important;
+
+  border: none;
+
+  border-radius: 16px;
+
+  padding:
+    16px 34px;
+
+  font-size: 1rem;
+  font-weight: 800;
+
+  letter-spacing: 0.3px;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.sistema-btn-descarga:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 28px rgba(179,0,0,0.22);
+
+  color: white !important;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .sistema {
+    padding: 40px 0;
+  }
+
+  .sistema-header {
+    flex-direction: column;
+    text-align: center;
+
+    padding: 26px 22px;
+  }
+
+  .titulo-sistema {
+    font-size: 1.75rem;
+  }
+
+  .sistema-subtitulo {
+    font-size: 1rem;
+  }
+
+  .sistema-card {
+    padding: 24px;
+  }
+
+  .sistema-card h4 {
+    font-size: 1.4rem;
+  }
+
+  .sistema-card p {
+    font-size: 1rem;
+  }
+
+  .docs-lista {
+    justify-content: center;
+  }
+
+  .sistema-btn-descarga {
+    width: 100%;
+  }
+}

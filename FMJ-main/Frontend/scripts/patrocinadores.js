@@ -1,15 +1,15 @@
-async function cargarPatrocinadores() {
+export async function cargarPatrocinadores() {
   const grid = document.getElementById("sponsorsGrid");
   if (!grid) return;
 
   try {
-    const res = await fetch("http://localhost:3000/api/patrocinadores");
+    const res = await fetch("/api/patrocinadores");
     const patrocinadores = await res.json();
 
     grid.innerHTML = "";
 
     patrocinadores.forEach(p => {
-      const logoUrl = `http://localhost:3000${p.logo}`;
+  const logoUrl = p.logo || "/assets/imagenes/default.png";
 
       grid.innerHTML += `
         <div class="sponsor-item">

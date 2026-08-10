@@ -15,11 +15,10 @@ export const authMiddleware = (req, res, next) => {
     req.user = decoded; // id y rol
     next();
   } catch (error) {
-    res.status(401).json({ mensaje: 'Token inválido' });
+    return res.status(401).json({ mensaje: 'Token inválido o vencido' });
   }
 };
 
-// Middleware opcional para roles específicos
 export const adminOnly = (req, res, next) => {
   if (req.user.rol !== 'admin' && req.user.rol !== 'superadmin') {
     return res.status(403).json({ mensaje: 'Acceso denegado' });

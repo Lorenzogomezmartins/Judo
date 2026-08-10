@@ -1,100 +1,188 @@
-let monthYear;
-let calendarDays;
-let modal;
-let closeModal;
-let eventTitle;
-let eventInfo;
+const API_TORNEOS = "/api/torneos";
 
-let currentDate;
-let events;
+let currentDate = new Date();
+let eventos = {};
 
-function inicializarCalendario() {
+export async function inicializarCalendario() {
+  await obtenerEventosDesdeTorneos();
+  renderCalendar();
 
-  // Referencias al DOM (AHORA sí existen)
-  monthYear = document.getElementById("monthYear");
-  calendarDays = document.getElementById("calendarDays");
-
-  modal = document.getElementById("eventModal");
-  closeModal = document.getElementById("closeModal");
-  eventTitle = document.getElementById("eventTitle");
-  eventInfo = document.getElementById("eventInfo");
-
-  // Seguridad
-  if (!monthYear || !calendarDays) {
-    console.error("Calendario: elementos no encontrados");
-    return;
-  }
-
-  currentDate = new Date();
-
-  /* EVENTOS DE EJEMPLO */
-  events = {
-    "2026-1-15": {
-      title: "Torneo Metropolitano",
-      info: "Lugar: Buenos Aires | Horario: 10:00"
-    },
-    "2026-1-22": {
-      title: "Examen de Cinturones",
-      info: "Club Central | 18:00"
-    }
-  };
-
-  // Botones
-  document.getElementById("prevMonth").onclick = () => {
+  document.getElementById("prevMonth")?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar(monthYear, calendarDays, currentDate, events, eventTitle, eventInfo, modal);
-  };
+    renderCalendar();
+  });
 
-  document.getElementById("nextMonth").onclick = () => {
+  document.getElementById("nextMonth")?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar(monthYear, calendarDays, currentDate, events, eventTitle, eventInfo, modal);
-  };
+    renderCalendar();
+  });
 
-  closeModal.onclick = () => modal.classList.add("hidden");
-
-  renderCalendar(monthYear, calendarDays, currentDate, events, eventTitle, eventInfo, modal);
+  inicializarModal();
 }
 
-function renderCalendar(monthYear, calendarDays, currentDate, events, eventTitle, eventInfo, modal) {
+async function obtenerEventosDesdeTorneos() {
+  try {
+    const response = await fetch(API_TORNEOS);
+
+    if (!response.ok) {
+      throw new Error("Error al obtener torneos");
+    }
+
+    const torneos = await response.json();
+    eventos = {};
+
+    torneos.forEach((torneo) => {
+      if (!torneo.fecha) return;
+
+      const fecha = new Date(torneo.fecha);
+
+      const year = fecha.getUTCFullYear();
+      const month = fecha.getUTCMonth();
+      const day = fecha.getUTCDate();
+
+      const key = `${year}-${month}-${day}`;
+
+      if (!eventos[key]) {
+        eventos[key] = [];
+      }
+
+      eventos[key].push(torneo);
+    });
+  } catch (error) {
+    console.error("Error cargando torneos:", error);
+  }
+}
+
+function renderCalendar() {
+  const monthYear = document.getElementById("monthYear");
+  const calendarDays = document.getElementById("calendarDays");
+
+  if (!monthYear || !calendarDays) return;
+
   calendarDays.innerHTML = "";
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  monthYear.textContent =
-    currentDate.toLocaleDateString("es-ES", {
-      month: "long",
-      year: "numeric"
-    });
+  monthYear.textContent = currentDate.toLocaleString("es-ES", {
+    month: "long",
+    year: "numeric",
+  });
 
-  const firstDay = new Date(year, month, 1).getDay() || 7;
+  const firstDay = new Date(year, month, 1);
+  let startDay = firstDay.getDay();
+  startDay = startDay === 0 ? 6 : startDay - 1;
+
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  for (let i = 1; i < firstDay; i++) {
-    calendarDays.innerHTML += `<div></div>`;
+  for (let i = 0; i < startDay; i++) {
+    calendarDays.innerHTML += `<div class="empty-day"></div>`;
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateKey = `${year}-${month + 1}-${day}`;
-    let eventHTML = "";
+    const key = `${year}-${month}-${day}`;
+    const eventosDia = eventos[key] || [];
 
-    if (events[dateKey]) {
-      eventHTML = `<div class="event">${events[dateKey].title}</div>`;
-    }
+    const dayDiv = document.createElement("div");
+    dayDiv.classList.add("day");
 
-    calendarDays.innerHTML += `
-      <div class="day" onclick="openEvent('${dateKey}')">
-        <div class="day-number">${day}</div>
-        ${eventHTML}
-      </div>
+    dayDiv.innerHTML = `
+      <div class="day-number">${day}</div>
     `;
+
+    eventosDia.forEach((torneo) => {
+      const fechaEvento = new Date(torneo.fecha);
+      const hoy = new Date();
+
+      hoy.setHours(0, 0, 0, 0);
+      fechaEvento.setHours(0, 0, 0, 0);
+
+      const esPasado = fechaEvento < hoy;
+
+     const tipo = torneo.tipo || "torneo";
+
+const eventoDiv = document.createElement("div");
+
+if (tipo === "torneo") {
+  eventoDiv.classList.add("event", esPasado ? "red" : "green");
+} else {
+  eventoDiv.classList.add("event", "yellow");
+}
+
+const etiquetaTipo =
+  tipo === "curso"
+    ? "Curso"
+    : tipo === "capacitacion"
+      ? "Capacitación"
+      : tipo === "evento"
+        ? "Evento"
+        : "Torneo";
+
+eventoDiv.textContent = `${etiquetaTipo}: ${torneo.nombre || "Sin nombre"}`;
+
+      eventoDiv.addEventListener("click", (e) => {
+        e.stopPropagation();
+        abrirModal(torneo);
+      });
+
+      dayDiv.appendChild(eventoDiv);
+    });
+
+    calendarDays.appendChild(dayDiv);
   }
 }
 
-function openEvent(dateKey) {
-  if (!events[dateKey]) return;
+function inicializarModal() {
+  const closeBtn = document.getElementById("closeModal");
+  const modal = document.getElementById("eventModal");
 
-  eventTitle.textContent = events[dateKey].title;
-  eventInfo.textContent = events[dateKey].info;
+  closeBtn?.addEventListener("click", cerrarModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      cerrarModal();
+    }
+  });
+}
+
+function abrirModal(torneo) {
+  const modal = document.getElementById("eventModal");
+  const title = document.getElementById("eventTitle");
+  const fecha = document.getElementById("eventFecha");
+  const direccion = document.getElementById("eventDireccion");
+  const categorias = document.getElementById("eventCategorias");
+  const image = document.getElementById("eventImage");
+
+  if (!modal) return;
+
+  title.textContent = torneo.nombre || "Torneo";
+
+  fecha.textContent = torneo.fecha
+    ? new Date(torneo.fecha).toLocaleDateString("es-AR")
+    : "-";
+
+  direccion.textContent = torneo.direccion || "-";
+
+  categorias.textContent = Array.isArray(torneo.categorias)
+    ? torneo.categorias.join(", ")
+    : torneo.categorias || "-";
+
+  const foto =
+    Array.isArray(torneo.fotos) && torneo.fotos.length > 0
+      ? torneo.fotos[0]
+      : "";
+
+  if (foto) {
+    image.src = foto;
+    image.style.display = "block";
+  } else {
+    image.src = "";
+    image.style.display = "none";
+  }
+
   modal.classList.remove("hidden");
+}
+
+function cerrarModal() {
+  document.getElementById("eventModal")?.classList.add("hidden");
 }

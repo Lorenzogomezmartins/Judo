@@ -1,35 +1,62 @@
 <section class="contenido container mt-5">
-  <a href="#/torneos" class="btn btn-outline-secondary mb-4">
-    ← Volver a Torneos
-  </a>
-  <h2 class="text-center mb-4">Torneos Disponibles</h2>
 
-  <div class="row g-4">
-
-    <div class="col-md-4">
-      <div class="card h-100 shadow">
-        <div class="card-body">
-          <h5 class="card-title">Torneo Metropolitano</h5>
-          <p><strong>Fecha:</strong> 15/06/2026</p>
-          <p><strong>Lugar:</strong> Estadio Central</p>
-          <p><strong>Estado:</strong> Inscripción Abierta</p>
-          <button class="btn btn-primary w-100">Inscribirse</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card h-100 shadow">
-        <div class="card-body">
-          <h5 class="card-title">Copa Juvenil FMJ</h5>
-          <p><strong>Fecha:</strong> 30/07/2026</p>
-          <p><strong>Lugar:</strong> Polideportivo Norte</p>
-          <p><strong>Estado:</strong> Próximamente</p>
-          <button class="btn btn-primary w-100">Inscribirse</button>
-        </div>
-      </div>
-    </div>
-
+  <!-- BOTÓN VOLVER -->
+  <div class="mb-4">
+    <a href="#/torneos" class="btn btn-outline-secondary">
+      ← Volver a Torneos
+    </a>
   </div>
+
+  <!-- HEADER -->
+  <header class="text-center mb-5">
+    <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">
+      Próximas competencias
+    </span>
+
+    <h2 class="fw-bold mb-2">
+      Torneos Disponibles
+    </h2>
+
+    <p class="text-muted mb-0">
+      Consultá próximos torneos, categorías, sedes y fechas de inscripción.
+    </p>
+  </header>
+
+  <!-- BUSCADOR -->
+  <section class="row justify-content-center mb-5">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="input-group input-group-lg shadow-sm">
+        <span class="input-group-text bg-white">
+          🔎
+        </span>
+
+        <input
+          type="text"
+          id="buscadorTorneosActuales"
+          class="form-control"
+          placeholder="Buscar torneo por nombre, lugar o categoría..."
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTADO -->
+  <section>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h4 class="fw-bold mb-1">
+          Próximos Torneos
+        </h4>
+
+        <p class="text-muted mb-0">
+          Eventos abiertos y competencias próximas.
+        </p>
+      </div>
+    </div>
+
+    <div id="listaTorneosActuales" class="row g-4">
+      <!-- Cards dinámicas -->
+    </div>
+  </section>
 
 </section>

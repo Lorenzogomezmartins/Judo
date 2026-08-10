@@ -1,5 +1,5 @@
 // src/controllers/clubes/listarClubes.js
-import Club from '../../models/Club.js';
+import Club from '../../models/club.js';
 
 const listarClubes = async (req, res) => {
   try {

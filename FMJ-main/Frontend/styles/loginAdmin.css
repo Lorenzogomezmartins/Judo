@@ -1,0 +1,176 @@
+/* =====================================================
+   LOGIN ADMIN - FMJ
+   Este CSS solo afecta al partial LoginAdmin.html
+===================================================== */
+
+.login-admin-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  color: #020617;
+  font-family: 'Playfair Display', serif;
+}
+
+/* =====================================================
+   HEADER LOGIN
+===================================================== */
+
+.login-admin-header {
+  width: 100%;
+  background-color: #b30000;
+  color: #e5e7eb;
+  padding: 20px 40px;
+}
+
+.login-admin-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.login-admin-logos img {
+  height: 100px;
+  width: 150px;
+  object-fit: contain;
+}
+
+.login-admin-logos h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* =====================================================
+   BOTÓN VOLVER
+===================================================== */
+
+.volver-inicio {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  text-decoration: none;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.volver-inicio:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+
+/* =====================================================
+   CONTENEDOR LOGIN
+===================================================== */
+
+.login-admin-main {
+  max-width: 480px;
+  margin: 70px auto;
+  background: #ffffff;
+  padding: 45px;
+  border-radius: 12px;
+  border: 2px solid #d1d5db;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.login-admin-main h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #020617;
+  font-size: 1.5rem;
+}
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+
+#formAdmin {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+#formAdmin label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+#formAdmin input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #000;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+#formAdmin input:focus {
+  outline: none;
+  border-color: #b30000;
+  box-shadow: 0 0 0 3px rgba(179, 0, 0, 0.12);
+}
+
+/* =====================================================
+   BOTÓN
+===================================================== */
+
+#formAdmin button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background-color: #b30000;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#formAdmin button:hover {
+  background-color: #7a0000;
+}
+
+/* =====================================================
+   ERROR LOGIN
+===================================================== */
+
+#errorLogin {
+  margin: 0;
+  text-align: center;
+  color: #b30000;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+  .login-admin-header {
+    padding: 20px;
+  }
+
+  .login-admin-logos {
+    gap: 12px;
+  }
+
+  .login-admin-logos img {
+    height: 70px;
+    width: 70px;
+  }
+
+  .login-admin-logos h1 {
+    font-size: 1.3rem;
+  }
+
+  .login-admin-main {
+    margin: 40px 20px;
+    padding: 30px;
+  }
+}

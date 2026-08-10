@@ -8,6 +8,7 @@ import actualizarClub from '../controllers/Clubes/actualizarClub.js';
 import eliminarClub from '../controllers/Clubes/eliminarClub.js';
 
 import { uploadLogoClub } from '../middlewares/uploadLogoClub.js';
+import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
@@ -15,27 +16,32 @@ const router = Router();
    RUTAS CLUBES
 ========================= */
 
-// Listar todos
+// Públicas
 router.get('/', listarClubes);
-
-// Obtener por nombre 
 router.get('/nombre/:nombre', obtenerClub);
 
-// Crear club
+// Protegidas
 router.post(
   '/',
+  authMiddleware,
+  adminOnly,
   uploadLogoClub.single('logo'),
   crearClub
 );
 
-// Actualizar por ID
 router.put(
   '/:id',
+  authMiddleware,
+  adminOnly,
   uploadLogoClub.single('logo'),
   actualizarClub
 );
 
-// Eliminar por ID
-router.delete('/:id', eliminarClub);
+router.delete(
+  '/:id',
+  authMiddleware,
+  adminOnly,
+  eliminarClub
+);
 
 export default router;

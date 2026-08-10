@@ -8,13 +8,36 @@ import actualizarPatrocinador from '../controllers/Patrocinadores/actualizarPatr
 import eliminarPatrocinador from '../controllers/Patrocinadores/eliminarPatrocinador.js';
 
 import { uploadLogo } from '../middlewares/uploadLogo.js';
+import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
+// Públicas
 router.get('/', listarPatrocinadores);
 router.get('/:id', obtenerPatrocinador);
-router.post('/', uploadLogo.single('logo'), crearPatrocinador);
-router.put('/:id', uploadLogo.single('logo'), actualizarPatrocinador);
-router.delete('/:id', eliminarPatrocinador);
+
+// Protegidas
+router.post(
+  '/',
+  authMiddleware,
+  adminOnly,
+  uploadLogo.single('logo'),
+  crearPatrocinador
+);
+
+router.put(
+  '/:id',
+  authMiddleware,
+  adminOnly,
+  uploadLogo.single('logo'),
+  actualizarPatrocinador
+);
+
+router.delete(
+  '/:id',
+  authMiddleware,
+  adminOnly,
+  eliminarPatrocinador
+);
 
 export default router;
