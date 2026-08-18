@@ -1,5 +1,5 @@
 import Inscripcion from "../../models/inscripcion.js";
-import Torneo from "../../models/torneo.js";
+import Torneo from "../../models/Torneo.js";
 
 const crearInscripcion = async (req, res) => {
   try {

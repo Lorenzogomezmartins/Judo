@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import crearInscripcion from "../controllers/inscripcionesTorneo/crearInscripcion.js";
+import crearInscripcion from "../controllers/inscripcionesTorneo/crearnscripcion.js";
 import listarInscripciones from "../controllers/inscripcionesTorneo/listarInscripciones.js";
 import obtenerInscripcion from "../controllers/inscripcionesTorneo/obtenerInscripcion.js";
 import actualizarInscripcion from "../controllers/inscripcionesTorneo/actualizarInscripcion.js";
