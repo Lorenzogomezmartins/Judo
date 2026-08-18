@@ -33,26 +33,21 @@ export function subirBufferACloudinary(
 }
 
 
-export function subirCvACloudinary(file) {
+export function subirCvACloudinary(buffer, nombreArchivo) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: "fmj/cvs",
+        public_id: `cv_${Date.now()}`,
         resource_type: "raw",
-        use_filename: true,
-        unique_filename: false,
-        filename_override: file.originalname,
       },
       (error, result) => {
         if (error) return reject(error);
-
-        result.secure_url += `?fl_attachment=${encodeURIComponent(file.originalname)}`;
-
         resolve(result);
       }
     );
 
-    uploadStream.end(file.buffer);
+    uploadStream.end(buffer);
   });
 }
 export default cloudinary;

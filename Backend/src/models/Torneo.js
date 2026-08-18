@@ -5,6 +5,7 @@ const torneoSchema = new mongoose.Schema(
     nombre: {
       type: String,
       required: true,
+      trim: true,
     },
 
     tipo: {
@@ -27,6 +28,7 @@ const torneoSchema = new mongoose.Schema(
 
     descripcion: {
       type: String,
+      default: "",
     },
 
     fotos: [
@@ -37,36 +39,61 @@ const torneoSchema = new mongoose.Schema(
 
     direccion: {
       type: String,
+      default: "",
     },
 
     reglas: {
       type: String,
-    },
-    
-    transmisiones: [
-  {
-    titulo: {
-      type: String,
       default: "",
     },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
-],
+
+    transmisiones: [
+      {
+        titulo: {
+          type: String,
+          default: "",
+        },
+
+        url: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+
     categorias: [
       {
         type: String,
       },
     ],
 
+    // ==========================================
+    // INSCRIPCIONES
+    // ==========================================
+
+    inscripcionesHabilitadas: {
+      type: Boolean,
+      default: false,
+    },
+
+    inscripcionDesde: {
+      type: Date,
+      default: null,
+    },
+
+    inscripcionHasta: {
+      type: Date,
+      default: null,
+    },
+
+    // ==========================================
+    // GOOGLE CALENDAR
+    // ==========================================
+
     googleCalendarEventId: {
       type: String,
       default: "",
     },
-
-
 
     activo: {
       type: Boolean,
@@ -78,4 +105,6 @@ const torneoSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Torneo", torneoSchema);
+const Torneo = mongoose.models.Torneo || mongoose.model("Torneo", torneoSchema);
+
+export default Torneo;

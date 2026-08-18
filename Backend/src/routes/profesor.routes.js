@@ -6,6 +6,9 @@ import listarProfesores from '../controllers/Profesores/listarProfesores.js';
 import obtenerProfesor from '../controllers/Profesores/obtenerProfesor.js';
 import actualizarProfesor from '../controllers/Profesores/actualizarProfesor.js';
 import eliminarProfesor from '../controllers/Profesores/eliminarProfesor.js';
+import {
+  importarProfesoresDesdeSheets,
+} from "../controllers/Profesores/importarProfesoresSheets.js";
 
 import { uploadFotoProfesor } from '../middlewares/uploadFotoProfesor.js';
 import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
@@ -44,5 +47,10 @@ router.delete(
   adminOnly,
   eliminarProfesor
 );
-
+router.post(
+  "/importar-sheets",
+  authMiddleware,
+  adminOnly,
+  importarProfesoresDesdeSheets
+);
 export default router;

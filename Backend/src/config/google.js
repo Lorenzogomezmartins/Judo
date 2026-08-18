@@ -62,15 +62,20 @@ export async function descargarArchivoDrive(fileId) {
 export function extraerDriveId(url = "") {
   if (!url) return null;
 
-  const matchId = url.match(/id=([^&]+)/);
-  if (matchId) return matchId[1];
-
-  const matchFile = url.match(/\/d\/([^/]+)/);
+  // Link normal de Drive: /file/d/ID/view
+  const matchFile = url.match(/\/file\/d\/([^/]+)/);
   if (matchFile) return matchFile[1];
+
+  // Link: /d/ID/view
+  const matchD = url.match(/\/d\/([^/]+)/);
+  if (matchD) return matchD[1];
+
+  // Link con ?id=ID
+  const matchId = url.match(/[?&]id=([^&]+)/);
+  if (matchId) return matchId[1];
 
   return null;
 }
-
 // ===============================
 // GOOGLE CALENDAR
 // ===============================
@@ -192,4 +197,20 @@ export async function listarEventosCalendario() {
   });
 
   return response.data.items || [];
+}
+
+export async function obtenerFilasProfesores() {
+  const client = await auth.getClient();
+
+  const sheets = google.sheets({
+    version: "v4",
+    auth: client,
+  });
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEET_PROFESORES_ID,
+    range: "Respuestas de formulario 1!A:Z",
+  });
+
+  return response.data.values || [];
 }

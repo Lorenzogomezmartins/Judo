@@ -9,12 +9,17 @@ const rankingUsuarioSchema = new mongoose.Schema(
     categoria: { type: String },
     clave: { type: String },
 
-    abiertoCiudad2025: {
+    abiertoCiudad2026: {
       posicion: { type: String },
       puntaje: { type: Number, default: 0 },
     },
 
-    torneoMetropolitano2025: {
+    copaDoblas2026: {
+      posicion: { type: String },
+      puntaje: { type: Number, default: 0 },
+    },
+
+    torneoMetropolitano2026: {
       posicion: { type: String },
       puntaje: { type: Number, default: 0 },
     },

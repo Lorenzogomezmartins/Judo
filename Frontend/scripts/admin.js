@@ -216,6 +216,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
+
+document.addEventListener("click", async (e) => {
+  if (e.target.id !== "btn-importar-profesores") return;
+
+  const confirmar = confirm(
+    "¿Querés importar los profesores desde Google Sheets?"
+  );
+
+  if (!confirmar) return;
+
+  try {
+    const respuesta = await fetchProtegido(
+      "/api/profesores/importar-sheets",
+      {
+        method: "POST",
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+      throw new Error(
+        resultado.error || resultado.mensaje
+      );
+    }
+
+    alert(
+      `Importación terminada.\n\n` +
+      `Creados: ${resultado.creados}\n` +
+      `Actualizados: ${resultado.actualizados}\n` +
+      `Errores: ${JSON.stringify(resultado.errores, null, 2)}`
+    );
+
+    // Volver a cargar profesores
+    if (typeof cargarProfesores === "function") {
+      await cargarProfesores();
+    }
+  } catch (error) {
+    console.error(error);
+    alert(
+      "Error importando profesores: " +
+      error.message
+    );
+  }
+});
  // ============================
   // GALERIA
   // ============================
@@ -709,8 +755,8 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
         </div>
 
         <div class="club-col">
-          ${profesor.descripcion || "-"}
-        </div>
+  ${profesor.club || "-"}
+</div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
           <button 

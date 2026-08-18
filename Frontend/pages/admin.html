@@ -385,7 +385,7 @@
       </div>
     </section>
 
-   <!-- PROFESORES -->
+<!-- PROFESORES -->
 <section class="tab-pane fade" id="profesores">
   <div class="card p-4 shadow-sm">
     <h4 class="mb-4">Gestión de Profesores</h4>
@@ -398,10 +398,21 @@
         placeholder="Filtrar por nombre..."
       >
 
-      <button class="btn btn-success" id="btnNuevoProfesorr">
-        <i class="bi bi-plus-lg"></i>
-        Agregar Profesor
-      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-success" id="btnNuevoProfesorr">
+          <i class="bi bi-plus-lg"></i>
+          Agregar Profesor
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="btn-importar-profesores"
+        >
+          <i class="bi bi-cloud-arrow-down"></i>
+          Importar desde Google Sheets
+        </button>
+      </div>
     </div>
 
     <div

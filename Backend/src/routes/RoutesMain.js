@@ -6,10 +6,10 @@ import clubRoutes from './club.routes.js';
 import AdminRoutes from './Admin.routes.js';
 import usuarioRoutes from './usuario.routes.js';
 import TorneosRoutes from './torneo.routes.js';
-import inscripcionRoutes from './inscripcion.routes.js';
 import resultadosRoutes from './resultados.routes.js';
 import rankingRoutes from './ranking.routes.js';
 import galeriaRoutes from "./galeria.routes.js";
+import inscripcionesTorneoRoutes from './inscripcionesTorneo.routes.js';
 
 import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
 
@@ -29,10 +29,10 @@ router.use('/clubes', clubRoutes);
 router.use('/Administradores', AdminRoutes);
 router.use('/usuarios', usuarioRoutes);
 router.use('/torneos', TorneosRoutes);
-router.use('/inscripciones', inscripcionRoutes);
 router.use('/resultados', resultadosRoutes);
 router.use('/ranking', rankingRoutes);
 router.use("/galeria", galeriaRoutes);
+router.use('/inscripciones-torneo', inscripcionesTorneoRoutes);
 
 // Ruta de prueba protegida
 router.get('/admin/verificar', authMiddleware, adminOnly, (req, res) => {

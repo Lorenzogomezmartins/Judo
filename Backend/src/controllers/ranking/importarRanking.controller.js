@@ -40,14 +40,18 @@ function hayCambios(usuarioExistente, datosNuevos) {
     usuarioExistente.sexo !== datosNuevos.sexo ||
     Number(usuarioExistente.puntajeTotal || 0) !==
       Number(datosNuevos.puntajeTotal || 0) ||
-    usuarioExistente.abiertoCiudad2025?.posicion !==
-      datosNuevos.abiertoCiudad2025.posicion ||
-    Number(usuarioExistente.abiertoCiudad2025?.puntaje || 0) !==
-      Number(datosNuevos.abiertoCiudad2025.puntaje || 0) ||
-    usuarioExistente.torneoMetropolitano2025?.posicion !==
-      datosNuevos.torneoMetropolitano2025.posicion ||
-    Number(usuarioExistente.torneoMetropolitano2025?.puntaje || 0) !==
-      Number(datosNuevos.torneoMetropolitano2025.puntaje || 0)
+    usuarioExistente.abiertoCiudad2026?.posicion !==
+      datosNuevos.abiertoCiudad2026.posicion ||
+    Number(usuarioExistente.abiertoCiudad2026?.puntaje || 0) !==
+      Number(datosNuevos.abiertoCiudad2026.puntaje || 0) ||
+    usuarioExistente.copaDoblas2026?.posicion !==
+      datosNuevos.copaDoblas2026.posicion ||
+    Number(usuarioExistente.copaDoblas2026?.puntaje || 0) !==
+      Number(datosNuevos.copaDoblas2026.puntaje || 0) ||
+    usuarioExistente.torneoMetropolitano2026?.posicion !==
+      datosNuevos.torneoMetropolitano2026.posicion ||
+    Number(usuarioExistente.torneoMetropolitano2026?.puntaje || 0) !==
+      Number(datosNuevos.torneoMetropolitano2026.puntaje || 0)
   );
 }
 
@@ -88,15 +92,17 @@ export async function ejecutarImportacionRanking() {
       const abiertoPosicion = normalizarTexto(fila[6]);
       const abiertoPuntaje = normalizarNumero(fila[7]);
 
-      const metropolitanoPosicion = normalizarTexto(fila[8]);
-      const metropolitanoPuntaje = normalizarNumero(fila[9]);
+      const copaDoblasPosicion = normalizarTexto(fila[8]);
+const copaDoblasPuntaje = normalizarNumero(fila[9]);
 
-      const puntajeTotal = normalizarNumero(fila[10]);
-      const fotoDriveUrl = normalizarTexto(fila[11]);
+const metropolitanoPosicion = normalizarTexto(fila[10]);
+const metropolitanoPuntaje = normalizarNumero(fila[11]);
 
-      // Si después agregás Peso y Sexo al Excel, usá estas columnas
-      const peso = normalizarNumero(fila[12]);
-      const sexo = normalizarSexo(fila[13]);
+const puntajeTotal = normalizarNumero(fila[12]);
+const fotoDriveUrl = normalizarTexto(fila[13]);
+
+const peso = normalizarNumero(fila[14]);
+const sexo = normalizarSexo(fila[15]);
 
       if (!dni) {
         omitidasSinDni++;
@@ -144,15 +150,20 @@ export async function ejecutarImportacionRanking() {
         peso,
         sexo,
 
-        abiertoCiudad2025: {
-          posicion: abiertoPosicion,
-          puntaje: abiertoPuntaje,
-        },
+        abiertoCiudad2026: {
+  posicion: abiertoPosicion,
+  puntaje: abiertoPuntaje,
+},
 
-        torneoMetropolitano2025: {
-          posicion: metropolitanoPosicion,
-          puntaje: metropolitanoPuntaje,
-        },
+copaDoblas2026: {
+  posicion: copaDoblasPosicion,
+  puntaje: copaDoblasPuntaje,
+},
+
+torneoMetropolitano2026: {
+  posicion: metropolitanoPosicion,
+  puntaje: metropolitanoPuntaje,
+},
 
         puntajeTotal,
 
@@ -166,9 +177,11 @@ export async function ejecutarImportacionRanking() {
           categoria,
           clave,
           abiertoPosicion,
-          abiertoPuntaje,
-          metropolitanoPosicion,
-          metropolitanoPuntaje,
+abiertoPuntaje,
+copaDoblasPosicion,
+copaDoblasPuntaje,
+metropolitanoPosicion,
+metropolitanoPuntaje,
           puntajeTotal,
           fotoDriveUrl,
           peso,

@@ -12,7 +12,7 @@ export async function cargarRankingUsuarios() {
 
   tbody.innerHTML = `
     <tr>
-      <td colspan="6">Cargando ranking...</td>
+      <td colspan="9">Cargando ranking...</td>
     </tr>
   `;
 
@@ -27,7 +27,7 @@ export async function cargarRankingUsuarios() {
     if (!Array.isArray(usuarios)) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="6">Error en el formato del ranking.</td>
+          <td colspan="9">Error en el formato del ranking.</td>
         </tr>
       `;
       return;
@@ -46,7 +46,7 @@ export async function cargarRankingUsuarios() {
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">Error al cargar ranking.</td>
+        <td colspan="9">Error al cargar ranking.</td>
       </tr>
     `;
   }
@@ -200,7 +200,7 @@ function renderizarRanking(usuarios) {
   if (!usuarios.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">
+        <td colspan="9">
           No hay usuarios para mostrar.
         </td>
       </tr>
@@ -216,9 +216,7 @@ function renderizarRanking(usuarios) {
 
     fila.innerHTML = `
   <td class="fw-bold">
-    ${rankingUsuarios.findIndex(
-  (u) => u.dni === usuario.dni
-) + 1}
+    ${usuarios.indexOf(usuario) + 1}
   </td>
 
   <td>
@@ -238,44 +236,56 @@ function renderizarRanking(usuarios) {
   </td>
 
   <td class="fw-semibold">
-    ${usuario.nombre || "-"} ${usuario.apellido || "-"}
-  </td>
+  ${usuario.nombre || "-"} ${usuario.apellido || "-"}
+</td>
 
-  <td>
-    ${usuario.categoria || "-"}
-  </td>
+<td>
+  ${usuario.categoria || "-"}
+</td>
 
-  <td>
-    ${usuario.institucion || "-"}
-  </td>
+<td>
+  ${usuario.institucion || "-"}
+</td>
 
-  <td>
-    <div class="fw-semibold">
-      Posición:
-      ${usuario.abiertoCiudad2025?.posicion || "-"}
-    </div>
+<td>
+  <div class="fw-semibold">
+    Posición:
+    ${usuario.abiertoCiudad2026?.posicion || "-"}
+  </div>
 
-    <small class="text-muted">
-      Puntaje:
-      ${usuario.abiertoCiudad2025?.puntaje ?? 0}
-    </small>
-  </td>
+  <small class="text-muted">
+    Puntaje:
+    ${usuario.abiertoCiudad2026?.puntaje ?? 0}
+  </small>
+</td>
 
-  <td>
-    <div class="fw-semibold">
-      Posición:
-      ${usuario.torneoMetropolitano2025?.posicion || "-"}
-    </div>
+<td>
+  <div class="fw-semibold">
+    Posición:
+    ${usuario.copaDoblas2026?.posicion || "-"}
+  </div>
 
-    <small class="text-muted">
-      Puntaje:
-      ${usuario.torneoMetropolitano2025?.puntaje ?? 0}
-    </small>
-  </td>
+  <small class="text-muted">
+    Puntaje:
+    ${usuario.copaDoblas2026?.puntaje ?? 0}
+  </small>
+</td>
 
-  <td class="fw-bold text-danger">
-    ${usuario.puntos}
-  </td>
+<td>
+  <div class="fw-semibold">
+    Posición:
+    ${usuario.torneoMetropolitano2026?.posicion || "-"}
+  </div>
+
+  <small class="text-muted">
+    Puntaje:
+    ${usuario.torneoMetropolitano2026?.puntaje ?? 0}
+  </small>
+</td>
+
+<td class="fw-bold text-danger">
+  ${usuario.puntos}
+</td>
 `;
 
 tbody.appendChild(fila);
