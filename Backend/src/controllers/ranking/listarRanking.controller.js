@@ -14,4 +14,4 @@ export async function listarRanking(req, res) {
       error: error.message,
     });
   }
-}
+} 

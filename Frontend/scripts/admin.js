@@ -1279,7 +1279,17 @@ async function importarInscripcionesSheets() {
     return;
   }
 
+  const boton = document.getElementById("btnImportarInscripciones");
+
   try {
+    if (boton) {
+      boton.disabled = true;
+      boton.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Importando...
+      `;
+    }
+
     const response = await fetchProtegido(
       `${API_RANKING}/importar-sheets`,
       {
@@ -1297,16 +1307,43 @@ async function importarInscripcionesSheets() {
       );
     }
 
-    alert(
-      `${resultado.mensaje}\n\n` +
-      `Creadas: ${resultado.creadas ?? 0}\n` +
-      `Actualizadas: ${resultado.actualizadas ?? 0}\n` +
-      `Sin cambios: ${resultado.sinCambios ?? 0}\n` +
-      `Sin DNI: ${resultado.omitidasSinDni ?? 0}\n` +
-      `Sin foto: ${resultado.omitidasSinFoto ?? 0}\n` +
-      `Errores: ${resultado.errores?.length || 0}`
-    );
+    let mensaje = `${resultado.mensaje}\n\n`;
 
+    mensaje += `Creadas: ${resultado.creadas ?? 0}\n`;
+    mensaje += `Actualizadas: ${resultado.actualizadas ?? 0}\n`;
+    mensaje += `Sin cambios: ${resultado.sinCambios ?? 0}\n`;
+    mensaje += `Sin DNI: ${resultado.omitidasSinDni ?? 0}\n`;
+    mensaje += `DNI duplicados en la planilla: ${resultado.erroresDuplicados ?? 0}\n`;
+    mensaje += `Errores: ${resultado.errores?.length ?? 0}`;
+
+    alert(mensaje);
+
+
+    function obtenerFotoRankingAdmin(usuario) {
+  const foto = String(usuario?.foto || "").trim();
+
+  if (!foto) {
+    return "./assets/imagenes/incognito.jpg";
+  }
+
+  if (
+    foto.startsWith("http://") ||
+    foto.startsWith("https://") ||
+    foto.startsWith("data:image/")
+  ) {
+    return foto;
+  }
+
+  if (foto.startsWith("/assets/")) {
+    return `.${foto}`;
+  }
+
+  if (foto.startsWith("assets/")) {
+    return `./${foto}`;
+  }
+
+  return foto;
+}
     await cargarInscripcionesAdmin();
 
   } catch (error) {
@@ -1315,9 +1352,45 @@ async function importarInscripcionesSheets() {
     alert(
       "Error importando ranking: " + error.message
     );
+
+  } finally {
+    if (boton) {
+      boton.disabled = false;
+      boton.innerHTML = `
+        <i class="bi bi-cloud-download"></i>
+        Importar desde Google Sheets
+      `;
+    }
   }
 }
+function obtenerFotoRankingAdmin(usuario) {
+  const FOTO_INCOGNITO = "/assets/imagenes/incognito.png";
 
+  if (!usuario || !usuario.foto) {
+    return FOTO_INCOGNITO;
+  }
+
+  const foto = String(usuario.foto).trim();
+
+  if (!foto) {
+    return FOTO_INCOGNITO;
+  }
+
+  // Cloudinary / cualquier URL externa
+  if (
+    foto.startsWith("http://") ||
+    foto.startsWith("https://")
+  ) {
+    return foto;
+  }
+
+  // Foto local
+  if (foto.startsWith("/")) {
+    return foto;
+  }
+
+  return `/${foto}`;
+}
 async function cargarInscripcionesAdmin() {
   const container =
     document.getElementById("inscripcionesGrid");
@@ -1381,22 +1454,18 @@ async function cargarInscripcionesAdmin() {
         </div>
 
         <div class="club-col">
-          ${
-            usuario.foto
-              ? `
-                <img
-                  src="${usuario.foto}"
-                  style="
-                    width:50px;
-                    height:50px;
-                    border-radius:50%;
-                    object-fit:cover;
-                  "
-                >
-              `
-              : "-"
-          }
-        </div>
+  <img 
+    src="${obtenerFotoRankingAdmin(usuario)}"
+    alt="${usuario.nombre || "Usuario"}"
+    onerror="this.onerror=null; this.src='./assets/imagenes/incognito.png';"
+    style="
+      width:50px;
+      height:50px;
+      border-radius:50%;
+      object-fit:cover;
+    "
+  >
+</div>
       `;
 
       container.appendChild(row);

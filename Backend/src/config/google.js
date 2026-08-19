@@ -26,14 +26,33 @@ export async function obtenerFilasInscripciones() {
     auth: client,
   });
 
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  const sheetGid = 1783102869;
+
+  const spreadsheet = await sheets.spreadsheets.get({
+    spreadsheetId,
+    fields: "sheets(properties(sheetId,title))",
+  });
+
+  const hoja = spreadsheet.data.sheets?.find(
+    (sheet) => sheet.properties?.sheetId === sheetGid
+  );
+
+  if (!hoja) {
+    throw new Error(
+      `No se encontró la pestaña de Google Sheets con gid ${sheetGid}`
+    );
+  }
+
+  const nombreHoja = hoja.properties.title;
+
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: "A:Z",
+    spreadsheetId,
+    range: `${nombreHoja}!A:Z`,
   });
 
   return response.data.values || [];
 }
-
 // ===============================
 // GOOGLE DRIVE
 // ===============================

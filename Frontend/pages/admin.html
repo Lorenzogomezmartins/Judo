@@ -18,7 +18,7 @@
   <!-- IZQUIERDA -->
   <div class="fmj-navbar-left">
     <div class="fmj-navbar-logo">
-      <img src="../assets/Logos/Logo1.png" alt="Logo FMJ">
+      <img src="../assets/Logos/Logo1.jpeg alt="Logo FMJ">
     </div>
   </div>
 
@@ -212,52 +212,49 @@
   </div>
 </section>
 
-    <!-- INSCRIPCIONES -->
-    <section class="tab-pane fade" id="inscripciones">
-      <div class="card p-4 shadow-sm">
+    <!-- RANKING -->
+<section class="tab-pane fade" id="inscripciones">
+  <div class="card p-4 shadow-sm">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <h4 class="mb-1">Inscripciones</h4>
-            <p class="text-muted mb-0">
-              Importá desde Google Sheets, revisá pendientes, editá datos y aprobá usuarios.
-            </p>
-          </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h4 class="mb-1">Ranking</h4>
 
-          <button id="btnImportarInscripciones" class="btn btn-primary">
-            <i class="bi bi-cloud-download"></i> Importar desde Google Sheets
-          </button>
-        </div>
-
-        <div class="d-flex gap-2 align-items-center mb-3">
-          <label for="filtroEstadoInscripciones" class="form-label mb-0">
-            Estado:
-          </label>
-
-          <select id="filtroEstadoInscripciones" class="form-select w-auto">
-            <option value="pendiente" selected>Pendientes</option>
-            <option value="aprobado">Aprobadas</option>
-            <option value="rechazado">Rechazadas</option>
-            <option value="duplicado">Duplicadas</option>
-            <option value="">Todas</option>
-          </select>
-        </div>
-
-        <div class="clubes-header">
-          <div>Nombre</div>
-          <div>DNI</div>
-          <div>Email</div>
-          <div>Clasificación</div>
-          <div>Estado</div>
-          <div>Acciones</div>
-        </div>
-
-        <div id="inscripcionesGrid" class="clubes-listado">
-          <p>Cargando inscripciones...</p>
-        </div>
-
+        <p class="text-muted mb-0">
+          Importá y actualizá los judokas directamente desde Google Sheets.
+        </p>
       </div>
-    </section>
+
+      <button id="btnImportarInscripciones" class="btn btn-primary">
+        <i class="bi bi-cloud-download"></i>
+        Importar desde Google Sheets
+      </button>
+    </div>
+
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle"></i>
+
+      El DNI identifica a cada judoka.
+      Si ya existe, sus datos se actualizan.
+      Si no existe, se crea un nuevo registro.
+      La foto es opcional.
+    </div>
+
+    <div class="clubes-header">
+      <div>Nombre</div>
+      <div>DNI</div>
+      <div>Institución</div>
+      <div>Categoría</div>
+      <div>Puntaje</div>
+      <div>Foto</div>
+    </div>
+
+    <div id="inscripcionesGrid" class="clubes-listado">
+      <p>Cargando ranking...</p>
+    </div>
+
+  </div>
+</section>
 
     <!-- CLUBES -->
     <section class="tab-pane fade" id="clubes">

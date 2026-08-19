@@ -8,23 +8,42 @@ import {
 
 import { subirBufferACloudinary } from "../../config/cloudinary.js";
 
+const FOTO_INCOGNITO = "./assets/imagenes/incognito.jpg";
+
 function normalizarTexto(valor = "") {
-  return String(valor).trim();
+  return String(valor ?? "").trim();
+}
+
+function normalizarFotoDrive(valor = "") {
+  const foto = String(valor ?? "").trim();
+
+  if (!foto || foto.toLowerCase() === "pepito") {
+    return "";
+  }
+
+  return foto;
 }
 
 function normalizarDni(valor = "") {
-  return String(valor).trim().replace(/\D/g, "");
+  return String(valor ?? "")
+    .trim()
+    .replace(/\D/g, "");
 }
 
 function normalizarNumero(valor = "") {
-  const limpio = String(valor).replace(",", ".").trim();
+  const limpio = String(valor ?? "")
+    .replace(",", ".")
+    .trim();
+
   const numero = Number(limpio);
 
   return Number.isNaN(numero) ? 0 : numero;
 }
 
 function normalizarSexo(valor = "") {
-  return String(valor).trim().toLowerCase();
+  return String(valor ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 function hayCambios(usuarioExistente, datosNuevos) {
@@ -36,29 +55,56 @@ function hayCambios(usuarioExistente, datosNuevos) {
     usuarioExistente.institucion !== datosNuevos.institucion ||
     usuarioExistente.categoria !== datosNuevos.categoria ||
     usuarioExistente.clave !== datosNuevos.clave ||
-    Number(usuarioExistente.peso || 0) !== Number(datosNuevos.peso || 0) ||
+
+    Number(usuarioExistente.peso || 0) !==
+      Number(datosNuevos.peso || 0) ||
+
     usuarioExistente.sexo !== datosNuevos.sexo ||
+
     Number(usuarioExistente.puntajeTotal || 0) !==
       Number(datosNuevos.puntajeTotal || 0) ||
+
     usuarioExistente.abiertoCiudad2026?.posicion !==
       datosNuevos.abiertoCiudad2026.posicion ||
+
     Number(usuarioExistente.abiertoCiudad2026?.puntaje || 0) !==
       Number(datosNuevos.abiertoCiudad2026.puntaje || 0) ||
+
     usuarioExistente.copaDoblas2026?.posicion !==
       datosNuevos.copaDoblas2026.posicion ||
+
     Number(usuarioExistente.copaDoblas2026?.puntaje || 0) !==
       Number(datosNuevos.copaDoblas2026.puntaje || 0) ||
+
     usuarioExistente.torneoMetropolitano2026?.posicion !==
       datosNuevos.torneoMetropolitano2026.posicion ||
+
     Number(usuarioExistente.torneoMetropolitano2026?.puntaje || 0) !==
-      Number(datosNuevos.torneoMetropolitano2026.puntaje || 0)
+      Number(datosNuevos.torneoMetropolitano2026.puntaje || 0) ||
+
+    usuarioExistente.datosOriginales?.fotoDriveUrl !==
+      datosNuevos.datosOriginales?.fotoDriveUrl
   );
 }
 
 /*
-  Esta es la función REAL de importación.
-  La usamos tanto desde el botón manual como desde el setInterval automático.
+  IMPORTACIÓN REAL DEL RANKING
+
+  REGLA PRINCIPAL:
+
+  DNI + CATEGORÍA identifica un registro del ranking.
+
+  Ejemplo:
+
+  MJ2809472 + J15M-60
+  MJ2809472 + J15M-66
+
+  Son dos registros válidos.
+
+  El DNI identifica a la persona.
+  La categoría identifica su participación dentro del ranking.
 */
+
 export async function ejecutarImportacionRanking() {
   const filas = await obtenerFilasInscripciones();
 
@@ -66,16 +112,26 @@ export async function ejecutarImportacionRanking() {
     throw new Error("La planilla está vacía");
   }
 
-  // Tu Excel tiene encabezado doble, entonces los datos empiezan desde la fila 3
+  // Los datos comienzan desde la fila 3.
   const filasDatos = filas.slice(2);
 
   let creadas = 0;
   let actualizadas = 0;
   let sinCambios = 0;
   let omitidasSinDni = 0;
-  let omitidasSinFoto = 0;
+  let erroresDuplicados = 0;
 
   const errores = [];
+
+  /*
+    AHORA NO CONTROLAMOS SOLO DNI.
+
+    Controlamos DNI + categoría.
+
+    Esto permite que una persona aparezca
+    varias veces si está en categorías diferentes.
+  */
+  const registrosProcesados = new Set();
 
   for (let i = 0; i < filasDatos.length; i++) {
     const fila = filasDatos[i];
@@ -83,6 +139,7 @@ export async function ejecutarImportacionRanking() {
 
     try {
       const dni = normalizarDni(fila[0]);
+
       const apellido = normalizarTexto(fila[1]);
       const nombre = normalizarTexto(fila[2]);
       const institucion = normalizarTexto(fila[3]);
@@ -93,17 +150,21 @@ export async function ejecutarImportacionRanking() {
       const abiertoPuntaje = normalizarNumero(fila[7]);
 
       const copaDoblasPosicion = normalizarTexto(fila[8]);
-const copaDoblasPuntaje = normalizarNumero(fila[9]);
+      const copaDoblasPuntaje = normalizarNumero(fila[9]);
 
-const metropolitanoPosicion = normalizarTexto(fila[10]);
-const metropolitanoPuntaje = normalizarNumero(fila[11]);
+      const metropolitanoPosicion = normalizarTexto(fila[10]);
+      const metropolitanoPuntaje = normalizarNumero(fila[11]);
 
-const puntajeTotal = normalizarNumero(fila[12]);
-const fotoDriveUrl = normalizarTexto(fila[13]);
+      const puntajeTotal = normalizarNumero(fila[12]);
 
-const peso = normalizarNumero(fila[14]);
-const sexo = normalizarSexo(fila[15]);
+      const fotoDriveUrl = normalizarFotoDrive(fila[13]);
 
+      const peso = normalizarNumero(fila[14]);
+      const sexo = normalizarSexo(fila[15]);
+
+      /*
+        DNI obligatorio.
+      */
       if (!dni) {
         omitidasSinDni++;
 
@@ -115,32 +176,67 @@ const sexo = normalizarSexo(fila[15]);
         continue;
       }
 
-      if (!fotoDriveUrl) {
-        omitidasSinFoto++;
-
+      /*
+        CATEGORÍA obligatoria para poder diferenciar
+        las distintas participaciones de una persona.
+      */
+      if (!categoria) {
         errores.push({
           fila: numeroFilaReal,
-          error: "No se importó porque no tiene foto",
+          dni,
+          error: "No se importó porque no tiene categoría",
         });
 
         continue;
       }
 
-      const fotoDriveId = extraerDriveId(fotoDriveUrl);
+      /*
+        IDENTIFICADOR DEL REGISTRO:
 
-      if (!fotoDriveId) {
-        omitidasSinFoto++;
+        DNI + categoría
+      */
+      const claveRegistro = `${dni}|${categoria.toLowerCase()}`;
+
+      /*
+        Si aparece exactamente el mismo DNI + categoría
+        dos veces en la misma planilla, ahí sí es duplicado.
+      */
+      if (registrosProcesados.has(claveRegistro)) {
+        erroresDuplicados++;
 
         errores.push({
           fila: numeroFilaReal,
-          error: "No se importó porque la foto no tiene un link válido de Drive",
+          dni,
+          categoria,
+          error: "DNI + categoría repetidos dentro de la planilla",
         });
 
         continue;
       }
 
-      const datosSinFotoCloudinary = {
+      registrosProcesados.add(claveRegistro);
+
+      /*
+        BUSCAMOS POR DNI + CATEGORÍA.
+
+        Esto permite:
+
+        MJ2809472 + J15M-60
+
+        y
+
+        MJ2809472 + J15M-66
+
+        como dos documentos diferentes.
+      */
+      const usuarioExistente = await RankingUsuario.findOne({
         dni,
+        categoria,
+      });
+
+      const datosNuevos = {
+        dni,
+
         apellido,
         nombre,
         institucion,
@@ -151,19 +247,19 @@ const sexo = normalizarSexo(fila[15]);
         sexo,
 
         abiertoCiudad2026: {
-  posicion: abiertoPosicion,
-  puntaje: abiertoPuntaje,
-},
+          posicion: abiertoPosicion,
+          puntaje: abiertoPuntaje,
+        },
 
-copaDoblas2026: {
-  posicion: copaDoblasPosicion,
-  puntaje: copaDoblasPuntaje,
-},
+        copaDoblas2026: {
+          posicion: copaDoblasPosicion,
+          puntaje: copaDoblasPuntaje,
+        },
 
-torneoMetropolitano2026: {
-  posicion: metropolitanoPosicion,
-  puntaje: metropolitanoPuntaje,
-},
+        torneoMetropolitano2026: {
+          posicion: metropolitanoPosicion,
+          puntaje: metropolitanoPuntaje,
+        },
 
         puntajeTotal,
 
@@ -176,57 +272,149 @@ torneoMetropolitano2026: {
           institucion,
           categoria,
           clave,
+
           abiertoPosicion,
-abiertoPuntaje,
-copaDoblasPosicion,
-copaDoblasPuntaje,
-metropolitanoPosicion,
-metropolitanoPuntaje,
+          abiertoPuntaje,
+
+          copaDoblasPosicion,
+          copaDoblasPuntaje,
+
+          metropolitanoPosicion,
+          metropolitanoPuntaje,
+
           puntajeTotal,
+
           fotoDriveUrl,
+
           peso,
           sexo,
         },
       };
 
-      const usuarioExistente = await RankingUsuario.findOne({ dni });
-
       const cambioDatos = hayCambios(
         usuarioExistente,
-        datosSinFotoCloudinary
+        datosNuevos
       );
 
-      // Si ya existe y no cambió nada, no hace nada.
-      // No duplica, no vuelve a subir foto, no pisa innecesariamente.
+      /*
+        Si existe exactamente el mismo DNI + categoría
+        y no cambió nada, no hacemos nada.
+      */
       if (usuarioExistente && !cambioDatos) {
         sinCambios++;
         continue;
       }
 
-      let foto = usuarioExistente?.foto || "";
-      let fotoPublicId = usuarioExistente?.fotoPublicId || "";
+      /*
+        FOTO
 
-      const imagenBuffer = await descargarArchivoDrive(fotoDriveId);
+        La foto pertenece a la persona.
 
-      const resultadoCloudinary = await subirBufferACloudinary(
-        imagenBuffer,
-        dni
-      );
+        Si el usuario de esa categoría ya tiene foto,
+        la conservamos.
 
-      foto = resultadoCloudinary.secure_url;
-      fotoPublicId = resultadoCloudinary.public_id;
+        Si hay una nueva foto de Drive,
+        la subimos/reemplazamos en Cloudinary.
+      */
 
+      let foto =
+        usuarioExistente?.foto ||
+        FOTO_INCOGNITO;
+
+      let fotoPublicId =
+        usuarioExistente?.fotoPublicId ||
+        "";
+
+      if (fotoDriveUrl) {
+        const fotoDriveId = extraerDriveId(
+          fotoDriveUrl
+        );
+
+        if (!fotoDriveId) {
+          console.warn(
+            `No se pudo extraer el ID de Drive del DNI ${dni}:`,
+            fotoDriveUrl
+          );
+        } else {
+          try {
+            console.log(
+              `Descargando foto del DNI ${dni} desde Drive. ID: ${fotoDriveId}`
+            );
+
+            const imagenBuffer =
+              await descargarArchivoDrive(
+                fotoDriveId
+              );
+
+            console.log(
+              `Foto descargada correctamente para DNI ${dni}. Subiendo a Cloudinary...`
+            );
+
+            const resultadoCloudinary =
+              await subirBufferACloudinary(
+                imagenBuffer,
+                dni
+              );
+
+            foto =
+              resultadoCloudinary.secure_url;
+
+            fotoPublicId =
+              resultadoCloudinary.public_id;
+
+            console.log(
+              `Foto subida correctamente a Cloudinary para DNI ${dni}:`,
+              foto
+            );
+          } catch (errorFoto) {
+            console.error(
+              `Error procesando foto del DNI ${dni}:`,
+              errorFoto.message
+            );
+
+            /*
+              Si ya tenía foto, conserva la anterior.
+              Si no tenía, queda incógnito.
+            */
+            foto =
+              usuarioExistente?.foto ||
+              FOTO_INCOGNITO;
+
+            fotoPublicId =
+              usuarioExistente?.fotoPublicId ||
+              "";
+          }
+        }
+      }
+
+      /*
+        ACTUALIZAMOS POR:
+
+        DNI + CATEGORÍA
+
+        Si existe:
+        UPDATE
+
+        Si no existe:
+        CREATE
+      */
       await RankingUsuario.findOneAndUpdate(
-        { dni },
         {
-          ...datosSinFotoCloudinary,
+          dni,
+          categoria,
+        },
+
+        {
+          ...datosNuevos,
           foto,
           fotoPublicId,
         },
+
         {
           upsert: true,
           new: true,
           runValidators: true,
+          setDefaultsOnInsert: true,
         }
       );
 
@@ -245,27 +433,37 @@ metropolitanoPuntaje,
 
   return {
     mensaje: "Importación de ranking finalizada",
+
     creadas,
     actualizadas,
     sinCambios,
+
     omitidasSinDni,
-    omitidasSinFoto,
+    erroresDuplicados,
+
     errores,
   };
 }
 
 /*
   Endpoint manual.
-  Este lo usa el botón importar o Postman.
+
+  También es utilizado por Postman
+  y puede ser utilizado por el cron.
 */
-export async function importarRankingDesdeSheets(req, res) {
+export async function importarRankingDesdeSheets(
+  req,
+  res
+) {
   try {
-    const resultado = await ejecutarImportacionRanking();
+    const resultado =
+      await ejecutarImportacionRanking();
 
     return res.status(200).json(resultado);
   } catch (error) {
     return res.status(500).json({
-      mensaje: "Error importando ranking desde Google Sheets",
+      mensaje:
+        "Error importando ranking desde Google Sheets",
       error: error.message,
     });
   }

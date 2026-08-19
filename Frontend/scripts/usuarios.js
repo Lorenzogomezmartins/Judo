@@ -52,8 +52,30 @@ export async function cargarRankingUsuarios() {
   }
 }
 
+const FOTO_INCOGNITO = "/assets/imagenes/incognito.png";
+
 function obtenerFotoUsuario(usuario) {
-  return usuario.foto || "/assets/imagenes/default.png";
+  const foto = String(usuario?.foto || "").trim();
+
+  if (!foto) {
+    return FOTO_INCOGNITO;
+  }
+
+  // Cloudinary o cualquier URL externa
+  if (
+    foto.startsWith("http://") ||
+    foto.startsWith("https://")
+  ) {
+    return foto;
+  }
+
+  // Ruta interna del frontend
+  if (foto.startsWith("/")) {
+    return foto;
+  }
+
+  // Por si viene como assets/...
+  return `/${foto.replace(/^\.?\//, "")}`;
 }
 
 function obtenerPesoDesdeCategoria(categoria = "") {
@@ -212,25 +234,26 @@ function renderizarRanking(usuarios) {
 
   usuarios.forEach((usuario) => {
     const fila = document.createElement("tr");
-    const foto = obtenerFotoUsuario(usuario);
+const foto = obtenerFotoUsuario(usuario);
 
-    fila.innerHTML = `
+fila.innerHTML = `
   <td class="fw-bold">
     ${usuarios.indexOf(usuario) + 1}
   </td>
 
   <td>
-    <img
-      src="${foto}"
-      alt="${usuario.nombre || "Usuario"}"
+    <img 
+      src="${foto}" 
+      alt="${usuario.nombre || "Usuario"}" 
       class="ranking-foto"
+      onerror="this.onerror=null; this.src='/assets/imagenes/incognito.png';"
       style="
-        width: 85px;
-        height: 85px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid #b30000;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        width: 85px; 
+        height: 85px; 
+        object-fit: cover; 
+        border-radius: 50%; 
+        border: 3px solid #b30000; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
       "
     >
   </td>
