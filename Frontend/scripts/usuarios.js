@@ -89,7 +89,6 @@ function obtenerPesoDesdeCategoria(categoria = "") {
 
 function cargarCategoriasRanking() {
   const filtroCategoria = document.getElementById("filtroCategoria");
-
   if (!filtroCategoria) return;
 
   const categorias = [
@@ -99,6 +98,13 @@ function cargarCategoriasRanking() {
         .filter(Boolean)
     ),
   ];
+
+  categorias.sort((a, b) =>
+    a.localeCompare(b, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  );
 
   filtroCategoria.innerHTML = `
     <option value="">Todas</option>
