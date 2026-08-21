@@ -1594,11 +1594,9 @@ async function guardarFotoGaleria(e) {
   }
 
   const formData = new FormData();
-  formData.append("titulo", titulo);
 
-if (fecha) {
+  formData.append("titulo", titulo);
   formData.append("fecha", fecha);
-}
 
   if (imagenInput.files.length > 0) {
     formData.append("imagen", imagenInput.files[0]);
@@ -1623,10 +1621,15 @@ if (fecha) {
       );
     }
 
-    alert(id ? "Foto actualizada correctamente" : "Foto subida correctamente");
+    alert(
+      id
+        ? "Foto actualizada correctamente"
+        : "Foto subida correctamente"
+    );
 
     cerrarFormularioGaleria();
     cargarGaleriaAdmin();
+
   } catch (error) {
     console.error("Error guardando foto:", error);
     alert("Error: " + error.message);

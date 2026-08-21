@@ -319,85 +319,96 @@ function renderizarRanking(usuarios) {
 
   tbody.innerHTML = "";
 
-  usuarios.forEach((usuario) => {
+  let puestoActual = 0;
+let puntajeAnterior = null;
+
+usuarios.forEach((usuario) => {
+  const puntajeActual = Number(usuario.puntos ?? 0);
+
+  if (puntajeActual !== puntajeAnterior) {
+    puestoActual++;
+  }
+
+  puntajeAnterior = puntajeActual;
+
     const fila = document.createElement("tr");
-const foto = obtenerFotoUsuario(usuario);
+    const foto = obtenerFotoUsuario(usuario);
 
-fila.innerHTML = `
-  <td class="fw-bold">
-    ${usuarios.indexOf(usuario) + 1}
-  </td>
+    fila.innerHTML = `
+      <td class="fw-bold">
+        ${puestoActual}
+      </td>
 
-  <td>
-    <img 
-      src="${foto}" 
-      alt="${usuario.nombre || "Usuario"}" 
-      class="ranking-foto"
-      onerror="this.onerror=null; this.src='/assets/imagenes/incognito.png';"
-      style="
-        width: 85px; 
-        height: 85px; 
-        object-fit: cover; 
-        border-radius: 50%; 
-        border: 3px solid #b30000; 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-      "
-    >
-  </td>
+      <td>
+        <img 
+          src="${foto}" 
+          alt="${usuario.nombre || "Usuario"}" 
+          class="ranking-foto"
+          onerror="this.onerror=null; this.src='/assets/imagenes/incognito.png';"
+          style="
+            width: 85px; 
+            height: 85px; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 3px solid #b30000; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+          "
+        >
+      </td>
 
-  <td class="fw-semibold">
-  ${usuario.nombre || "-"} ${usuario.apellido || "-"}
-</td>
+      <td class="fw-semibold">
+        ${usuario.nombre || "-"} ${usuario.apellido || "-"}
+      </td>
 
-<td>
-  ${usuario.categoria || "-"}
-</td>
+      <td>
+        ${usuario.categoria || "-"}
+      </td>
 
-<td>
-  ${usuario.institucion || "-"}
-</td>
+      <td>
+        ${usuario.institucion || "-"}
+      </td>
 
-<td>
-  <div class="fw-semibold">
-    Posición:
-    ${usuario.abiertoCiudad2026?.posicion || "-"}
-  </div>
+      <td>
+        <div class="fw-semibold">
+          Posición:
+          ${usuario.abiertoCiudad2026?.posicion || "-"}
+        </div>
 
-  <small class="text-muted">
-    Puntaje:
-    ${usuario.abiertoCiudad2026?.puntaje ?? 0}
-  </small>
-</td>
+        <small class="text-muted">
+          Puntaje:
+          ${usuario.abiertoCiudad2026?.puntaje ?? 0}
+        </small>
+      </td>
 
-<td>
-  <div class="fw-semibold">
-    Posición:
-    ${usuario.copaDoblas2026?.posicion || "-"}
-  </div>
+      <td>
+        <div class="fw-semibold">
+          Posición:
+          ${usuario.copaDoblas2026?.posicion || "-"}
+        </div>
 
-  <small class="text-muted">
-    Puntaje:
-    ${usuario.copaDoblas2026?.puntaje ?? 0}
-  </small>
-</td>
+        <small class="text-muted">
+          Puntaje:
+          ${usuario.copaDoblas2026?.puntaje ?? 0}
+        </small>
+      </td>
 
-<td>
-  <div class="fw-semibold">
-    Posición:
-    ${usuario.torneoMetropolitano2026?.posicion || "-"}
-  </div>
+      <td>
+        <div class="fw-semibold">
+          Posición:
+          ${usuario.torneoMetropolitano2026?.posicion || "-"}
+        </div>
 
-  <small class="text-muted">
-    Puntaje:
-    ${usuario.torneoMetropolitano2026?.puntaje ?? 0}
-  </small>
-</td>
+        <small class="text-muted">
+          Puntaje:
+          ${usuario.torneoMetropolitano2026?.puntaje ?? 0}
+        </small>
+      </td>
 
-<td class="fw-bold text-danger">
-  ${usuario.puntos}
-</td>
-`;
+      <td class="fw-bold text-danger">
+        ${usuario.puntos}
+      </td>
+    `;
 
-tbody.appendChild(fila);
-});
+    tbody.appendChild(fila);
+  });
 }

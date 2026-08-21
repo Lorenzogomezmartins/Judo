@@ -20,8 +20,8 @@ const galeriaSchema = new mongoose.Schema(
 
     fecha: {
       type: Date,
-      required: true,
-      default: Date.now,
+  required: false,
+  default: null
     },
 
     activo: {

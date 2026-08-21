@@ -1,3 +1,4 @@
+
 import Galeria from "../../models/galeria.js";
 import cloudinary, { subirBufferACloudinary } from "../../config/cloudinary.js";
 
@@ -13,10 +14,12 @@ const actualizarFotoGaleria = async (req, res) => {
 
     const { titulo, fecha } = req.body;
 
-    foto.titulo = titulo ?? foto.titulo;
+    if (titulo !== undefined) {
+      foto.titulo = titulo;
+    }
 
-    if (fecha) {
-      foto.fecha = fecha;
+    if (fecha !== undefined) {
+      foto.fecha = fecha === "" ? null : fecha;
     }
 
     if (req.file) {
@@ -42,7 +45,10 @@ const actualizarFotoGaleria = async (req, res) => {
       mensaje: "Foto actualizada correctamente",
       foto,
     });
+
   } catch (error) {
+    console.error("Error actualizando foto de galería:", error);
+
     res.status(500).json({
       mensaje: "Error al actualizar la foto",
       error: error.message,
