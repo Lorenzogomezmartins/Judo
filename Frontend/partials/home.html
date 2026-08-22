@@ -1,24 +1,116 @@
-<section class="home-contenido text-center">
-  <h2>Bienvenidos</h2>
+<section class="home-inicio">
 
-  <p class="mt-3">
-    La Federación Metropolitana de Judo trabaja para el desarrollo,
-    organización y difusión del judo, promoviendo los valores del deporte
-    y la formación integral de sus practicantes.
-  </p>
+  <div class="home-intro">
+    <h2>Federación Metropolitana de Judo</h2>
+  </div>
 
-  <img
-    src="../assets/Logos/Logo FMJ.png"
-    alt="FMJ Logo"
-    class="logo-contenido my-4"
-  >
+
+  <div class="home-accesos">
+
+    <a href="#/calendario" class="home-acceso">
+      <div class="home-acceso-icon">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+
+      <div class="home-acceso-content">
+        <strong>Calendario</strong>
+        <span>Próximas actividades</span>
+      </div>
+
+      <i class="bi bi-arrow-up-right home-acceso-arrow"></i>
+    </a>
+
+
+    <a href="#/ranking" class="home-acceso">
+      <div class="home-acceso-icon">
+        <i class="bi bi-trophy"></i>
+      </div>
+
+      <div class="home-acceso-content">
+        <strong>Ranking</strong>
+        <span>Posiciones actualizadas</span>
+      </div>
+
+      <i class="bi bi-arrow-up-right home-acceso-arrow"></i>
+    </a>
+
+
+    <a href="#/torneos" class="home-acceso">
+      <div class="home-acceso-icon">
+        <i class="bi bi-award"></i>
+      </div>
+
+      <div class="home-acceso-content">
+        <strong>Torneos</strong>
+        <span>Competencias FMJ</span>
+      </div>
+
+      <i class="bi bi-arrow-up-right home-acceso-arrow"></i>
+    </a>
+
+
+    <a href="#/clubes" class="home-acceso">
+      <div class="home-acceso-icon">
+        <i class="bi bi-building"></i>
+      </div>
+
+      <div class="home-acceso-content">
+        <strong>Clubes</strong>
+        <span>Clubes afiliados</span>
+      </div>
+
+      <i class="bi bi-arrow-up-right home-acceso-arrow"></i>
+    </a>
+
+  </div>
+
+
+  <section class="home-proxima-actividad">
+
+    <div class="home-proxima-header">
+
+      <div>
+        <span class="home-section-label">
+          Próxima actividad
+        </span>
+
+        <h3>Lo próximo en la Federación</h3>
+      </div>
+
+      <a href="#/calendario" class="home-ver-calendario">
+        Ver calendario
+        <i class="bi bi-arrow-right"></i>
+      </a>
+
+    </div>
+
+
+    <div
+      id="homeProximaActividad"
+      class="home-proxima-card"
+    >
+      <div class="home-proxima-loading">
+        Cargando próxima actividad...
+      </div>
+    </div>
+
+  </section>
+
 </section>
 
-<section class="galeria-home">
-  <div class="galeria-home-header">
-    <span class="galeria-home-etiqueta">Galería FMJ</span>
 
-    <h3>Fotos favoritas de la comunidad</h3>
+<!-- GALERÍA: NO TOCAR -->
+<section class="galeria-home">
+
+  <div class="galeria-home-header">
+
+    <span class="galeria-home-etiqueta">
+      Galería FMJ
+    </span>
+
+    <h3>
+      Fotos favoritas de la comunidad
+    </h3>
 
     <p>
       Las 5 fotografías con mayor cantidad de "Me gusta" otorgados por la comunidad FMJ.
@@ -28,19 +120,35 @@
       Ver galería completa
       <i class="bi bi-arrow-right"></i>
     </a>
+
   </div>
 
+
   <div class="galeria-home-slider">
-    <button class="galeria-arrow galeria-prev" id="galeriaPrev" type="button">
+
+    <button
+      class="galeria-arrow galeria-prev"
+      id="galeriaPrev"
+      type="button"
+    >
       <i class="bi bi-chevron-left"></i>
     </button>
 
-    <div id="galeriaHomeGrid" class="galeria-home-grid">
+    <div
+      id="galeriaHomeGrid"
+      class="galeria-home-grid"
+    >
       <p>Cargando fotografías...</p>
     </div>
 
-    <button class="galeria-arrow galeria-next" id="galeriaNext" type="button">
+    <button
+      class="galeria-arrow galeria-next"
+      id="galeriaNext"
+      type="button"
+    >
       <i class="bi bi-chevron-right"></i>
     </button>
+
   </div>
+
 </section>

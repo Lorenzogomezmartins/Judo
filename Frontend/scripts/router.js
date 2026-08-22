@@ -7,10 +7,12 @@ import { cargarProfesores } from "./profesores.js";
 import { cargarPatrocinadores } from "./patrocinadores.js";
 import { iniciarLoginAdmin } from "./loginAdmin.js";
 import { cargarRankingUsuarios } from "./usuarios.js";
+import { inicializarHome } from "./home.js";
 import {
   cargarGaleria,
   cargarGaleriaHome,
 } from "./galeria.js";
+
 
 // ================= RUTAS =================
 
@@ -67,8 +69,9 @@ async function cargarVista(vista) {
 
     switch (vistaFinal) {
   case "home":
-    await cargarGaleriaHome();
-    break;
+  await inicializarHome();
+  await cargarGaleriaHome();
+  break;
 
   case "galeria":
     await cargarGaleria();
@@ -109,14 +112,14 @@ async function cargarVista(vista) {
         break;
     }
   } catch (error) {
-    console.error("Error cargando vista:", error);
+  console.error("Error cargando vista:", error);
 
-    contenedor.innerHTML = `
-      <div class="alert alert-danger text-center">
-        Error al cargar la sección
-      </div>
-    `;
-  }
+  contenedor.innerHTML = `
+    <div class="alert alert-danger text-center">
+      Error al cargar la sección
+    </div>
+  `;
+}
 }
 
 // ================= ROUTER =================
