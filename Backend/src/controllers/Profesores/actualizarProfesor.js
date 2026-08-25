@@ -1,4 +1,5 @@
 import Profesor from "../../models/profesor.js";
+
 import {
   subirBufferACloudinary,
   subirCvACloudinary,
@@ -6,25 +7,33 @@ import {
 
 const actualizarProfesor = async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = {
+      ...req.body,
+    };
 
     if (data.capacitaciones) {
       data.capacitaciones = JSON.parse(data.capacitaciones);
     }
 
+    if (data.rol && !["profesor", "autoridad"].includes(data.rol)) {
+      return res.status(400).json({
+        mensaje: "El rol debe ser profesor o autoridad",
+      });
+    }
+
     if (req.files?.foto) {
-  const imagen = await subirBufferACloudinary(
-    req.files.foto[0].buffer,
-    `profesor_${Date.now()}`
-  );
+      const imagen = await subirBufferACloudinary(
+        req.files.foto[0].buffer,
+        `profesor_${Date.now()}`
+      );
 
-  data.foto = imagen.secure_url;
-}
+      data.foto = imagen.secure_url;
+    }
 
-if (req.files?.cv) {
-  const archivo = await subirCvACloudinary(req.files.cv[0]);
-  data.cv = archivo.secure_url;
-}
+    if (req.files?.cv) {
+      const archivo = await subirCvACloudinary(req.files.cv[0]);
+      data.cv = archivo.secure_url;
+    }
 
     const profesor = await Profesor.findByIdAndUpdate(
       req.params.id,
@@ -43,14 +52,14 @@ if (req.files?.cv) {
 
     res.json(profesor);
   } catch (error) {
-  console.error("ERROR ACTUALIZAR PROFESOR:");
-  console.error(error);
+    console.error("ERROR ACTUALIZAR PROFESOR:");
+    console.error(error);
 
-  res.status(500).json({
-    mensaje: error.message,
-    stack: error.stack,
-  });
-}
+    res.status(500).json({
+      mensaje: error.message,
+      stack: error.stack,
+    });
+  }
 };
 
 export default actualizarProfesor;

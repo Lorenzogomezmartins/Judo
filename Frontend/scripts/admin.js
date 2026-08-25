@@ -708,42 +708,69 @@ async function guardarPatrocinador(e) {
 /* ============================= 
    PROFESORES
 ============================= */
+/* =========================================================
+   PROFESORES Y AUTORIDADES
+========================================================= */
+
 /* CARGAR PROFESORES */
+
 async function cargarProfesoresAdmin(filtroNombre = "") {
   const container = document.getElementById("profesoresGrid");
+
   if (!container) return;
 
   container.innerHTML = "<p>Cargando profesores...</p>";
 
   try {
     const response = await fetch(API_PROFESORES);
+
+    if (!response.ok) {
+      throw new Error("Error al cargar profesores");
+    }
+
     let profesores = await response.json();
 
     if (filtroNombre) {
       const texto = filtroNombre.toLowerCase();
 
-      profesores = profesores.filter(p =>
+      profesores = profesores.filter((p) =>
         p.nombre.toLowerCase().includes(texto) ||
         p.apellido.toLowerCase().includes(texto)
       );
     }
 
     if (!profesores.length) {
-      container.innerHTML = "<p>No hay profesores registrados.</p>";
+      container.innerHTML = "<p>No hay profesores o autoridades registrados.</p>";
       return;
     }
 
     container.innerHTML = "";
 
-    profesores.forEach(profesor => {
-  const fotoUrl = profesor.foto || "/assets/imagenes/default.png";;
+    profesores.forEach((profesor) => {
+      const fotoUrl =
+        profesor.foto ||
+        "/assets/imagenes/default.png";
+
+      const rol =
+        profesor.rol === "autoridad"
+          ? "autoridad"
+          : "profesor";
+
+      const rolTexto =
+        rol === "autoridad"
+          ? "Autoridad"
+          : "Profesor";
 
       const row = document.createElement("div");
+
       row.classList.add("club-admin-row");
 
       row.innerHTML = `
         <div class="club-admin-logo">
-          <img src="${fotoUrl}" alt="${profesor.nombre}">
+          <img
+            src="${fotoUrl}"
+            alt="${profesor.nombre}"
+          >
         </div>
 
         <div class="club-col">
@@ -755,21 +782,35 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
         </div>
 
         <div class="club-col">
-  ${profesor.club || "-"}
-</div>
+          ${profesor.club || "-"}
+        </div>
+
+        <div class="club-col">
+          <span class="badge ${
+            rol === "autoridad"
+              ? "text-bg-danger"
+              : "text-bg-secondary"
+          }">
+            ${rolTexto}
+          </span>
+        </div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
-          <button 
+
+          <button
             class="btn btn-outline-primary btn-sm"
-            onclick="editarProfesor('${profesor._id}')">
+            onclick="editarProfesor('${profesor._id}')"
+          >
             <i class="bi bi-pencil"></i>
           </button>
 
-          <button 
+          <button
             class="btn btn-outline-danger btn-sm"
-            onclick="eliminarProfesor('${profesor._id}')">
+            onclick="eliminarProfesor('${profesor._id}')"
+          >
             <i class="bi bi-trash"></i>
           </button>
+
         </div>
       `;
 
@@ -778,186 +819,393 @@ async function cargarProfesoresAdmin(filtroNombre = "") {
 
   } catch (error) {
     console.error("Error cargando profesores:", error);
-    container.innerHTML = "<p>Error al cargar profesores.</p>";
+
+    container.innerHTML =
+      "<p>Error al cargar profesores.</p>";
   }
 }
 
-/* AGREGAR PROFESORES */
+
+/* =========================================================
+   ABRIR / CERRAR FORMULARIO
+========================================================= */
+
 function abrirFormularioProfesor() {
-  const container = document.getElementById("formProfesorContainer");
+  const container =
+    document.getElementById("formProfesorContainer");
 
   container.style.display = "block";
+
   document.getElementById("formProfesor").reset();
+
   document.getElementById("profesorId").value = "";
+
+  document.getElementById("profesorRol").value =
+    "profesor";
 }
 
+
 function cerrarFormularioProfesor() {
-  const container = document.getElementById("formProfesorContainer");
+  const container =
+    document.getElementById("formProfesorContainer");
+
   container.style.display = "none";
 }
+
+
+/* =========================================================
+   GUARDAR PROFESOR / AUTORIDAD
+========================================================= */
 
 async function guardarProfesor(e) {
   e.preventDefault();
 
-  const id = document.getElementById("profesorId").value.trim();
-  const nombre = document.getElementById("profesorNombre").value.trim();
-  const apellido = document.getElementById("profesorApellido").value.trim();
-  const club = document.getElementById("profesorClub").value.trim();
-  const descripcion = document.getElementById("profesorDescripcion").value.trim();
-  const fotoInput = document.getElementById("profesorFoto");
-  const cvInput = document.getElementById("profesorCv");
+  const id =
+    document.getElementById("profesorId").value.trim();
 
-  const capacitacionesTexto = document
-  .getElementById("profesorCapacitaciones")
-  .value
-  .trim();
+  const nombre =
+    document.getElementById("profesorNombre").value.trim();
 
-const capacitaciones = capacitacionesTexto
-  ? capacitacionesTexto
-      .split("\n")
-      .map((linea) => {
-        const [titulo, club, fecha, descripcion] = linea
-          .split("|")
-          .map((valor) => valor.trim());
+  const apellido =
+    document.getElementById("profesorApellido").value.trim();
 
-        return {
-          titulo,
-          club,
-          fecha,
-          descripcion,
-        };
-      })
-      .filter((capacitacion) => capacitacion.titulo && capacitacion.club)
-  : [];
+  const rol =
+    document.getElementById("profesorRol").value;
+
+  const club =
+    document.getElementById("profesorClub").value.trim();
+
+  const descripcion =
+    document.getElementById("profesorDescripcion").value.trim();
+
+  const fotoInput =
+    document.getElementById("profesorFoto");
+
+  const cvInput =
+    document.getElementById("profesorCv");
+
+
+  /* CAPACITACIONES */
+
+  const capacitacionesTexto =
+    document
+      .getElementById("profesorCapacitaciones")
+      .value
+      .trim();
+
+  const capacitaciones = capacitacionesTexto
+    ? capacitacionesTexto
+        .split("\n")
+        .map((linea) => {
+          const [
+            titulo,
+            clubCapacitacion,
+            fecha,
+            descripcionCapacitacion,
+          ] = linea
+            .split("|")
+            .map((valor) => valor.trim());
+
+          return {
+            titulo,
+            club: clubCapacitacion,
+            fecha,
+            descripcion: descripcionCapacitacion,
+          };
+        })
+        .filter(
+          (capacitacion) =>
+            capacitacion.titulo &&
+            capacitacion.club
+        )
+    : [];
+
+
+  /* VALIDACIONES */
 
   if (!nombre || !apellido) {
     alert("Nombre y apellido son obligatorios");
     return;
   }
 
-  try {
-    if (!id) {
-      const responseProfesores = await fetch(API_PROFESORES);
-      const profesores = await responseProfesores.json();
+  if (
+    rol !== "profesor" &&
+    rol !== "autoridad"
+  ) {
+    alert("Seleccioná un tipo válido");
+    return;
+  }
 
-      const existe = profesores.find(p =>
-        p.nombre.toLowerCase() === nombre.toLowerCase() &&
-        p.apellido.toLowerCase() === apellido.toLowerCase()
+
+  try {
+
+    /* EVITAR DUPLICADOS */
+
+    if (!id) {
+      const responseProfesores =
+        await fetch(API_PROFESORES);
+
+      const profesores =
+        await responseProfesores.json();
+
+      const existe = profesores.find(
+        (p) =>
+          p.nombre.toLowerCase() ===
+            nombre.toLowerCase() &&
+          p.apellido.toLowerCase() ===
+            apellido.toLowerCase()
       );
 
       if (existe) {
-        alert("Ya existe un profesor con ese nombre y apellido");
+        alert(
+          "Ya existe una persona registrada con ese nombre y apellido"
+        );
+
         return;
       }
     }
+
+
+    /* FORMDATA */
 
     const formData = new FormData();
 
     formData.append("nombre", nombre);
     formData.append("apellido", apellido);
+    formData.append("rol", rol);
     formData.append("club", club);
     formData.append("descripcion", descripcion);
-    formData.append("capacitaciones", JSON.stringify(capacitaciones));
+
+    formData.append(
+      "capacitaciones",
+      JSON.stringify(capacitaciones)
+    );
+
+
+    /* FOTO */
 
     if (fotoInput.files.length > 0) {
-      formData.append("foto", fotoInput.files[0]);
+      formData.append(
+        "foto",
+        fotoInput.files[0]
+      );
     }
+
+
+    /* CV */
+
     if (cvInput.files.length > 0) {
-  formData.append("cv", cvInput.files[0]);
-}
+      formData.append(
+        "cv",
+        cvInput.files[0]
+      );
+    }
+
+
+    /* URL Y MÉTODO */
 
     const url = id
       ? `${API_PROFESORES}/${id}`
       : API_PROFESORES;
 
-    const method = id ? "PUT" : "POST";
+    const method =
+      id
+        ? "PUT"
+        : "POST";
 
-    const response = await fetchProtegido(url, {
-      method: method,
-      body: formData
-    });
+
+    /* REQUEST */
+
+    const response =
+      await fetchProtegido(url, {
+        method,
+        body: formData,
+      });
+
 
     if (!response.ok) {
-  const error = await response.json();
-  console.log(error);
-  throw new Error(error.mensaje || "Error guardando profesor");
-}
+      const error =
+        await response.json();
+
+      console.log(error);
+
+      throw new Error(
+        error.mensaje ||
+        "Error guardando profesor"
+      );
+    }
+
 
     alert(
       id
-        ? "Profesor actualizado correctamente"
-        : "Profesor creado correctamente"
+        ? "Registro actualizado correctamente"
+        : "Registro creado correctamente"
     );
+
 
     cerrarFormularioProfesor();
 
-    document.getElementById("formProfesor").reset();
-    document.getElementById("profesorId").value = "";
+    document
+      .getElementById("formProfesor")
+      .reset();
+
+    document
+      .getElementById("profesorId")
+      .value = "";
+
 
     cargarProfesoresAdmin();
 
   } catch (error) {
     console.error("Error:", error);
-    alert("Error al guardar profesor");
+
+    alert(
+      error.message ||
+      "Error al guardar profesor"
+    );
   }
 }
 
-/* ELIMINAR PROFESORES */
+
+/* =========================================================
+   ELIMINAR PROFESOR / AUTORIDAD
+========================================================= */
+
 async function eliminarProfesor(id) {
-  if (!confirm("¿Seguro que querés eliminar este profesor?")) return;
+  if (
+    !confirm(
+      "¿Seguro que querés eliminar este registro?"
+    )
+  ) {
+    return;
+  }
 
   try {
-    const response = await fetchProtegido(`${API_PROFESORES}/${id}`, {
-      method: "DELETE"
-    });
+    const response =
+      await fetchProtegido(
+        `${API_PROFESORES}/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
     if (!response.ok) {
-      throw new Error("Error al eliminar profesor");
+      throw new Error(
+        "Error al eliminar profesor"
+      );
     }
 
-    alert("Profesor eliminado correctamente");
+    alert(
+      "Registro eliminado correctamente"
+    );
+
     cargarProfesoresAdmin();
 
   } catch (error) {
     console.error("Error:", error);
-    alert("No se pudo eliminar el profesor");
+
+    alert(
+      "No se pudo eliminar el registro"
+    );
   }
 }
 
-/* EDITAR PROFESORES */
+
+/* =========================================================
+   EDITAR PROFESOR / AUTORIDAD
+========================================================= */
+
 async function editarProfesor(id) {
-  console.log("Editar profesor:", id);
+  console.log(
+    "Editar profesor:",
+    id
+  );
 
   try {
-    const response = await fetch(`${API_PROFESORES}/${id}`);
-    const profesor = await response.json();
+    const response =
+      await fetch(
+        `${API_PROFESORES}/${id}`
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Error al cargar el registro"
+      );
+    }
+
+    const profesor =
+      await response.json();
+
 
     abrirFormularioProfesor();
 
-    document.getElementById("profesorId").value = profesor._id;
-    document.getElementById("profesorNombre").value = profesor.nombre || "";
-    document.getElementById("profesorApellido").value = profesor.apellido || "";
-    document.getElementById("profesorClub").value = profesor.club || "";
-    document.getElementById("profesorDescripcion").value = profesor.descripcion || "";
 
-    document.getElementById("profesorCapacitaciones").value =
-  Array.isArray(profesor.capacitaciones)
-    ? profesor.capacitaciones
-        .map((capacitacion) => {
-          const fecha = capacitacion.fecha
-            ? capacitacion.fecha.split("T")[0]
-            : "";
+    document
+      .getElementById("profesorId")
+      .value = profesor._id;
 
-          return `${capacitacion.titulo || ""} | ${capacitacion.club || ""} | ${fecha} | ${capacitacion.descripcion || ""}`;
-        })
-        .join("\n")
-    : "";
+
+    document
+      .getElementById("profesorNombre")
+      .value = profesor.nombre || "";
+
+
+    document
+      .getElementById("profesorApellido")
+      .value = profesor.apellido || "";
+
+
+    document
+      .getElementById("profesorRol")
+      .value =
+        profesor.rol === "autoridad"
+          ? "autoridad"
+          : "profesor";
+
+
+    document
+      .getElementById("profesorClub")
+      .value = profesor.club || "";
+
+
+    document
+      .getElementById("profesorDescripcion")
+      .value =
+        profesor.descripcion || "";
+
+
+    document
+      .getElementById("profesorCapacitaciones")
+      .value =
+        Array.isArray(
+          profesor.capacitaciones
+        )
+          ? profesor.capacitaciones
+              .map(
+                (capacitacion) => {
+                  const fecha =
+                    capacitacion.fecha
+                      ? capacitacion.fecha
+                          .split("T")[0]
+                      : "";
+
+                  return `${capacitacion.titulo || ""} | ${capacitacion.club || ""} | ${fecha} | ${capacitacion.descripcion || ""}`;
+                }
+              )
+              .join("\n")
+          : "";
 
   } catch (error) {
-    console.error("Error cargando profesor:", error);
+    console.error(
+      "Error cargando profesor:",
+      error
+    );
+
+    alert(
+      "No se pudo cargar el registro"
+    );
   }
 }
-
 /* ============================= 
    TORNEOS
 ============================= */

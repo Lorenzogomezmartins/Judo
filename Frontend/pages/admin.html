@@ -383,11 +383,14 @@
     </section>
 
 <!-- PROFESORES -->
+<!-- PROFESORES -->
 <section class="tab-pane fade" id="profesores">
   <div class="card p-4 shadow-sm">
-    <h4 class="mb-4">Gestión de Profesores</h4>
+
+    <h4 class="mb-4">Gestión de Profesores y Autoridades</h4>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
+
       <input
         type="text"
         id="filtroProfesores"
@@ -396,9 +399,13 @@
       >
 
       <div class="d-flex gap-2">
-        <button class="btn btn-success" id="btnNuevoProfesorr">
+
+        <button
+          class="btn btn-success"
+          id="btnNuevoProfesorr"
+        >
           <i class="bi bi-plus-lg"></i>
-          Agregar Profesor
+          Agregar Profesor / Autoridad
         </button>
 
         <button
@@ -409,84 +416,136 @@
           <i class="bi bi-cloud-arrow-down"></i>
           Importar desde Google Sheets
         </button>
+
       </div>
+
     </div>
 
+    <!-- FORMULARIO -->
     <div
       class="card border p-4 mb-4"
       id="formProfesorContainer"
       style="display:none;"
     >
-      <h5 class="mb-3">Formulario Profesor</h5>
+
+      <h5 class="mb-3">Formulario Profesor / Autoridad</h5>
 
       <form id="formProfesor" enctype="multipart/form-data">
+
         <input type="hidden" id="profesorId">
 
         <div class="row">
 
+          <!-- ROL -->
           <div class="col-md-6 mb-3">
+
+            <label>Tipo</label>
+
+            <select
+              id="profesorRol"
+              class="form-select"
+            >
+              <option value="profesor" selected>
+                Profesor
+              </option>
+
+              <option value="autoridad">
+                Autoridad
+              </option>
+            </select>
+
+          </div>
+
+          <!-- NOMBRE -->
+          <div class="col-md-6 mb-3">
+
             <label>Nombre</label>
+
             <input
               type="text"
               id="profesorNombre"
               class="form-control"
               required
             >
+
           </div>
 
+          <!-- APELLIDO -->
           <div class="col-md-6 mb-3">
+
             <label>Apellido</label>
+
             <input
               type="text"
               id="profesorApellido"
               class="form-control"
               required
             >
+
           </div>
 
+          <!-- CLUB -->
           <div class="col-md-6 mb-3">
+
             <label>Club</label>
+
             <input
               type="text"
               id="profesorClub"
               class="form-control"
               placeholder="Ej: Club Atlético Judo Norte"
             >
+
           </div>
 
+          <!-- FOTO -->
           <div class="col-md-6 mb-3">
+
             <label>Foto</label>
+
             <input
               type="file"
               id="profesorFoto"
               class="form-control"
               accept="image/*"
             >
+
           </div>
 
+          <!-- CV -->
           <div class="col-md-6 mb-3">
-  <label>CV</label>
-  <input
-    type="file"
-    id="profesorCv"
-    class="form-control"
-    accept=".pdf,.doc,.docx"
-  >
-  <small class="text-muted">
-    PDF o Word (máx. 10 MB)
-  </small>
-</div>
 
+            <label>CV</label>
+
+            <input
+              type="file"
+              id="profesorCv"
+              class="form-control"
+              accept=".pdf,.doc,.docx"
+            >
+
+            <small class="text-muted">
+              PDF o Word (máx. 10 MB)
+            </small>
+
+          </div>
+
+          <!-- DESCRIPCIÓN -->
           <div class="col-md-12 mb-3">
+
             <label>Descripción</label>
+
             <input
               type="text"
               id="profesorDescripcion"
               class="form-control"
             >
+
           </div>
 
+          <!-- CAPACITACIONES -->
           <div class="col-12 mb-3">
+
             <label class="form-label">
               Capacitaciones / Cursos
             </label>
@@ -503,11 +562,13 @@
               Formato:
               Título | Club | Fecha | Descripción
             </small>
+
           </div>
 
         </div>
 
         <div class="d-flex gap-2">
+
           <button
             type="submit"
             class="btn btn-primary"
@@ -522,17 +583,20 @@
           >
             Cancelar
           </button>
+
         </div>
 
       </form>
+
     </div>
 
+    <!-- LISTADO -->
     <div class="clubes-header">
       <div>Foto</div>
       <div>Nombre</div>
       <div>Apellido</div>
       <div>Club</div>
-      <div>Descripción</div>
+      <div>Tipo</div>
       <div>Acciones</div>
     </div>
 
@@ -540,6 +604,7 @@
       id="profesoresGrid"
       class="clubes-listado"
     ></div>
+
   </div>
 </section>
     <!-- TORNEOS -->

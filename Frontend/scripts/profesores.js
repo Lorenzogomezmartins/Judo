@@ -1,7 +1,8 @@
 const API_URL = "/api/profesores";
 
 export async function cargarProfesores() {
-  const contenedor = document.getElementById("lista-profesores");
+  const contenedor =
+    document.getElementById("lista-profesores");
 
   if (!contenedor) return;
 
@@ -9,121 +10,149 @@ export async function cargarProfesores() {
     const res = await fetch(API_URL);
 
     if (!res.ok) {
-      throw new Error("Error al obtener profesores");
+      throw new Error(
+        "Error al obtener profesores"
+      );
     }
 
-    const profesores = await res.json();
+    const personas = await res.json();
 
-    contenedor.innerHTML = `<div class="profesores-grid"></div>`;
 
-    const grid = contenedor.querySelector(".profesores-grid");
+    /* =====================================================
+       SEPARAR AUTORIDADES Y PROFESORES
 
-    profesores.forEach((profesor) => {
-      const foto = profesor.foto
-        ? profesor.foto
-        : "../assets/placeholder-profesor.jpg";
+       Si no tiene rol, se considera profesor para que los
+       registros anteriores sigan funcionando.
+    ===================================================== */
 
-      const capacitaciones = profesor.capacitaciones || [];
+    const autoridades =
+      personas.filter(
+        (persona) =>
+          persona.rol === "autoridad"
+      );
 
-      const card = `
-        <div class="profesor-card">
+    const profesores =
+      personas.filter(
+        (persona) =>
+          persona.rol !== "autoridad"
+      );
 
-          <img
-            src="${foto}"
-            alt="${profesor.nombre} ${profesor.apellido}"
-          >
 
-          <h3>
-            ${profesor.nombre} ${profesor.apellido}
-          </h3>
+    contenedor.innerHTML = "";
 
-          <span class="grado">
-            ${profesor.club || "Profesor FMJ"}
+
+    /* =====================================================
+       AUTORIDADES
+    ===================================================== */
+
+    if (autoridades.length > 0) {
+      const seccionAutoridades =
+        document.createElement("section");
+
+      seccionAutoridades.className =
+        "autoridades-seccion";
+
+      seccionAutoridades.innerHTML = `
+        <div class="autoridades-header">
+
+          <span class="autoridades-eyebrow">
+            Federación Metropolitana de Judo
           </span>
 
-          <p>
-            ${profesor.descripcion || ""}
-          </p>
-
-          ${
-            capacitaciones.length > 0
-              ? `
-                <details class="profesor-capacitaciones">
-
-                  <summary>
-                    Capacitaciones (${capacitaciones.length})
-                  </summary>
-
-                  <ul>
-                    ${capacitaciones
-                      .map(
-                        (cap) => `
-                          <li>
-                            <strong>${cap.titulo}</strong>
-
-                            <span>
-                              Club: ${cap.club}
-                            </span>
-
-                            ${
-                              cap.fecha
-                                ? `
-                                  <br>
-                                  <small>
-                                    ${cap.fecha
-                                      .split("T")[0]
-                                      .split("-")
-                                      .reverse()
-                                      .join("/")}
-                                  </small>
-                                `
-                                : ""
-                            }
-
-                            ${
-                              cap.descripcion
-                                ? `
-                                  <br>
-                                  <em>${cap.descripcion}</em>
-                                `
-                                : ""
-                            }
-                          </li>
-                        `
-                      )
-                      .join("")}
-                  </ul>
-
-                </details>
-              `
-              : `
-                <p class="text-muted mt-2">
-                  Sin capacitaciones registradas
-                </p>
-              `
-                    }
-
-          ${
-            profesor.cv
-              ? `
-                <a
-                  href="${profesor.cv}"
-                  target="_blank"
-                  class="btn btn-outline-primary mt-3 w-100"
-                >
-                  Descargar CV
-                </a>
-              `
-              : ""
-          }
+          <h2>
+            Autoridades
+          </h2>
 
         </div>
+
+        <div class="autoridades-grid"></div>
       `;
 
-      grid.innerHTML += card;
-    });
+      const autoridadesGrid =
+        seccionAutoridades.querySelector(
+          ".autoridades-grid"
+        );
+
+
+      autoridades.forEach(
+        (autoridad) => {
+          autoridadesGrid.innerHTML +=
+            crearCardPersona(
+              autoridad,
+              true
+            );
+        }
+      );
+
+
+      contenedor.appendChild(
+        seccionAutoridades
+      );
+    }
+
+
+    /* =====================================================
+       PROFESORES
+    ===================================================== */
+
+    const seccionProfesores =
+      document.createElement("section");
+
+    seccionProfesores.className =
+      "profesores-seccion";
+
+    seccionProfesores.innerHTML = `
+      <div class="profesores-seccion-header">
+
+        <span class="profesores-eyebrow">
+          Federación Metropolitana de Judo
+        </span>
+
+        <h2>
+          Profesores
+        </h2>
+
+      </div>
+
+      <div class="profesores-grid"></div>
+    `;
+
+
+    const grid =
+      seccionProfesores.querySelector(
+        ".profesores-grid"
+      );
+
+
+    if (!profesores.length) {
+      grid.innerHTML = `
+        <p class="text-muted">
+          No hay profesores registrados.
+        </p>
+      `;
+    } else {
+      profesores.forEach(
+        (profesor) => {
+          grid.innerHTML +=
+            crearCardPersona(
+              profesor,
+              false
+            );
+        }
+      );
+    }
+
+
+    contenedor.appendChild(
+      seccionProfesores
+    );
+
+
   } catch (error) {
-    console.error("Error cargando profesores:", error);
+    console.error(
+      "Error cargando profesores:",
+      error
+    );
 
     contenedor.innerHTML = `
       <p class="text-danger">
@@ -131,4 +160,144 @@ export async function cargarProfesores() {
       </p>
     `;
   }
+}
+
+
+/* =========================================================
+   CREAR CARD
+========================================================= */
+
+function crearCardPersona(persona, esAutoridad = false) {
+  const foto = persona.foto
+    ? persona.foto
+    : "../assets/placeholder-profesor.jpg";
+
+  const capacitaciones =
+    persona.capacitaciones || [];
+
+
+  return `
+    <div class="profesor-card ${
+      esAutoridad
+        ? "autoridad-card"
+        : ""
+    }">
+
+      <img
+        src="${foto}"
+        alt="${persona.nombre} ${persona.apellido}"
+      >
+
+      <h3>
+        ${persona.nombre}
+        ${persona.apellido}
+      </h3>
+
+      <span class="grado">
+        ${
+          persona.club ||
+          (
+            esAutoridad
+              ? "Autoridad FMJ"
+              : "Profesor FMJ"
+          )
+        }
+      </span>
+
+      <p>
+        ${persona.descripcion || ""}
+      </p>
+
+
+      ${
+        capacitaciones.length > 0
+          ? `
+            <details class="profesor-capacitaciones">
+
+              <summary>
+                Capacitaciones
+                (${capacitaciones.length})
+              </summary>
+
+              <ul>
+
+                ${
+                  capacitaciones
+                    .map(
+                      (cap) => `
+                        <li>
+
+                          <strong>
+                            ${cap.titulo}
+                          </strong>
+
+                          <span>
+                            Club:
+                            ${cap.club}
+                          </span>
+
+                          ${
+                            cap.fecha
+                              ? `
+                                <br>
+
+                                <small>
+                                  ${
+                                    cap.fecha
+                                      .split("T")[0]
+                                      .split("-")
+                                      .reverse()
+                                      .join("/")
+                                  }
+                                </small>
+                              `
+                              : ""
+                          }
+
+                          ${
+                            cap.descripcion
+                              ? `
+                                <br>
+
+                                <em>
+                                  ${cap.descripcion}
+                                </em>
+                              `
+                              : ""
+                          }
+
+                        </li>
+                      `
+                    )
+                    .join("")
+                }
+
+              </ul>
+
+            </details>
+          `
+          : `
+            <p class="text-muted mt-2">
+              Sin capacitaciones registradas
+            </p>
+          `
+      }
+
+
+      ${
+        persona.cv
+          ? `
+            <a
+              href="${persona.cv}"
+              target="_blank"
+              class="btn btn-outline-primary mt-3 w-100"
+            >
+              Descargar CV
+            </a>
+          `
+          : ""
+      }
+
+    </div>
+  `;
 }

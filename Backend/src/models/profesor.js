@@ -1,4 +1,5 @@
 // models/profesor.js
+
 import mongoose from "mongoose";
 
 const capacitacionSchema = new mongoose.Schema(
@@ -42,9 +43,9 @@ const profesorSchema = new mongoose.Schema(
     },
 
     club: {
-  type: String,
-  trim: true,
-},
+      type: String,
+      trim: true,
+    },
 
     foto: {
       type: String,
@@ -55,10 +56,16 @@ const profesorSchema = new mongoose.Schema(
       trim: true,
     },
 
+    rol: {
+      type: String,
+      enum: ["profesor", "autoridad"],
+      default: "profesor",
+    },
+
     cv: {
-  type: String,
-  default: null,
-},
+      type: String,
+      default: null,
+    },
 
     capacitaciones: {
       type: [capacitacionSchema],
