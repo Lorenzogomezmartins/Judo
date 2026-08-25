@@ -151,6 +151,23 @@ function crearCardGaleriaHome(foto) {
   `;
 
   const btnLike = card.querySelector(".galeria-home-like-btn");
+  const img = card.querySelector("img");
+
+img.addEventListener("load", () => {
+  const relacion = img.naturalWidth / img.naturalHeight;
+
+  if (relacion < 0.85) {
+    card.classList.add("galeria-home-vertical");
+  } else if (relacion > 1.8) {
+    card.classList.add("galeria-home-horizontal");
+  } else {
+    card.classList.add("galeria-home-normal");
+  }
+});
+
+if (img.complete) {
+  img.dispatchEvent(new Event("load"));
+}
 
   btnLike.addEventListener("click", async () => {
     await alternarLike(foto._id, btnLike);

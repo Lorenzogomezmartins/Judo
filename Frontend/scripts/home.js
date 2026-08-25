@@ -70,78 +70,92 @@ async function cargarProximaActividad() {
       return;
     }
 
-    const actividad = proximasActividades[0];
+    const primeraFecha = proximasActividades[0].fecha
+  .split("T")[0];
 
-    const fecha = new Date(actividad.fecha);
+const actividadesDelDia = proximasActividades.filter((actividad) => {
+  return actividad.fecha.split("T")[0] === primeraFecha;
+});
 
-    const dia = fecha.getUTCDate();
+const fecha = new Date(proximasActividades[0].fecha);
 
-    const mes = fecha
-      .toLocaleString("es-AR", {
-        month: "long",
-        timeZone: "UTC",
-      })
-      .toUpperCase();
+const dia = fecha.getUTCDate();
 
-    const anio = fecha.getUTCFullYear();
+const mes = fecha
+  .toLocaleString("es-AR", {
+    month: "long",
+    timeZone: "UTC",
+  })
+  .toUpperCase();
 
-    const tipo = obtenerTipoActividad(actividad.tipo);
+const anio = fecha.getUTCFullYear();
 
-    const ubicacion =
-      actividad.direccion ||
-      "Ubicación a confirmar";
+container.innerHTML = `
+  <div class="home-proxima-fecha">
 
-    container.innerHTML = `
-      <div class="home-proxima-fecha">
+    <span class="home-proxima-dia">
+      ${dia}
+    </span>
 
-        <span class="home-proxima-dia">
-          ${dia}
-        </span>
+    <span class="home-proxima-mes">
+      ${mes}
+    </span>
 
-        <span class="home-proxima-mes">
-          ${mes}
-        </span>
+    <span class="home-proxima-anio">
+      ${anio}
+    </span>
 
-        <span class="home-proxima-anio">
-          ${anio}
-        </span>
+  </div>
 
-      </div>
+  <div class="home-proxima-contenido">
 
-      <div class="home-proxima-contenido">
+    ${actividadesDelDia.map((actividad) => {
 
-        <span class="home-proxima-tipo">
-          ${tipo}
-        </span>
+      const tipo = obtenerTipoActividad(actividad.tipo);
 
-        <h4>
-          ${actividad.nombre || "Actividad sin nombre"}
-        </h4>
+      const ubicacion =
+        actividad.direccion ||
+        "Ubicación a confirmar";
 
-        <div class="home-proxima-info">
+      return `
+        <div class="home-proxima-evento">
 
-          <span>
-            <i class="bi bi-calendar-event"></i>
-            ${formatearFechaCompleta(fecha)}
+          <span class="home-proxima-tipo">
+            ${tipo}
           </span>
 
-          <span>
-            <i class="bi bi-geo-alt"></i>
-            ${ubicacion}
-          </span>
+          <h4>
+            ${actividad.nombre || "Actividad sin nombre"}
+          </h4>
+
+          <div class="home-proxima-info">
+
+            <span>
+              <i class="bi bi-calendar-event"></i>
+              ${formatearFechaCompleta(new Date(actividad.fecha))}
+            </span>
+
+            <span>
+              <i class="bi bi-geo-alt"></i>
+              ${ubicacion}
+            </span>
+
+          </div>
 
         </div>
+      `;
+    }).join("")}
 
-        <a
-          href="#/calendario"
-          class="home-proxima-link"
-        >
-          Ver en calendario
-          <i class="bi bi-arrow-right"></i>
-        </a>
+    <a
+      href="#/calendario"
+      class="home-proxima-link"
+    >
+      Ver en calendario
+      <i class="bi bi-arrow-right"></i>
+    </a>
 
-      </div>
-    `;
+  </div>
+`;
   } catch (error) {
     console.error("Error cargando próxima actividad:", error);
 
