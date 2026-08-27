@@ -714,6 +714,7 @@
 }
 
 
+
 /* =========================================================
    TABLA
 ========================================================= */
@@ -997,6 +998,57 @@
 
 
 /* =========================================================
+   CATEGORÍA - BOTÓN FILTRO
+========================================================= */
+
+.categoria-filtro-btn {
+  min-width: 88px;
+  padding: 9px 14px;
+
+  border: 1px solid rgba(23, 105, 194, 0.16) !important;
+  border-radius: 999px;
+
+  color: var(--ranking-blue);
+  background: var(--ranking-blue-soft);
+
+  font-size: 13px;
+  font-weight: 850;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.categoria-filtro-btn:hover {
+  transform: translateY(-2px);
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--ranking-blue),
+      #0d4f98
+    );
+
+  box-shadow:
+    0 8px 18px rgba(23, 105, 194, 0.22);
+}
+
+.categoria-filtro-btn:active {
+  transform: scale(0.96);
+}
+
+.categoria-filtro-btn:focus-visible {
+  outline: 3px solid rgba(23, 105, 194, 0.28);
+  outline-offset: 3px;
+}
+
+/* =========================================================
    LOADING
 ========================================================= */
 
@@ -1251,6 +1303,61 @@
   font-size: 13px;
 
   line-height: 1.6;
+}
+
+
+
+/* =========================================================
+   LIMPIAR FILTROS
+========================================================= */
+
+.ranking-clear-btn {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  border: 1px solid #dfdfdf !important;
+  border-radius: 16px;
+
+  color: #5c6066;
+  background: #f7f7f8;
+
+  font-size: 13px;
+  font-weight: 850;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ranking-clear-btn:hover {
+  transform: translateY(-2px);
+
+  color: var(--ranking-red);
+  border-color: rgba(169, 0, 0, 0.2) !important;
+  background: var(--ranking-red-soft);
+
+  box-shadow:
+    0 8px 18px rgba(169, 0, 0, 0.1);
+}
+
+.ranking-clear-btn:active {
+  transform: scale(0.97);
+}
+
+.ranking-clear-btn:focus-visible {
+  outline: 3px solid rgba(23, 105, 194, 0.28);
+  outline-offset: 3px;
 }
 
 

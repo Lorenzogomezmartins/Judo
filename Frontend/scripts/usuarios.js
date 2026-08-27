@@ -195,12 +195,16 @@ function cargarCategoriasRanking() {
   });
 }
 
+
+
 function inicializarEventosRanking() {
   const searchInput = document.getElementById("searchInput");
   const filtroCategoria = document.getElementById("filtroCategoria");
   const sortDesc = document.getElementById("sortDesc");
   const sortAsc = document.getElementById("sortAsc");
   const botonesPeso = document.querySelectorAll(".peso-btn");
+  const botonesCategoria = document.querySelectorAll(".categoria-filtro-btn");
+  const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
   searchInput?.addEventListener("input", aplicarFiltrosRanking);
   filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
@@ -232,9 +236,56 @@ sortAsc?.addEventListener("click", () => {
       boton.classList.add("active");
 
       aplicarFiltrosRanking();
+
+        botonesCategoria.forEach((boton) => {
+    boton.addEventListener("click", () => {
+      const categoria = boton.dataset.categoria || "";
+
+      const filtroCategoria = document.getElementById("filtroCategoria");
+      const searchInput = document.getElementById("searchInput");
+
+      if (filtroCategoria) {
+        filtroCategoria.value = categoria;
+      }
+
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
+      aplicarFiltrosRanking();
+
+      btnLimpiarFiltros?.addEventListener("click", () => {
+  const searchInput = document.getElementById("searchInput");
+  const filtroCategoria = document.getElementById("filtroCategoria");
+
+  if (searchInput) {
+    searchInput.value = "";
+  }
+
+  if (filtroCategoria) {
+    filtroCategoria.value = "";
+  }
+
+  sexoSeleccionado = "";
+  pesoSeleccionado = "";
+
+  ordenActual = "desc";
+
+  sortDesc?.classList.add("active");
+  sortAsc?.classList.remove("active");
+
+  botonesPeso.forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  aplicarFiltrosRanking();
+});
+    });
+  });
     });
   });
 }
+
 
 function aplicarFiltrosRanking() {
   const searchInput = document.getElementById("searchInput");
@@ -360,8 +411,14 @@ function renderizarRanking(usuarios) {
       </td>
 
       <td>
-        ${usuario.categoria || "-"}
-      </td>
+  <button
+    type="button"
+    class="categoria-filtro-btn"
+    data-categoria="${usuario.categoria || ""}"
+  >
+    ${usuario.categoria || "-"}
+  </button>
+</td>
 
       <td>
         ${usuario.institucion || "-"}
@@ -408,6 +465,25 @@ function renderizarRanking(usuarios) {
       </td>
     `;
 
-    tbody.appendChild(fila);
+        tbody.appendChild(fila);
+
+    const botonCategoria = fila.querySelector(".categoria-filtro-btn");
+
+    botonCategoria?.addEventListener("click", () => {
+      const categoria = botonCategoria.dataset.categoria || "";
+
+      const filtroCategoria = document.getElementById("filtroCategoria");
+      const searchInput = document.getElementById("searchInput");
+
+      if (filtroCategoria) {
+        filtroCategoria.value = categoria;
+      }
+
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
+      aplicarFiltrosRanking();
+    });
   });
 }
