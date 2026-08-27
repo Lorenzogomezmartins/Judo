@@ -19,6 +19,9 @@ export async function cargarRankingUsuarios() {
   try {
     const response = await fetch(API_RANKING);
     const usuarios = await response.json();
+    console.log("RANKING RECIBIDO:", usuarios);
+    console.log("PRIMER USUARIO:", usuarios[0]);
+console.log("PROPIEDADES:", Object.keys(usuarios[0]));
 
     if (!response.ok) {
       throw new Error("Error al obtener ranking");
@@ -33,10 +36,10 @@ export async function cargarRankingUsuarios() {
       return;
     }
 
-    rankingUsuarios = usuarios.map((usuario) => ({
-      ...usuario,
-      puntos: Number(usuario.puntajeTotal ?? 0),
-    }));
+   rankingUsuarios = usuarios.map((usuario) => ({
+  ...usuario,
+  puntos: Number(usuario.puntajeTotal ?? 0),
+}));
 
     cargarCategoriasRanking();
     inicializarEventosRanking();
@@ -293,10 +296,16 @@ function aplicarFiltrosRanking() {
   }
 
   usuariosFiltrados.sort((a, b) => {
-    return ordenActual === "asc"
-      ? a.puntos - b.puntos
-      : b.puntos - a.puntos;
-  });
+  const rankingA = Number(a.ranking);
+  const rankingB = Number(b.ranking);
+
+  if (Number.isNaN(rankingA)) return 1;
+  if (Number.isNaN(rankingB)) return -1;
+
+  return ordenActual === "asc"
+    ? rankingB - rankingA
+    : rankingA - rankingB;
+});
 
   renderizarRanking(usuariosFiltrados);
 }
@@ -319,25 +328,15 @@ function renderizarRanking(usuarios) {
 
   tbody.innerHTML = "";
 
-  let puestoActual = 0;
-let puntajeAnterior = null;
-
-usuarios.forEach((usuario) => {
-  const puntajeActual = Number(usuario.puntos ?? 0);
-
-  if (puntajeActual !== puntajeAnterior) {
-    puestoActual++;
-  }
-
-  puntajeAnterior = puntajeActual;
+  usuarios.forEach((usuario) => {
 
     const fila = document.createElement("tr");
     const foto = obtenerFotoUsuario(usuario);
 
     fila.innerHTML = `
-      <td class="fw-bold">
-        ${puestoActual}
-      </td>
+     <td class="fw-bold">
+  ${usuario.ranking ?? "-"}
+</td>
 
       <td>
         <img 

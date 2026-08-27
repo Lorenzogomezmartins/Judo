@@ -48,7 +48,7 @@ export async function obtenerFilasInscripciones() {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${nombreHoja}!A:Z`,
+    range: "'Para Ranking -- FINAL'!A:Q",
   });
 
   return response.data.values || [];
