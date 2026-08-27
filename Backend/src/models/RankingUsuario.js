@@ -30,7 +30,9 @@ const rankingUsuarioSchema = new mongoose.Schema(
 
     puntajeTotal: { type: Number, default: 0 },
 
-    foto: { type: String },
+ranking: { type: Number },
+
+foto: { type: String },
 
     fotoPublicId: { type: String },
 

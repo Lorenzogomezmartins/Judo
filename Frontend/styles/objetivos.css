@@ -1,99 +1,528 @@
-/* =========================
-   GRID OBJETIVOS
-========================= */
-.objetivos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 32px;
-  justify-items: center;
+/* =========================================================
+   OBJETIVOS
+========================================================= */
+
+.objetivos-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 70px;
+  padding: 20px 24px 0;
+  color: #111827;
 }
 
-/* =========================
-   CARD OBJETIVO (GRANDE Y LIMPIA)
-========================= */
-.objetivo-card {
-  width: 100%;
-  max-width: 300px;
-  min-height: 280px;
-  background: #ffffff;
-  padding: 30px 26px;
-  border-radius: 18px;
-  text-align: center;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
+/* =========================================================
+   ENCABEZADO
+========================================================= */
+
+.objetivos-header {
+  text-align: center;
+  max-width: 850px;
+  margin: 0 auto 75px;
+}
+
+.objetivos-etiqueta {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.objetivos-header h2 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  color: #111827;
+}
+
+.objetivos-header .subtitle {
+  margin: 16px 0 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.objetivos-descripcion {
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.objetivos-seccion {
+  margin-bottom: 90px;
+}
+
+.seccion-titulo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 35px;
+}
+
+.seccion-numero {
+  display: flex;
+  align-items: center;
   justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #4b5563;
+
+  flex-shrink: 0;
+}
+
+.seccion-label {
+  display: block;
+  margin-bottom: 3px;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.seccion-titulo h3 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 850;
+  color: #111827;
+}
+
+
+/* =========================================================
+   MISIÓN
+========================================================= */
+
+.mision-contenido {
+  max-width: 930px;
+  margin-left: 66px;
+  padding-left: 30px;
+
+  border-left: 2px solid #e5e7eb;
+}
+
+.mision-contenido p {
+  margin: 0 0 18px;
+
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+.mision-contenido p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   VISIÓN
+========================================================= */
+
+.objetivos-vision {
+  padding: 55px 60px;
+  border-radius: 24px;
+  background: #f8fafc;
+}
+
+.vision-contenido {
+  max-width: 900px;
+  margin-left: 66px;
+}
+
+.vision-frase {
+  position: relative;
+
+  margin-bottom: 28px;
+  padding: 25px 30px 25px 45px;
+
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.vision-frase .comilla {
+  position: absolute;
+  top: 8px;
+  left: 18px;
+
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  line-height: 1;
+  color: #d1d5db;
+}
+
+.vision-frase p {
+  margin: 0;
+
+  font-size: 1.18rem;
+  line-height: 1.7;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.vision-contenido > p {
+  margin: 0;
+
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   OBJETIVOS
+========================================================= */
+
+.objetivos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.objetivo-card {
+  position: relative;
+
+  min-height: 270px;
+  padding: 30px 28px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.045);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .objetivo-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.12);
+
+  border-color: #d1d5db;
+
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.09);
 }
 
-/* =========================
-   TÍTULO CARD (CREATIVO)
-========================= */
-.objetivo-card h3 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin-bottom: 14px;
+.objetivo-numero {
+  display: block;
+  margin-bottom: 28px;
+
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #9ca3af;
+}
+
+.objetivo-card h4 {
+  margin: 0 0 14px;
+
+  font-size: 1.12rem;
+  font-weight: 850;
   color: #111827;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
 }
 
-/* =========================
-   TEXTO CARD (ELEGANTE)
-========================= */
 .objetivo-card p {
-  font-size: 0.95rem;
-  line-height: 1.65;
-  color: #4b5563;
+  margin: 0;
+
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: #6b7280;
 }
 
-/* =========================
-   FRASE FINAL (CHICA Y SUTIL)
-========================= */
+
+/* =========================================================
+   HISTORIA
+========================================================= */
+
+.historia-intro {
+  max-width: 850px;
+  margin: 0 0 38px 66px;
+}
+
+.historia-intro p {
+  margin: 0 0 14px;
+
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #6b7280;
+}
+
+.historia-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.historia-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.historia-card {
+  display: flex;
+  gap: 20px;
+
+  padding: 28px;
+
+  border-radius: 18px;
+  background: #111827;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.historia-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+}
+
+.historia-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+
+  font-size: 0.7rem;
+  font-weight: 900;
+
+  color: #ffffff;
+
+  flex-shrink: 0;
+}
+
+.historia-card span:not(.historia-icono) {
+  display: block;
+  margin-bottom: 7px;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+
+  color: #9ca3af;
+}
+
+.historia-card h4 {
+  margin: 0 0 12px;
+
+  font-size: 1.05rem;
+  font-weight: 800;
+
+  color: #ffffff;
+}
+
+.historia-card p {
+  margin: 0;
+
+  font-size: 0.88rem;
+  line-height: 1.65;
+
+  color: #d1d5db;
+}
+
+
+/* =========================================================
+   CIERRE
+========================================================= */
+
 .objetivos-cierre {
-  margin-top: 80px;
-  padding: 28px 30px;
-  background: transparent;
-  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  margin-top: 20px;
+  padding: 25px 0;
+}
+
+.objetivos-cierre .cierre-linea {
+  width: 55px;
+  height: 1px;
+  background: #d1d5db;
 }
 
 .objetivos-cierre p {
-  font-size: 0.95rem;
+  margin: 0;
+
+  font-size: 0.92rem;
   font-style: italic;
-  font-weight: 500;
   line-height: 1.6;
-  color: #6b7280;
-  max-width: 900px;
-  margin: 0 auto;
+
   text-align: center;
+  color: #6b7280;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 768px) {
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .objetivos-grid,
+  .historia-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .objetivos-vision {
+    padding: 45px 35px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .objetivos-container {
+    padding: 15px 18px 0;
+  }
+
+  .objetivos-header {
+    margin-bottom: 55px;
+  }
+
+  .objetivos-header h2 {
+    font-size: 2.5rem;
+  }
+
+  .objetivos-seccion {
+    margin-bottom: 65px;
+  }
+
+  .seccion-titulo {
+    margin-bottom: 28px;
+  }
+
+  .seccion-titulo h3 {
+    font-size: 1.7rem;
+  }
+
+  .mision-contenido,
+  .vision-contenido,
+  .historia-intro {
+    margin-left: 0;
+  }
+
+  .mision-contenido {
+    padding-left: 20px;
+  }
+
+  .objetivos-vision {
+    padding: 35px 22px;
+    border-radius: 18px;
+  }
+
+  .vision-frase {
+    padding: 22px 20px 22px 35px;
+  }
+
+  .vision-frase p {
+    font-size: 1rem;
+  }
+
+  .objetivos-grid,
+  .historia-grid {
+    grid-template-columns: 1fr;
+  }
+
   .objetivo-card {
-    max-width: 100%;
     min-height: auto;
   }
 
-  .objetivos-cierre p {
-    font-size: 0.9rem;
+  .historia-card {
+    padding: 24px;
   }
+
+  .objetivos-cierre {
+    gap: 12px;
+  }
+
+  .objetivos-cierre .cierre-linea {
+    width: 30px;
+  }
+
 }
 
+
+/* =========================================================
+   MOBILE PEQUEÑO
+========================================================= */
+
 @media (max-width: 480px) {
+
+  .objetivos-header h2 {
+    font-size: 2.2rem;
+  }
+
+  .objetivos-header .subtitle {
+    font-size: 0.98rem;
+  }
+
+  .objetivos-descripcion {
+    font-size: 0.92rem;
+  }
+
+  .seccion-titulo {
+    gap: 12px;
+  }
+
+  .seccion-numero {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mision-contenido p,
+  .historia-intro p {
+    font-size: 0.94rem;
+  }
+
   .objetivo-card {
-    padding: 26px 22px;
+    padding: 25px 22px;
+  }
+
+  .historia-card {
+    gap: 14px;
+  }
+
+  .historia-card p {
+    font-size: 0.85rem;
   }
 
   .objetivos-cierre p {
-    font-size: 0.85rem;
+    font-size: 0.84rem;
   }
+
 }

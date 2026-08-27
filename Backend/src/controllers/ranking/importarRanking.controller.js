@@ -62,9 +62,12 @@ function hayCambios(usuarioExistente, datosNuevos) {
     usuarioExistente.sexo !== datosNuevos.sexo ||
 
     Number(usuarioExistente.puntajeTotal || 0) !==
-      Number(datosNuevos.puntajeTotal || 0) ||
+  Number(datosNuevos.puntajeTotal || 0) ||
 
-    usuarioExistente.abiertoCiudad2026?.posicion !==
+Number(usuarioExistente.ranking || 0) !==
+  Number(datosNuevos.ranking || 0) ||
+
+usuarioExistente.abiertoCiudad2026?.posicion !==
       datosNuevos.abiertoCiudad2026.posicion ||
 
     Number(usuarioExistente.abiertoCiudad2026?.puntaje || 0) !==
@@ -159,8 +162,10 @@ export async function ejecutarImportacionRanking() {
 
       const fotoDriveUrl = normalizarFotoDrive(fila[13]);
 
-      const peso = normalizarNumero(fila[14]);
-      const sexo = normalizarSexo(fila[15]);
+      const ranking = normalizarNumero(fila[14]);
+
+      const peso = normalizarNumero(fila[15]);
+const sexo = normalizarSexo(fila[16]);
 
       /*
         DNI obligatorio.
@@ -263,6 +268,8 @@ export async function ejecutarImportacionRanking() {
 
         puntajeTotal,
 
+        ranking,
+
         filaGoogleSheet: numeroFilaReal,
 
         datosOriginales: {
@@ -283,6 +290,9 @@ export async function ejecutarImportacionRanking() {
           metropolitanoPuntaje,
 
           puntajeTotal,
+
+          ranking,
+
 
           fotoDriveUrl,
 
