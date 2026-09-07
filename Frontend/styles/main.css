@@ -150,6 +150,11 @@ body {
 .nav a {
   flex: 1;
   min-width: 105px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   text-align: center;
   color: #ffffff;
   text-decoration: none;
@@ -162,8 +167,8 @@ body {
 }
 
 .nav a:hover {
-  background: #ffffff;
-  color: #9e0000;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
   transform: translateY(-2px);
 }
 

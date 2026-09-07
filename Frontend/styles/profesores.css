@@ -1,128 +1,422 @@
-/* =========================
-   SECCIÓN PROFESORES
-========================= */
+/* =========================================================
+   PROFESORES Y AUTORIDADES
+========================================================= */
+
 .profesores {
-  max-width: 1200px;
-  margin: 60px auto;
+  max-width: 1250px;
+  margin: 70px auto;
   padding: 0 25px;
-  text-align: center;
 }
 
-/* TÍTULO */
-.profesores h2 {
-  font-size: 2.2rem;
+/* =========================================================
+   HEADER GENERAL
+========================================================= */
+
+.profesores-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.profesores-eyebrow,
+.autoridades-eyebrow,
+.profesores-eyebrow {
+  display: block;
+  font-size: 0.78rem;
   font-weight: 800;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-}
-
-/* SUBTÍTULO */
-.profesores-subtitle {
-  max-width: 700px;
-  margin: 0 auto 45px;
-  font-size: 1rem;
-  color: #4b5563;
-  line-height: 1.6;
-}
-
-/* =========================
-   GRID
-========================= */
-.profesores-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 35px;
-}
-
-/* =========================
-   CARD PROFESOR
-========================= */
-.profesor-card {
-  background: #ffffff;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.profesor-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.12);
-}
-
-/* IMAGEN */
-.profesor-card img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  display: block;
-}
-
-/* =========================
-   CONTENIDO
-========================= */
-
-/* NOMBRE */
-.profesor-card h3 {
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin: 18px 15px 8px;
-  color: #111827;
-  text-align: center;
-}
-
-/* SEPARADOR BAJO EL NOMBRE */
-.profesor-card h3::after {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 3px;
-  background: #b91c1c;
-  margin: 8px auto 12px;
-  border-radius: 2px;
-}
-
-/* GRADO */
-.profesor-card .grado {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   color: #b91c1c;
   margin-bottom: 10px;
 }
 
-/* DESCRIPCIÓN */
-.profesor-card p {
-  font-size: 0.95rem;
+.profesores-header h2 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.profesores-subtitle {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1rem;
   color: #6b7280;
-  line-height: 1.6;
-  padding: 0 20px 22px;
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   AUTORIDADES
+========================================================= */
+
+.autoridades-seccion {
+  margin-bottom: 90px;
+}
+
+.autoridades-header,
+.profesores-seccion-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.autoridades-header h2,
+.profesores-seccion-header h2 {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0;
+}
+
+/* Línea decorativa */
+
+.autoridades-header h2::after,
+.profesores-seccion-header h2::after {
+  content: "";
+  display: block;
+  width: 45px;
+  height: 3px;
+  background: #b91c1c;
+  margin: 12px auto 0;
+  border-radius: 3px;
+}
+
+
+/* =========================================================
+   GRID AUTORIDADES
+========================================================= */
+
+.autoridades-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD AUTORIDAD
+========================================================= */
+
+.autoridad-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  display: flex;
+  flex-direction: column;
+
   text-align: center;
 }
 
-/* =========================
+.autoridad-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.11);
+}
+
+
+/* FOTO AUTORIDAD */
+
+.autoridad-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* NOMBRE AUTORIDAD */
+
+.autoridad-card h3 {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #111827;
+
+  margin: 17px 12px 6px;
+}
+
+
+/* CARGO / CLUB */
+
+.autoridad-card .grado {
+  display: block;
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  color: #b91c1c;
+
+  margin: 0 12px 12px;
+}
+
+
+/* DESCRIPCIÓN */
+
+.autoridad-card > p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #6b7280;
+
+  padding: 0 15px 18px;
+  margin: 0;
+}
+
+
+/* =========================================================
+   PROFESORES
+========================================================= */
+
+.profesores-seccion {
+  padding-top: 10px;
+}
+
+.profesores-seccion-header {
+  margin-bottom: 35px;
+}
+
+
+/* =========================================================
+   GRID PROFESORES
+========================================================= */
+
+.profesores-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD PROFESOR
+========================================================= */
+
+.profesor-card {
+  background: #ffffff;
+
+  border-radius: 18px;
+  overflow: hidden;
+
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.profesor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   FOTO PROFESOR
+========================================================= */
+
+.profesor-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* =========================================================
+   NOMBRE
+========================================================= */
+
+.profesor-card h3 {
+  font-size: 1.15rem;
+  font-weight: 900;
+
+  margin: 17px 15px 7px;
+
+  color: #111827;
+}
+
+
+/* SEPARADOR */
+
+.profesor-card h3::after {
+  content: "";
+
+  display: block;
+
+  width: 40px;
+  height: 3px;
+
+  background: #b91c1c;
+
+  margin: 8px auto 10px;
+
+  border-radius: 3px;
+}
+
+
+/* =========================================================
+   GRADO
+========================================================= */
+
+.profesor-card .grado {
+  display: block;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  color: #b91c1c;
+
+  margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   DESCRIPCIÓN
+========================================================= */
+
+.profesor-card > p {
+  font-size: 0.9rem;
+
+  color: #6b7280;
+
+  line-height: 1.55;
+
+  padding: 0 18px 18px;
+
+  margin: 0;
+}
+
+
+/* =========================================================
+   CAPACITACIONES
+========================================================= */
+
+.profesor-capacitaciones {
+  margin: 0 18px 18px;
+
+  text-align: left;
+
+  border-top: 1px solid #e5e7eb;
+
+  padding-top: 12px;
+}
+
+.profesor-capacitaciones summary {
+  cursor: pointer;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  color: #374151;
+
+  padding: 5px 0;
+}
+
+.profesor-capacitaciones ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.profesor-capacitaciones li {
+  font-size: 0.82rem;
+  color: #6b7280;
+
+  margin-bottom: 10px;
+}
+
+.profesor-capacitaciones strong {
+  color: #111827;
+}
+
+.profesor-capacitaciones span {
+  display: block;
+  margin-top: 3px;
+}
+
+
+/* =========================================================
+   CV
+========================================================= */
+
+.profesor-card .btn {
+  margin: auto 18px 18px;
+
+  width: auto !important;
+
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
    RESPONSIVE
-========================= */
-@media (max-width: 768px) {
+========================================================= */
 
-  .profesores h2 {
-    font-size: 1.9rem;
-  }
+/* TABLET */
 
-  .profesores-subtitle {
-    margin-bottom: 35px;
-  }
+@media (max-width: 1000px) {
 
-  .profesor-card img {
-    height: 230px;
+  .autoridades-grid,
+  .profesores-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
 }
 
-@media (max-width: 480px) {
+
+/* TABLET PEQUEÑA */
+
+@media (max-width: 750px) {
+
+  .autoridades-grid,
+  .profesores-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profesores-header h2 {
+    font-size: 2rem;
+  }
+
+  .autoridades-header h2,
+  .profesores-seccion-header h2 {
+    font-size: 1.7rem;
+  }
+
+}
+
+
+/* CELULAR */
+
+@media (max-width: 500px) {
+
+  .profesores {
+    margin: 50px auto;
+    padding: 0 18px;
+  }
+
+  .autoridades-grid,
+  .profesores-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
 
   .profesor-card img {
-    height: 210px;
+    height: 260px;
+  }
+
+  .autoridad-card img {
+    height: 250px;
   }
 
 }

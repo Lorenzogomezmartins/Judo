@@ -233,3 +233,34 @@ export async function obtenerFilasProfesores() {
 
   return response.data.values || [];
 }
+
+// ===============================
+// GOOGLE SHEETS - CLUBES
+// ===============================
+
+export async function obtenerFilasClubes() {
+  const client = await auth.getClient();
+
+  const sheets = google.sheets({
+    version: "v4",
+    auth: client,
+  });
+
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+
+  /*
+    IMPORTANTE:
+
+    Por ahora dejamos preparada la función.
+    Cuando tengas el Excel / Google Sheet definitivo,
+    ajustamos solamente el nombre de la pestaña
+    y el rango si hace falta.
+  */
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: "'Clubes'!A:Z",
+  });
+
+  return response.data.values || [];
+}

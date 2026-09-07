@@ -1,47 +1,93 @@
-// src/routes/club.routes.js
-import { Router } from 'express';
+import express from "express";
 
-import crearClub from '../controllers/Clubes/crearClub.js';
-import listarClubes from '../controllers/Clubes/listarClubes.js';
-import obtenerClub from '../controllers/Clubes/obtenerClub.js';
-import actualizarClub from '../controllers/Clubes/actualizarClub.js';
-import eliminarClub from '../controllers/Clubes/eliminarClub.js';
+import {
+  obtenerClubes,
+  obtenerClubPorId,
+  crearClub,
+  actualizarClub,
+  eliminarClub,
+} from "../controllers/Clubes/club.controller.js";
 
-import { uploadLogoClub } from '../middlewares/uploadLogoClub.js';
-import { authMiddleware, adminOnly } from '../middlewares/authMiddleware.js';
+import {
+  importarClubesDesdeSheets,
+} from "../controllers/Clubes/importarClubes.controller.js";
 
-const router = Router();
+import multer from "multer";
 
-/* =========================
-   RUTAS CLUBES
-========================= */
 
-// Públicas
-router.get('/', listarClubes);
-router.get('/nombre/:nombre', obtenerClub);
+const router = express.Router();
 
-// Protegidas
+
+/*
+=========================================================
+MULTER
+=========================================================
+
+El archivo queda en memoria para poder enviarlo
+directamente a Cloudinary.
+=========================================================
+*/
+
+const upload =
+  multer({
+    storage: multer.memoryStorage(),
+  });
+
+
+/*
+=========================================================
+CLUBES
+=========================================================
+*/
+
+// GET /api/clubes
+router.get(
+  "/",
+  obtenerClubes
+);
+
+
+// GET /api/clubes/:id
+router.get(
+  "/:id",
+  obtenerClubPorId
+);
+
+
+// POST /api/clubes
 router.post(
-  '/',
-  authMiddleware,
-  adminOnly,
-  uploadLogoClub.single('logo'),
+  "/",
+  upload.single("logo"),
   crearClub
 );
 
+
+// PUT /api/clubes/:id
 router.put(
-  '/:id',
-  authMiddleware,
-  adminOnly,
-  uploadLogoClub.single('logo'),
+  "/:id",
+  upload.single("logo"),
   actualizarClub
 );
 
+
+// DELETE /api/clubes/:id
 router.delete(
-  '/:id',
-  authMiddleware,
-  adminOnly,
+  "/:id",
   eliminarClub
 );
+
+
+/*
+=========================================================
+IMPORTAR CLUBES
+=========================================================
+*/
+
+// POST /api/clubes/importar
+router.post(
+  "/importar",
+  importarClubesDesdeSheets
+);
+
 
 export default router;

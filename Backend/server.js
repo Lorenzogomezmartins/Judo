@@ -9,6 +9,7 @@ import connectDB from './src/config/db.js';
 import sincronizarResultadosFTPAutomatico from "./src/controllers/resultados/sincronizarResultadosFTPAutomatico.js";
 import { ejecutarImportacionRanking } from "./src/controllers/ranking/importarRanking.controller.js";
 
+
 dotenv.config();
 connectDB();
 
