@@ -1,12 +1,15 @@
 import ftp from "basic-ftp";
 import { Writable } from "stream";
 
+// Ruta base estándar de Hostinger para este dominio
+const RUTA_HOSTINGER_DEFAULT = "/domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+
 export async function conectarFTP() {
   const client = new ftp.Client(30000);
 
   await client.access({
     host: process.env.FTP_HOST,
-    port: 21,
+    port: Number(process.env.FTP_PORT || 21),
     user: process.env.FTP_USER,
     password: process.env.FTP_PASSWORD,
     secure: false,
@@ -20,7 +23,7 @@ export async function listarArchivosFTP() {
 
   try {
     const archivos = [];
-    const baseDir = process.env.FTP_BASE_DIR || "/htdocs/resultados";
+    const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
 
     async function recorrer(ruta) {
       const items = await client.list(ruta);
@@ -40,6 +43,7 @@ export async function listarArchivosFTP() {
     }
 
     await recorrer(baseDir);
+
     return archivos;
   } finally {
     client.close();
@@ -79,7 +83,7 @@ export async function crearCarpetaFTP(rutaCarpeta) {
 }
 
 export async function crearCarpetaResultadoTorneo(slug) {
-  const baseDir = process.env.FTP_BASE_DIR || "/htdocs/resultados";
+  const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
   const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
 
   await crearCarpetaFTP(ruta);
@@ -97,7 +101,7 @@ export async function borrarCarpetaFTP(rutaCarpeta) {
 }
 
 export async function borrarCarpetaResultadoTorneo(slug) {
-  const baseDir = process.env.FTP_BASE_DIR || "/htdocs/resultados";
+  const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
   const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
 
   await borrarCarpetaFTP(ruta);

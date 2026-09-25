@@ -148,6 +148,27 @@ function crearCardTorneo(torneo, esAnterior = false) {
         .join("")
     : "";
 
+  // Validamos si el torneo tiene resultados subidos/disponibles
+  const tieneResultados = Boolean(
+    torneo.tieneResultados || 
+    torneo.tiene_resultados || 
+    torneo.hasResults ||
+    (torneo.resultados && torneo.resultados.length > 0)
+  );
+
+  const botonResultadosHtml = tieneResultados
+    ? `
+      <a
+        href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="torneo-btn torneo-btn-primary"
+      >
+        Ver resultados
+      </a>
+    `
+    : "";
+
   return `
     <div class="torneo-card">
 
@@ -196,14 +217,7 @@ function crearCardTorneo(torneo, esAnterior = false) {
 
           ${renderBotonesTransmisiones(torneo)}
 
-          <a
-            href="https://fmj-resultados.infinityfreeapp.com/resultados/${slug}/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="torneo-btn torneo-btn-primary"
-          >
-            Ver resultados
-          </a>
+          ${botonResultadosHtml}
 
         </div>
 
@@ -312,41 +326,58 @@ function renderCarousel(torneos) {
     return;
   }
 
-  contenedor.innerHTML = todos.slice(0, 5).map((torneo, index) => `
-    <div class="carousel-item ${index === 0 ? "active" : ""}">
-      <img
-        src="${obtenerImagenTorneo(torneo)}"
-        class="d-block w-100"
-        alt="${torneo.nombre || "Evento"}"
-        style="height: 450px; object-fit: contain; background: #f5f5f5;"
-        onerror="this.src='../assets/Logos/Logo1.png'"
-      >
+  contenedor.innerHTML = todos.slice(0, 5).map((torneo, index) => {
+    const slug = obtenerSlugResultado(torneo);
+    
+    // Validamos si tiene resultados disponibles
+    const tieneResultados = Boolean(
+      torneo.tieneResultados || 
+      torneo.tiene_resultados || 
+      torneo.hasResults ||
+      (torneo.resultados && torneo.resultados.length > 0)
+    );
 
-      <div class="carousel-caption bg-dark bg-opacity-75 rounded p-3">
-        <h5>${torneo.nombre || "Evento sin nombre"}</h5>
+    const botonResultadosHtml = tieneResultados
+      ? `
+        <a
+          href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-danger"
+        >
+          Ver resultados
+        </a>
+      `
+      : "";
 
-        <p class="mb-3">
-          ${formatearFecha(torneo.fecha)} ·
-          ${torneo.direccion || torneo.sede || "Sin dirección"}
-        </p>
+    return `
+      <div class="carousel-item ${index === 0 ? "active" : ""}">
+        <img
+          src="${obtenerImagenTorneo(torneo)}"
+          class="d-block w-100"
+          alt="${torneo.nombre || "Evento"}"
+          style="height: 450px; object-fit: contain; background: #f5f5f5;"
+          onerror="this.src='../assets/Logos/Logo1.png'"
+        >
 
-        <div class="d-flex justify-content-center gap-2 flex-wrap">
-          ${renderBotonesTransmisiones(torneo)}
+        <div class="carousel-caption bg-dark bg-opacity-75 rounded p-3">
+          <h5>${torneo.nombre || "Evento sin nombre"}</h5>
 
-          <a
-  href="https://fmj-resultados.infinityfreeapp.com/resultados/${obtenerSlugResultado(torneo)}/"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="btn btn-danger"
->
-  Ver resultados
-</a>
+          <p class="mb-3">
+            ${formatearFecha(torneo.fecha)} ·
+            ${torneo.direccion || torneo.sede || "Sin dirección"}
+          </p>
+
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            ${renderBotonesTransmisiones(torneo)}
+
+            ${botonResultadosHtml}
+          </div>
         </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
-
 // ============================
 // FILTROS
 // ============================

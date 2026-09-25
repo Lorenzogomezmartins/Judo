@@ -1,19 +1,25 @@
-import sincronizarResultadosFTP from "./sincronizarResultadosFTP.js";
+import { importarResultadosFTP } from "./importarResultadoFTP.js";
 
 const sincronizarResultadosFTPAutomatico = async () => {
-  const reqFake = {};
+  try {
+    const resultado = await importarResultadosFTP();
 
-  const resFake = {
-    status() {
-      return this;
-    },
-    json(data) {
-      console.log("✅ FTP automático:", data);
-      return data;
-    },
-  };
+    console.log(
+      `[RESULTADOS FTP] Sincronización finalizada: ${JSON.stringify(resultado)}`
+    );
 
-  await sincronizarResultadosFTP(reqFake, resFake);
+    return resultado;
+  } catch (error) {
+    console.error(
+      "[RESULTADOS FTP] Error en sincronización automática:",
+      error.message
+    );
+
+    return {
+      ok: false,
+      error: error.message,
+    };
+  }
 };
 
 export default sincronizarResultadosFTPAutomatico;

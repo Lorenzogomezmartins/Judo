@@ -2,22 +2,62 @@ import mongoose from "mongoose";
 
 const resultadoSchema = new mongoose.Schema(
   {
-    torneoSlug: { type: String, required: true, index: true },
-    torneoNombre: { type: String, required: true },
-    anio: { type: Number, required: true, index: true },
+    torneoSlug: {
+      type: String,
+      required: true,
+      index: true,
+    },
 
-    carpetaFTP: { type: String, required: true },
-    archivoNombre: { type: String, required: true },
-    rutaFTP: { type: String, required: true, unique: true },
+    torneoNombre: {
+      type: String,
+      required: true,
+    },
 
-    hashArchivo: { type: String, required: true },
-    tipoArchivo: { type: String, default: "html" },
+    anio: {
+      type: Number,
+      required: true,
+      index: true,
+    },
 
-    contenidoOriginal: { type: String, required: true },
+    carpetaFTP: {
+      type: String,
+      required: true,
+    },
 
-    importadoEn: { type: Date, default: Date.now },
+    archivoNombre: {
+      type: String,
+      required: true,
+    },
+
+    rutaFTP: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    hashArchivo: {
+      type: String,
+      required: true,
+    },
+
+    tipoArchivo: {
+      type: String,
+      default: "html",
+    },
+
+    contenidoOriginal: {
+      type: String,
+      required: true,
+    },
+
+    importadoEn: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("Resultado", resultadoSchema);
