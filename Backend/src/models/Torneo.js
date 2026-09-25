@@ -21,6 +21,11 @@ const torneoSchema = new mongoose.Schema(
       trim: true,
     },
 
+    resultadosSubidos: {
+  type: Boolean,
+  default: false,
+},
+
     fecha: {
       type: Date,
       required: true,
@@ -103,7 +108,9 @@ const torneoSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
+  
 );
+
 
 const Torneo = mongoose.models.Torneo || mongoose.model("Torneo", torneoSchema);
 

@@ -67,7 +67,7 @@ const crearTorneo = async (req, res) => {
     const transmisiones = parsearTransmisiones(req.body.transmisiones);
     const slug = await generarSlugUnico(req.body.nombre);
 
-    const torneo = new Torneo({
+   const torneo = new Torneo({
       nombre: req.body.nombre,
       tipo: req.body.tipo || "torneo",
       slug,
@@ -78,6 +78,7 @@ const crearTorneo = async (req, res) => {
       categorias,
       transmisiones,
       fotos: req.file ? [req.file.path] : [],
+      tieneResultados: true, // <--- Agrégalo aquí para que el frontend active el botón automáticamente
     });
 
     const guardado = await torneo.save();

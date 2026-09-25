@@ -148,26 +148,17 @@ function crearCardTorneo(torneo, esAnterior = false) {
         .join("")
     : "";
 
-  // Validamos si el torneo tiene resultados subidos/disponibles
-  const tieneResultados = Boolean(
-    torneo.tieneResultados || 
-    torneo.tiene_resultados || 
-    torneo.hasResults ||
-    (torneo.resultados && torneo.resultados.length > 0)
-  );
-
-  const botonResultadosHtml = tieneResultados
-    ? `
-      <a
-        href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="torneo-btn torneo-btn-primary"
-      >
-        Ver resultados
-      </a>
-    `
-    : "";
+  // Forzamos el botón para que aparezca en todos los torneos que tengan slug
+  const botonResultadosHtml = slug ? `
+    <a
+      href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/index.html"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="torneo-btn torneo-btn-primary"
+    >
+      Ver resultados
+    </a>
+  ` : "";
 
   return `
     <div class="torneo-card">
@@ -329,26 +320,17 @@ function renderCarousel(torneos) {
   contenedor.innerHTML = todos.slice(0, 5).map((torneo, index) => {
     const slug = obtenerSlugResultado(torneo);
     
-    // Validamos si tiene resultados disponibles
-    const tieneResultados = Boolean(
-      torneo.tieneResultados || 
-      torneo.tiene_resultados || 
-      torneo.hasResults ||
-      (torneo.resultados && torneo.resultados.length > 0)
-    );
-
-    const botonResultadosHtml = tieneResultados
-      ? `
-        <a
-          href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-danger"
-        >
-          Ver resultados
-        </a>
-      `
-      : "";
+    // Forzamos el botón en el carrusel tal como lo hicimos en las tarjetas
+    const botonResultadosHtml = slug ? `
+      <a
+        href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/index.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-danger"
+      >
+        Ver resultados
+      </a>
+    ` : "";
 
     return `
       <div class="carousel-item ${index === 0 ? "active" : ""}">

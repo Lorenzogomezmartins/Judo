@@ -1,108 +1,122 @@
-import ftp from "basic-ftp";
-import { Writable } from "stream";
+import * as ftp from "basic-ftp";
+import { Writable, Readable } from "stream";
 
-// Ruta base estándar de Hostinger para este dominio
-const RUTA_HOSTINGER_DEFAULT = "/domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
-
-export async function conectarFTP() {
-  const client = new ftp.Client(30000);
-
-  await client.access({
+function obtenerConfig() {
+  return {
     host: process.env.FTP_HOST,
-    port: Number(process.env.FTP_PORT || 21),
     user: process.env.FTP_USER,
     password: process.env.FTP_PASSWORD,
+    port: Number(process.env.FTP_PORT) || 21,
     secure: false,
-  });
+  };
+}
 
+export async function conectarFTP() {
+  const client = new ftp.Client();
+  client.ftp.timeout = 10000;
+  await client.access(obtenerConfig());
   return client;
 }
 
-export async function listarArchivosFTP() {
-  const client = await conectarFTP();
+export async function crearCarpetaResultadoTorneo(folderSlug) {
+  const client = new ftp.Client();
+  client.ftp.timeout = 15000;
 
   try {
-    const archivos = [];
-    const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
+    await client.access(obtenerConfig());
 
-    async function recorrer(ruta) {
-      const items = await client.list(ruta);
+    // Nos ubicamos obligatoriamente en la raíz absoluta del servidor FTP
+    await client.cd("/");
 
-      for (const item of items) {
-        const rutaCompleta = `${ruta}/${item.name}`.replaceAll("//", "/");
+    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    const targetPath = `${baseDir}/${folderSlug}`;
 
-        if (item.isDirectory) {
-          await recorrer(rutaCompleta);
-        } else {
-          archivos.push({
-            nombre: item.name,
-            ruta: rutaCompleta,
-          });
-        }
-      }
-    }
+    // Aseguramos la creación de la carpeta del torneo paso a paso o mediante la ruta completa limpia
+    await client.ensureDir(targetPath);
 
-    await recorrer(baseDir);
+    // Contenido HTML de prueba para el index.html
+    const contenidoPrueba = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del Torneo - ${folderSlug}</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; color: #333; }
+        h1 { color: #2c3e50; }
+        p { font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <h1>🏆 Resultados del Torneo: ${folderSlug}</h1>
+    <p>¡Carpeta sincronizada correctamente con el backend de Node.js!</p>
+</body>
+</html>`;
 
-    return archivos;
-  } finally {
-    client.close();
-  }
-}
+    const streamPrueba = Readable.from([contenidoPrueba]);
+    await client.uploadFrom(streamPrueba, `${targetPath}/index.html`);
 
-export async function leerArchivoFTP(rutaArchivo) {
-  const client = await conectarFTP();
+    console.log(`[FTP Success] Carpeta e index.html creados en: ${targetPath}`);
 
-  try {
-    const chunks = [];
-
-    const writable = new Writable({
-      write(chunk, encoding, callback) {
-        chunks.push(chunk);
-        callback();
-      },
-    });
-
-    await client.downloadTo(writable, rutaArchivo);
-
-    return Buffer.concat(chunks).toString("utf-8");
-  } finally {
-    client.close();
-  }
-}
-
-export async function crearCarpetaFTP(rutaCarpeta) {
-  const client = await conectarFTP();
-
-  try {
-    await client.ensureDir(rutaCarpeta);
-    console.log(`✅ Carpeta FTP creada/verificada: ${rutaCarpeta}`);
-  } finally {
-    client.close();
-  }
-}
-
-export async function crearCarpetaResultadoTorneo(slug) {
-  const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
-  const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
-
-  await crearCarpetaFTP(ruta);
-}
-
-export async function borrarCarpetaFTP(rutaCarpeta) {
-  const client = await conectarFTP();
-
-  try {
-    await client.removeDir(rutaCarpeta);
-    console.log(`🗑️ Carpeta FTP eliminada: ${rutaCarpeta}`);
+    return {
+      success: true,
+      path: targetPath,
+    };
+  } catch (error) {
+    console.error("[FTP Error] Error al crear la carpeta o subir archivo:", error.message);
+    throw error;
   } finally {
     client.close();
   }
 }
 
 export async function borrarCarpetaResultadoTorneo(slug) {
-  const baseDir = process.env.FTP_BASE_DIR || RUTA_HOSTINGER_DEFAULT;
-  const ruta = `${baseDir}/${slug}`.replaceAll("//", "/");
+  const client = new ftp.Client();
+  try {
+    await client.access(obtenerConfig());
+    await client.cd("/");
+    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    await client.removeDir(`${baseDir}/${slug}`);
+    console.log(`[FTP Success] Carpeta eliminada: ${baseDir}/${slug}`);
+  } catch (err) {
+    console.error("[FTP Error] Error al eliminar carpeta:", err.message);
+  } finally {
+    client.close();
+  }
+}
 
-  await borrarCarpetaFTP(ruta);
+export async function listarArchivosFTP(slug) {
+  const client = new ftp.Client();
+  try {
+    await client.access(obtenerConfig());
+    await client.cd("/");
+    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    return await client.list(`${baseDir}/${slug}`);
+  } catch (err) {
+    return [];
+  } finally {
+    client.close();
+  }
+}
+
+export async function leerArchivoFTP(slug, nombreArchivo) {
+  const client = new ftp.Client();
+  try {
+    await client.access(obtenerConfig());
+    await client.cd("/");
+    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    
+    let data = "";
+    const writableStream = new Writable({
+      write(chunk, encoding, callback) {
+        data += chunk.toString();
+        callback();
+      },
+    });
+    await client.downloadTo(writableStream, `${baseDir}/${slug}/${nombreArchivo}`);
+    return data;
+  } catch (err) {
+    return null;
+  } finally {
+    client.close();
+  }
 }
