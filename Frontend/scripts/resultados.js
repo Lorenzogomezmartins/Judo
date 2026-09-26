@@ -1,12 +1,16 @@
 const API_RESULTADOS = "/api/resultados";
 
 function obtenerTorneoSlugDesdeURL() {
-  const hash = window.location.hash;
-  const params = new URLSearchParams(hash.split("?")[1]);
-  return params.get("torneo");
+  const partes = window.location.pathname.split("/").filter(Boolean);
+  const indexResultados = partes.indexOf("resultados");
+  if (indexResultados !== -1 && partes[indexResultados + 1]) {
+    return partes[indexResultados + 1];
+  }
+  return partes[partes.length - 1] !== "index.html" ? partes[partes.length - 1] : partes[partes.length - 2];
 }
 
 function formatearNombre(slug) {
+  if (!slug) return "Torneo";
   return slug
     .split("-")
     .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1))
@@ -32,7 +36,7 @@ function renderResultados(resultados) {
   const container = document.getElementById("resultadosContainer");
   if (!container) return;
 
-  if (!resultados.length) {
+  if (!resultados || !resultados.length) {
     container.innerHTML = `
       <div class="col-12">
         <div class="alert alert-info text-center">
@@ -47,26 +51,26 @@ function renderResultados(resultados) {
 
   resultados.forEach((resultado) => {
     container.innerHTML += `
-      <div class="col-md-4">
+      <div class="col-md-4 mb-4">
         <div class="card shadow h-100">
           <div class="card-body d-flex flex-column">
-            <h5 class="card-title">${resultado.archivoNombre}</h5>
+            <h5 class="card-title">${resultado.archivoNombre || "Resultado"}</h5>
 
             <p class="text-muted mb-1">
-              Año: ${resultado.anio}
+              Año: ${resultado.anio || "N/D"}
             </p>
 
             <p class="text-muted small">
-              Carpeta: ${resultado.carpetaFTP}
+              Carpeta: ${resultado.carpetaFTP || ""}
             </p>
 
             <a
-              href="/api/resultados/ver-html/${resultado._id}"
-              target="_blank"
-              class="btn btn-primary mt-auto"
-            >
-              Abrir resultado
-            </a>
+            href="/resultados/${resultado.carpetaFTP || torneoSlug}/${resultado.archivoNombre}"
+            target="_blank"
+            class="btn btn-primary mt-auto"
+          >
+            Abrir resultado
+          </a>
           </div>
         </div>
       </div>

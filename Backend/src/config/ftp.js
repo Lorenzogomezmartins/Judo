@@ -1,5 +1,5 @@
 import * as ftp from "basic-ftp";
-import { Writable, Readable } from "stream";
+import { Writable } from "stream";
 
 function obtenerConfig() {
   return {
@@ -15,6 +15,11 @@ export async function conectarFTP() {
   const client = new ftp.Client();
   client.ftp.timeout = 10000;
   await client.access(obtenerConfig());
+  
+  // Imprimimos dónde está parado el FTP exactamente al entrar
+  const rutaActual = await client.pwd();
+  console.log(`🔍 [FTP DEBUG] El servidor FTP arrancó en la ruta: ${rutaActual}`);
+
   return client;
 }
 
@@ -24,45 +29,29 @@ export async function crearCarpetaResultadoTorneo(folderSlug) {
 
   try {
     await client.access(obtenerConfig());
+    
+    const rutaActual = await client.pwd();
+    console.log(`🔍 [FTP DEBUG] PWD inicial: ${rutaActual}`);
 
-    // Nos ubicamos obligatoriamente en la raíz absoluta del servidor FTP
-    await client.cd("/");
-
+    // Probamos usar la ruta relativa directa desde donde arranca el FTP de Hostinger
     const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
-    const targetPath = `${baseDir}/${folderSlug}`;
+    
+    // Limpiamos cualquier barra inicial para que respete el directorio base del usuario FTP
+    const baseClean = baseDir.replace(/^\/+/, "");
+    const targetPath = `${baseClean}/${folderSlug}`;
 
-    // Aseguramos la creación de la carpeta del torneo paso a paso o mediante la ruta completa limpia
+    console.log(`🔍 [FTP DEBUG] Intentando crear carpeta en: ${targetPath}`);
+
     await client.ensureDir(targetPath);
 
-    // Contenido HTML de prueba para el index.html
-    const contenidoPrueba = `<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Resultados del Torneo - ${folderSlug}</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; color: #333; }
-        h1 { color: #2c3e50; }
-        p { font-size: 1.2rem; }
-    </style>
-</head>
-<body>
-    <h1>🏆 Resultados del Torneo: ${folderSlug}</h1>
-    <p>¡Carpeta sincronizada correctamente con el backend de Node.js!</p>
-</body>
-</html>`;
-
-    const streamPrueba = Readable.from([contenidoPrueba]);
-    await client.uploadFrom(streamPrueba, `${targetPath}/index.html`);
-
-    console.log(`[FTP Success] Carpeta e index.html creados en: ${targetPath}`);
+    console.log(`[FTP Success] Carpeta creada correctamente.`);
 
     return {
       success: true,
       path: targetPath,
     };
   } catch (error) {
-    console.error("[FTP Error] Error al crear la carpeta o subir archivo:", error.message);
+    console.error("[FTP Error] Error al crear la carpeta:", error.message);
     throw error;
   } finally {
     client.close();
@@ -73,10 +62,8 @@ export async function borrarCarpetaResultadoTorneo(slug) {
   const client = new ftp.Client();
   try {
     await client.access(obtenerConfig());
-    await client.cd("/");
-    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    const baseDir = (process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados").replace(/^\/+/, "");
     await client.removeDir(`${baseDir}/${slug}`);
-    console.log(`[FTP Success] Carpeta eliminada: ${baseDir}/${slug}`);
   } catch (err) {
     console.error("[FTP Error] Error al eliminar carpeta:", err.message);
   } finally {
@@ -88,8 +75,7 @@ export async function listarArchivosFTP(slug) {
   const client = new ftp.Client();
   try {
     await client.access(obtenerConfig());
-    await client.cd("/");
-    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    const baseDir = (process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados").replace(/^\/+/, "");
     return await client.list(`${baseDir}/${slug}`);
   } catch (err) {
     return [];
@@ -102,8 +88,7 @@ export async function leerArchivoFTP(slug, nombreArchivo) {
   const client = new ftp.Client();
   try {
     await client.access(obtenerConfig());
-    await client.cd("/");
-    const baseDir = process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados";
+    const baseDir = (process.env.FTP_BASE_DIR || "domains/mediumaquamarine-pelican-819722.hostingersite.com/public_html/resultados").replace(/^\/+/, "");
     
     let data = "";
     const writableStream = new Writable({

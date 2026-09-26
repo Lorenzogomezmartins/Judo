@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 import apiRoutes from './src/routes/RoutesMain.js';
@@ -32,11 +33,53 @@ app.use(express.urlencoded({ extended: true }));
 
 /* =========================
    FRONTEND / ASSETS
-   Sirve todo lo que está dentro de Frontend
-   Ej: /assets/clubes/foto.jpg
 ========================= */
 
 app.use(express.static(path.join(__dirname, '../Frontend')));
+
+/* =========================
+   RESULTADOS FTP (HOSTINGER FIX DEFINITIVO)
+========================= */
+
+const servirResultadosFTP = (req, res) => {
+  const { slug, archivo = 'index.html' } = req.params;
+
+  // Rutas posibles en la estructura de Hostinger (subiendo un nivel desde el backend o buscando en la raíz absoluta)
+  const posiblesRutas = [
+    path.join(__dirname, '../../public_html/resultados', slug, archivo), // Si Backend está dentro de una carpeta al mismo nivel que public_html
+    path.join(__dirname, '../public_html/resultados', slug, archivo),
+    path.join(process.cwd(), '../public_html/resultados', slug, archivo),
+    path.join(process.cwd(), 'public_html/resultados', slug, archivo),
+    `/home/mediumaquamarine/public_html/resultados/${slug}/${archivo}`,
+    `/home/u12345678/public_html/resultados/${slug}/${archivo}`
+  ];
+
+  for (const ruta of posiblesRutas) {
+    if (fs.existsSync(ruta) && fs.statSync(ruta).isFile()) {
+      return res.sendFile(ruta);
+    }
+  }
+
+  // Búsqueda alternativa del index.html dentro de la carpeta del torneo
+  const posiblesCarpetas = [
+    path.join(__dirname, '../../public_html/resultados', slug),
+    path.join(__dirname, '../public_html/resultados', slug),
+    path.join(process.cwd(), '../public_html/resultados', slug),
+    path.join(process.cwd(), 'public_html/resultados', slug)
+  ];
+
+  for (const carpeta of posiblesCarpetas) {
+    const indexHtml = path.join(carpeta, 'index.html');
+    if (fs.existsSync(indexHtml)) {
+      return res.sendFile(indexHtml);
+    }
+  }
+
+  return res.status(404).send(`[Error] No se encontró el resultado físico para el torneo: ${slug}`);
+};
+
+app.get('/resultados/:slug', servirResultadosFTP);
+app.get('/resultados/:slug/:archivo', servirResultadosFTP);
 
 /* =========================
    VERIFICACIÓN RÁPIDA
