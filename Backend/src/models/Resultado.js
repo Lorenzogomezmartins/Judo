@@ -31,8 +31,7 @@ const resultadoSchema = new mongoose.Schema(
 
     rutaFTP: {
       type: String,
-      required: true,
-      unique: true,
+      
     },
 
     hashArchivo: {
