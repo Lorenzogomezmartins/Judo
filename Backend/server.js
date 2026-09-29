@@ -113,18 +113,23 @@ app.use('/api', apiRoutes);
 
 
 /* =========================
-   FTP AUTOMÁTICO
+   FTP AL ARRANCAR (CON DIAGNÓSTICO)
 ========================= */
 
-setInterval(async () => {
+const ejecutarSincronizacionAlArrancar = async () => {
   try {
-    console.log("⏳ Revisando FTP automáticamente...");
+    console.log("⏳ Sincronizando con FTP al encender el servidor...");
     await sincronizarResultadosFTPAutomatico();
+    console.log("✅ Sincronización inicial completada con éxito.");
   } catch (error) {
-    console.error("❌ Error en FTP automático:", error.message);
+    console.error("❌ ERROR CRÍTICO EN SINCRONIZACIÓN INICIAL:", error);
+    console.error("Mensaje:", error.message);
+    console.error("Stack:", error.stack);
   }
-}, 5 * 60 * 1000);
+};
 
+// Se ejecuta al arrancar al toque
+ejecutarSincronizacionAlArrancar();
 
 
 /* =========================
