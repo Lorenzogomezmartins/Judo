@@ -9,7 +9,7 @@ import apiRoutes from './src/routes/RoutesMain.js';
 import connectDB from './src/config/db.js';
 import sincronizarResultadosFTPAutomatico from "./src/controllers/resultados/sincronizarResultadosFTPAutomatico.js";
 import { ejecutarImportacionRanking } from "./src/controllers/ranking/importarRanking.controller.js";
-
+import Resultado from './src/models/Resultado.js';
 
 dotenv.config();
 connectDB();
@@ -38,44 +38,60 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
 /* =========================
-   RESULTADOS FTP (HOSTINGER FIX DEFINITIVO)
+   RESULTADOS FTP (MONGODB FLEXIBLE)
 ========================= */
 
-const servirResultadosFTP = (req, res) => {
-  const { slug, archivo = 'index.html' } = req.params;
+const servirResultadosFTP = async (req, res) => {
+  try {
+    const { slug, archivo = 'index.html' } = req.params;
+    
+    // Limpieza flexible del slug para asegurar coincidencia con MongoDB
+    const slugLimpio = slug.toLowerCase().trim();
 
-  // Rutas posibles en la estructura de Hostinger (subiendo un nivel desde el backend o buscando en la raíz absoluta)
-  const posiblesRutas = [
-    path.join(__dirname, '../../public_html/resultados', slug, archivo), // Si Backend está dentro de una carpeta al mismo nivel que public_html
-    path.join(__dirname, '../public_html/resultados', slug, archivo),
-    path.join(process.cwd(), '../public_html/resultados', slug, archivo),
-    path.join(process.cwd(), 'public_html/resultados', slug, archivo),
-    `/home/mediumaquamarine/public_html/resultados/${slug}/${archivo}`,
-    `/home/u12345678/public_html/resultados/${slug}/${archivo}`
-  ];
+    let resultadoDB = await Resultado.findOne({ 
+      $or: [
+        { torneoSlug: slugLimpio },
+        { carpetaFTP: { $regex: new RegExp(slugLimpio, 'i') } }
+      ]
+    });
 
-  for (const ruta of posiblesRutas) {
-    if (fs.existsSync(ruta) && fs.statSync(ruta).isFile()) {
-      return res.sendFile(ruta);
+    // Si aún no lo encuentra, buscamos de forma parcial por cualquier coincidencia en la ruta
+    if (!resultadoDB) {
+      resultadoDB = await Resultado.findOne({
+        rutaFTP: { $regex: new RegExp(slugLimpio, 'i') }
+      });
     }
-  }
 
-  // Búsqueda alternativa del index.html dentro de la carpeta del torneo
-  const posiblesCarpetas = [
-    path.join(__dirname, '../../public_html/resultados', slug),
-    path.join(__dirname, '../public_html/resultados', slug),
-    path.join(process.cwd(), '../public_html/resultados', slug),
-    path.join(process.cwd(), 'public_html/resultados', slug)
-  ];
-
-  for (const carpeta of posiblesCarpetas) {
-    const indexHtml = path.join(carpeta, 'index.html');
-    if (fs.existsSync(indexHtml)) {
-      return res.sendFile(indexHtml);
+    if (resultadoDB && resultadoDB.contenidoOriginal) {
+      return res.setHeader('Content-Type', 'text/html').send(resultadoDB.contenidoOriginal);
     }
-  }
 
-  return res.status(404).send(`[Error] No se encontró el resultado físico para el torneo: ${slug}`);
+    // Si no está en la base de datos de Mongo, devolvemos un mensaje claro en lugar de mandar a un Hostinger inexistente
+    return res.status(404).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+          <meta charset="UTF-8">
+          <title>Resultado no encontrado</title>
+          <style>
+              body { font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+              .box { background: #1e293b; padding: 2rem; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+              h1 { color: #38bdf8; }
+          </style>
+      </head>
+      <body>
+          <div class="box">
+              <h1>Torneo no sincronizado</h1>
+              <p>El torneo con el identificador <strong>"${slug}"</strong> no se encontró en la base de datos o aún no se sincronizó desde el FTP.</p>
+          </div>
+      </body>
+      </html>
+    `);
+
+  } catch (error) {
+    console.error("Error al servir resultado:", error);
+    return res.status(500).send("Error interno al procesar el resultado.");
+  }
 };
 
 app.get('/resultados/:slug', servirResultadosFTP);

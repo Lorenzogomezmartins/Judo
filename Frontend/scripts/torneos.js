@@ -149,9 +149,10 @@ function crearCardTorneo(torneo, esAnterior = false) {
     : "";
 
   // Forzamos el botón para que aparezca en todos los torneos que tengan slug
+ // Botón dinámico con ruta relativa limpia
   const botonResultadosHtml = slug ? `
     <a
-      href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/index.html"
+      href="/resultados/${slug}/index.html"
       target="_blank"
       rel="noopener noreferrer"
       class="torneo-btn torneo-btn-primary"
@@ -321,9 +322,10 @@ function renderCarousel(torneos) {
     const slug = obtenerSlugResultado(torneo);
     
     // Forzamos el botón en el carrusel tal como lo hicimos en las tarjetas
+    // Botón dinámico con ruta relativa limpia para el carrusel
     const botonResultadosHtml = slug ? `
       <a
-        href="https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${slug}/index.html"
+        href="/resultados/${slug}/index.html"
         target="_blank"
         rel="noopener noreferrer"
         class="btn btn-danger"

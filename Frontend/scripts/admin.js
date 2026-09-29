@@ -291,6 +291,68 @@ if (filtroGaleria) {
 /* ============================= 
    CLUBES
 ============================= */
+
+
+async function importarClubesSheets() {
+  if (!confirm("¿Querés importar los clubes desde Google Sheets?")) {
+    return;
+  }
+
+  const boton = document.getElementById("btnImportarClubes");
+
+  try {
+    if (boton) {
+      boton.disabled = true;
+      boton.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Importando...
+      `;
+    }
+
+    const response = await fetchProtegido(
+      `${API_CLUBES}/importar`,
+      {
+        method: "POST",
+      }
+    );
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error importando clubes"
+      );
+    }
+
+    let mensaje = `${resultado.mensaje}\n\n`;
+
+    mensaje += `Creados: ${resultado.creados ?? 0}\n`;
+    mensaje += `Actualizados: ${resultado.actualizados ?? 0}\n`;
+    mensaje += `Sin cambios: ${resultado.sinCambios ?? 0}\n`;
+    mensaje += `Sin nombre: ${resultado.omitidosSinNombre ?? 0}\n`;
+    mensaje += `Duplicados: ${resultado.erroresDuplicados ?? 0}\n`;
+    mensaje += `Errores: ${resultado.errores?.length ?? 0}`;
+
+    alert(mensaje);
+
+    await cargarClubesAdmin();
+
+  } catch (error) {
+    console.error("Error importando clubes:", error);
+    alert("Error importando clubes: " + error.message);
+
+  } finally {
+    if (boton) {
+      boton.disabled = false;
+      boton.innerHTML = `
+        <i class="bi bi-cloud-download"></i>
+        Importar desde Google Sheets
+      `;
+    }
+  }
+}
 /* CARGAR CLUBES*/
 async function cargarClubesAdmin(filtroNombre = "") { 
   const container = document.getElementById("clubesGrid");
