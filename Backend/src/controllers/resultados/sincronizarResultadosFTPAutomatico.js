@@ -1,7 +1,6 @@
 import Torneo from "../../models/Torneo.js";
 import Resultado from "../../models/Resultado.js";
 import ftp from "basic-ftp";
-import { Writable } from "stream";
 
 function obtenerConfig() {
   return {
@@ -14,7 +13,6 @@ function obtenerConfig() {
 
 const baseDir = (process.env.FTP_BASE_DIR || "public_html/resultados").replace(/^\/+/, "");
 
-// Listar carpetas del FTP
 async function listarCarpetasResultadosFTP() {
   const client = new ftp.Client();
   client.ftp.timeout = 15000;
@@ -31,7 +29,6 @@ async function listarCarpetasResultadosFTP() {
   }
 }
 
-// Verificar si existe archivo HTML en la carpeta
 async function existeResultadoFTP(folderSlug) {
   const client = new ftp.Client();
   client.ftp.timeout = 15000;
@@ -42,39 +39,6 @@ async function existeResultadoFTP(folderSlug) {
     return list.some(item => !item.isDirectory && (item.name.endsWith('.html') || item.name.endsWith('.htm')));
   } catch (error) {
     return false;
-  } finally {
-    client.close();
-  }
-}
-
-// Descargar el contenido del archivo HTML
-async function descargarResultadoFTP(folderSlug) {
-  const client = new ftp.Client();
-  client.ftp.timeout = 15000;
-  try {
-    await client.access(obtenerConfig());
-    await client.cd(`/${baseDir}/${folderSlug}`);
-    
-    const list = await client.list();
-    const archivoHtml = list.find(item => !item.isDirectory && (item.name.endsWith('.html') || item.name.endsWith('.htm')));
-    
-    if (!archivoHtml) return "";
-
-    const chunks = [];
-    await client.downloadTo(
-      new Writable({
-        write(chunk, encoding, callback) {
-          chunks.push(chunk);
-          callback();
-        },
-      }),
-      archivoHtml.name
-    );
-    
-    return Buffer.concat(chunks).toString("utf-8");
-  } catch (error) {
-    console.error("[FTP Error] Error al descargar archivo:", error.message);
-    return "";
   } finally {
     client.close();
   }
@@ -123,8 +87,7 @@ async function importarResultadosFTP() {
         continue;
       }
 
-      const contenido = await descargarResultadoFTP(carpeta);
-
+      // Solo guardamos los datos de enlace y ruta (SIN descargar HTML)
       await Resultado.findOneAndUpdate(
         { torneoSlug: torneo.slug },
         {
@@ -132,7 +95,6 @@ async function importarResultadosFTP() {
           torneoNombre: torneo.nombre,
           anio: obtenerAnio(torneo.fecha),
           carpetaFTP: carpeta,
-          contenidoOriginal: contenido,
           disponible: true,
           ultimaSincronizacion: new Date(),
         },
@@ -166,22 +128,11 @@ async function importarResultadosFTP() {
 const sincronizarResultadosFTPAutomatico = async () => {
   try {
     const resultado = await importarResultadosFTP();
-
-    console.log(
-      `[RESULTADOS FTP] Sincronización finalizada: ${JSON.stringify(resultado)}`
-    );
-
+    console.log(`[RESULTADOS FTP] Sincronización finalizada: ${JSON.stringify(resultado)}`);
     return resultado;
   } catch (error) {
-    console.error(
-      "[RESULTADOS FTP] Error en sincronización automática:",
-      error.message
-    );
-
-    return {
-      ok: false,
-      error: error.message,
-    };
+    console.error("[RESULTADOS FTP] Error en sincronización automática:", error.message);
+    return { ok: false, error: error.message };
   }
 };
 

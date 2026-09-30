@@ -41,7 +41,8 @@ app.use(express.static(path.join(__dirname, '../Frontend')));
 
 const servirResultadosFTP = async (req, res) => {
   try {
-    const { slug, archivo = 'index.html' } = req.params;
+    const slug = req.params.slug;
+    const archivo = req.params.archivo || 'index.html';
     const slugLimpio = slug.toLowerCase().trim();
 
     const resultadoDB = await Resultado.findOne({ 
@@ -66,9 +67,11 @@ const servirResultadosFTP = async (req, res) => {
       `);
     }
 
-    // Redirige directamente a la URL pública de Hostinger para el index o cualquier sub-archivo
-    const urlHostinger = `https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${resultadoDB.carpetaFTP}/${archivo}`;
+    // Codifica la carpeta y apunta al dominio oficial del panel de Hostinger
+    const carpetaCodificada = encodeURIComponent(resultadoDB.carpetaFTP.trim());
+    const urlHostinger = `https://mediumaquamarine-pelican-819722.hostingersite.com/resultados/${carpetaCodificada}/${archivo}`;
     
+    console.log("-> Redirigiendo a Hostinger:", urlHostinger);
     return res.redirect(302, urlHostinger);
 
   } catch (error) {
@@ -78,7 +81,7 @@ const servirResultadosFTP = async (req, res) => {
 };
 
 app.get('/resultados/:slug', servirResultadosFTP);
-app.get('/resultados/:slug/:archivo', servirResultadosFTP);
+app.get('/resultados/:slug/*archivo', servirResultadosFTP);
 
 /* =========================
    VERIFICACIÓN RÁPIDA
