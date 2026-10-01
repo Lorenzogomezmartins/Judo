@@ -1482,7 +1482,7 @@ async function guardarTorneo(e) {
       );
     }
 
-    const slugReal = data?.torneo?.slug || slug;
+    const slugReal = (typeof data !== "undefined" && data?.torneo?.slug) || slug;
 
 alert(
   `${id ? "Torneo actualizado correctamente" : "Torneo creado correctamente"}\n\n` +
