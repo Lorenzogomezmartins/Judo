@@ -11,7 +11,18 @@ function obtenerConfig() {
   };
 }
 
-const baseDir = (process.env.FTP_BASE_DIR || "public_html/resultados").replace(/^\/+/, "");
+// Carpeta base de resultados DENTRO de la raíz de la cuenta FTP (viene del .env).
+// Ejemplos: "public_html/resultados"  o  "resultados"
+// Se quitan "/" al inicio y al final para poder armar rutas de forma segura.
+const baseDir = (process.env.FTP_BASE_DIR || "public_html/resultados")
+  .trim()
+  .replace(/^\/+/, "")
+  .replace(/\/+$/, "");
+
+// Ruta absoluta dentro del FTP para una carpeta de torneo
+function rutaTorneo(folderSlug) {
+  return `/${baseDir}/${folderSlug}`;
+}
 
 // Función auxiliar para conectar directamente (requerida por algunos controladores)
 export async function conectarFTP() {
@@ -21,21 +32,20 @@ export async function conectarFTP() {
   return client;
 }
 
-// Crear la carpeta del torneo usando ruta absoluta segura para jaulas de Hostinger
+// Crear la carpeta del torneo
 export async function crearCarpetaResultadoTorneo(folderSlug) {
   const client = new ftp.Client();
   client.ftp.timeout = 15000;
 
   try {
     await client.access(obtenerConfig());
-    
+
     console.log(`🔍 [FTP DEBUG] Directorio inicial al conectar: ${await client.pwd()}`);
 
-    // Usamos la ruta absoluta desde la raíz de la jaula (/public_html)
-    // ensureDir creará /public_html/resultados y /public_html/resultados/folderSlug de un solo golpe
-    const rutaCompleta = `/public_html/resultados/${folderSlug}`;
+    const rutaCompleta = rutaTorneo(folderSlug);
     console.log(`🔍 [FTP DEBUG] Asegurando ruta completa: ${rutaCompleta}`);
-    
+
+    // ensureDir crea toda la ruta si no existe
     await client.ensureDir(rutaCompleta);
 
     const rutaFinal = await client.pwd();
@@ -43,7 +53,7 @@ export async function crearCarpetaResultadoTorneo(folderSlug) {
 
     return {
       success: true,
-      path: `public_html/resultados/${folderSlug}`,
+      path: `${baseDir}/${folderSlug}`,
     };
   } catch (error) {
     console.error("[FTP Error] Error al crear la carpeta:", error.message);
@@ -60,13 +70,13 @@ export async function borrarCarpetaResultadoTorneo(folderSlug) {
 
   try {
     await client.access(obtenerConfig());
-    
-    const rutaCarpeta = `/public_html/resultados/${folderSlug}`;
+
+    const rutaCarpeta = rutaTorneo(folderSlug);
     console.log(`🔍 [FTP DEBUG] Borrando carpeta recursivamente: ${rutaCarpeta}`);
-    
+
     await client.removeDir(rutaCarpeta);
     console.log(`[FTP Success] Carpeta ${folderSlug} borrada correctamente.`);
-    
+
     return { success: true };
   } catch (error) {
     console.error("[FTP Error] Error al borrar la carpeta:", error.message);
@@ -83,11 +93,10 @@ export async function listarArchivosFTP(folderSlug) {
 
   try {
     await client.access(obtenerConfig());
-    
-    const rutaCarpeta = `/public_html/resultados/${folderSlug}`;
-    await client.cd(rutaCarpeta);
+
+    await client.cd(rutaTorneo(folderSlug));
     const list = await client.list();
-    
+
     return list;
   } catch (error) {
     console.error("[FTP Error] Error al listar archivos:", error.message);
@@ -104,8 +113,8 @@ export async function leerArchivoFTP(folderSlug, nombreArchivo) {
 
   try {
     await client.access(obtenerConfig());
-    await client.cd(`${baseDir}/${folderSlug}`);
-    
+    await client.cd(rutaTorneo(folderSlug));
+
     const chunks = [];
     await client.downloadTo(
       new Writable({
@@ -116,7 +125,7 @@ export async function leerArchivoFTP(folderSlug, nombreArchivo) {
       }),
       nombreArchivo
     );
-    
+
     return Buffer.concat(chunks).toString("utf-8");
   } catch (error) {
     console.error("[FTP Error] Error al leer el archivo:", error.message);
