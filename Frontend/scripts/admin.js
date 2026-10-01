@@ -1482,12 +1482,12 @@ async function guardarTorneo(e) {
       );
     }
 
-    const slug = resultado?.torneo?.slug || "NO_GENERADO";
+    const slugReal = data?.torneo?.slug || slug;
 
 alert(
   `${id ? "Torneo actualizado correctamente" : "Torneo creado correctamente"}\n\n` +
   `Ruta para subir resultados:\n` +
-  `/htdocs/resultados/${slug}/`
+  `/resultados/${slugReal}/`
 );
 
     document.getElementById("formTorneo").reset();
