@@ -46,6 +46,140 @@ function normalizarSexo(valor = "") {
     .toLowerCase();
 }
 
+/*
+  =====================================================
+  COLUMNAS POR NOMBRE DE ENCABEZADO
+  =====================================================
+
+  La planilla tiene dos filas de encabezado:
+
+  Fila 1:  (vacío) ... Abierto de la Ciudad 2026 | (vacío) | Juegos Porteños 2026 ... Puntaje Total | Foto | Ranking
+  Fila 2:  id | last | first | club | category | Unificar | pos | Puntaje | pos | Puntaje ...
+
+  Se combinan las dos filas, así cada columna queda
+  identificada por un nombre, por ejemplo:
+
+    "id"
+    "ranking"
+    "puntaje total"
+    "abierto de la ciudad 2026|pos"
+    "juegos porteos 2026|puntaje"   (en minúscula)
+
+  De esta forma el orden de las columnas en la planilla
+  deja de importar.
+*/
+
+function normalizarEncabezado(valor = "") {
+  return String(valor ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function construirMapaColumnas(filaGrupos = [], filaCampos = []) {
+  const mapa = {};
+  const total = Math.max(filaGrupos.length, filaCampos.length);
+
+  let grupoActual = "";
+
+  for (let i = 0; i < total; i++) {
+    const grupo = normalizarEncabezado(filaGrupos[i]);
+    const campo = normalizarEncabezado(filaCampos[i]);
+
+    let clave = "";
+
+    if (grupo && campo) {
+      // Ej: "Abierto de la Ciudad 2026" + "pos"
+      grupoActual = grupo;
+      clave = `${grupo}|${campo}`;
+    } else if (grupo && !campo) {
+      // Columna simple: "Puntaje Total", "Foto", "Ranking"
+      grupoActual = "";
+      clave = grupo;
+    } else if (!grupo && campo) {
+      // Segunda columna del grupo ("Puntaje") o columna simple ("id")
+      clave = grupoActual ? `${grupoActual}|${campo}` : campo;
+    }
+
+    if (clave && mapa[clave] === undefined) {
+      mapa[clave] = i;
+    }
+  }
+
+  return mapa;
+}
+
+const ALIAS_COLUMNAS = {
+  dni: ["id", "dni"],
+  apellido: ["last", "apellido"],
+  nombre: ["first", "nombre"],
+  institucion: ["club", "institucion"],
+  categoria: ["category", "categoria"],
+  clave: ["unificar", "clave"],
+
+  abiertoPosicion: ["abierto de la ciudad 2026|pos"],
+  abiertoPuntaje: ["abierto de la ciudad 2026|puntaje"],
+
+  juegosPosicion: ["juegos porteños 2026|pos"],
+  juegosPuntaje: ["juegos porteños 2026|puntaje"],
+
+  copaDoblasPosicion: ["copa doblas 2026|pos"],
+  copaDoblasPuntaje: ["copa doblas 2026|puntaje"],
+
+  metropolitanoPosicion: ["torneo metropolitano 2026|pos"],
+  metropolitanoPuntaje: ["torneo metropolitano 2026|puntaje"],
+
+  puntajeTotal: ["puntaje total"],
+  foto: ["foto"],
+  ranking: ["ranking"],
+
+  // Opcionales: si no están en la planilla, quedan vacíos.
+  peso: ["peso"],
+  sexo: ["sexo"],
+};
+
+const COLUMNAS_OBLIGATORIAS = [
+  "dni",
+  "categoria",
+  "puntajeTotal",
+  "ranking",
+];
+
+function resolverColumnas(filas) {
+  if (filas.length < 2) {
+    throw new Error("La planilla no tiene las dos filas de encabezado");
+  }
+
+  const mapa = construirMapaColumnas(filas[0], filas[1]);
+
+  const columnas = {};
+
+  for (const [campo, alias] of Object.entries(ALIAS_COLUMNAS)) {
+    // Los alias se normalizan igual que los encabezados de la planilla.
+    const encontrado = alias
+      .map((nombre) => mapa[normalizarEncabezado(nombre)])
+      .find((indice) => indice !== undefined);
+
+    columnas[campo] = encontrado === undefined ? -1 : encontrado;
+  }
+
+  const faltantes = COLUMNAS_OBLIGATORIAS.filter(
+    (campo) => columnas[campo] === -1
+  );
+
+  if (faltantes.length) {
+    throw new Error(
+      `No se encontraron estas columnas en la planilla: ${faltantes.join(
+        ", "
+      )}. Encabezados detectados: ${Object.keys(mapa).join(" / ")}`
+    );
+  }
+
+  return columnas;
+}
+
 function hayCambios(usuarioExistente, datosNuevos) {
   if (!usuarioExistente) return true;
 
@@ -62,16 +196,22 @@ function hayCambios(usuarioExistente, datosNuevos) {
     usuarioExistente.sexo !== datosNuevos.sexo ||
 
     Number(usuarioExistente.puntajeTotal || 0) !==
-  Number(datosNuevos.puntajeTotal || 0) ||
+      Number(datosNuevos.puntajeTotal || 0) ||
 
-Number(usuarioExistente.ranking || 0) !==
-  Number(datosNuevos.ranking || 0) ||
+    Number(usuarioExistente.ranking || 0) !==
+      Number(datosNuevos.ranking || 0) ||
 
-usuarioExistente.abiertoCiudad2026?.posicion !==
+    usuarioExistente.abiertoCiudad2026?.posicion !==
       datosNuevos.abiertoCiudad2026.posicion ||
 
     Number(usuarioExistente.abiertoCiudad2026?.puntaje || 0) !==
       Number(datosNuevos.abiertoCiudad2026.puntaje || 0) ||
+
+    usuarioExistente.juegosPortenos2026?.posicion !==
+      datosNuevos.juegosPortenos2026.posicion ||
+
+    Number(usuarioExistente.juegosPortenos2026?.puntaje || 0) !==
+      Number(datosNuevos.juegosPortenos2026.puntaje || 0) ||
 
     usuarioExistente.copaDoblas2026?.posicion !==
       datosNuevos.copaDoblas2026.posicion ||
@@ -104,8 +244,8 @@ usuarioExistente.abiertoCiudad2026?.posicion !==
 
   Son dos registros válidos.
 
-  El DNI identifica a la persona.
-  La categoría identifica su participación dentro del ranking.
+  El ranking y el puntaje total se guardan TAL CUAL
+  figuran en la planilla. No se calcula nada.
 */
 
 export async function ejecutarImportacionRanking() {
@@ -114,6 +254,11 @@ export async function ejecutarImportacionRanking() {
   if (!filas.length) {
     throw new Error("La planilla está vacía");
   }
+
+  // Ubicamos cada columna por el nombre de su encabezado.
+  const columnas = resolverColumnas(filas);
+
+  console.log("COLUMNAS DETECTADAS EN LA PLANILLA:", columnas);
 
   // Los datos comienzan desde la fila 3.
   const filasDatos = filas.slice(2);
@@ -126,50 +271,50 @@ export async function ejecutarImportacionRanking() {
 
   const errores = [];
 
-  /*
-    AHORA NO CONTROLAMOS SOLO DNI.
-
-    Controlamos DNI + categoría.
-
-    Esto permite que una persona aparezca
-    varias veces si está en categorías diferentes.
-  */
   const registrosProcesados = new Set();
 
   for (let i = 0; i < filasDatos.length; i++) {
     const fila = filasDatos[i];
     const numeroFilaReal = i + 3;
 
+    // Devuelve el valor de una columna, o "" si no existe en la planilla.
+    const celda = (campo) =>
+      columnas[campo] >= 0 ? fila[columnas[campo]] : "";
+
     try {
-      const dni = normalizarDni(fila[0]);
+      const dni = normalizarDni(celda("dni"));
 
-      const apellido = normalizarTexto(fila[1]);
-      const nombre = normalizarTexto(fila[2]);
-      const institucion = normalizarTexto(fila[3]);
-      const categoria = normalizarTexto(fila[4]);
-      const clave = normalizarTexto(fila[5]);
+      const apellido = normalizarTexto(celda("apellido"));
+      const nombre = normalizarTexto(celda("nombre"));
+      const institucion = normalizarTexto(celda("institucion"));
+      const categoria = normalizarTexto(celda("categoria"));
+      const clave = normalizarTexto(celda("clave"));
 
-      const abiertoPosicion = normalizarTexto(fila[6]);
-      const abiertoPuntaje = normalizarNumero(fila[7]);
+      const abiertoPosicion = normalizarTexto(celda("abiertoPosicion"));
+      const abiertoPuntaje = normalizarNumero(celda("abiertoPuntaje"));
 
-      const copaDoblasPosicion = normalizarTexto(fila[8]);
-      const copaDoblasPuntaje = normalizarNumero(fila[9]);
+      const juegosPosicion = normalizarTexto(celda("juegosPosicion"));
+      const juegosPuntaje = normalizarNumero(celda("juegosPuntaje"));
 
-      const metropolitanoPosicion = normalizarTexto(fila[10]);
-      const metropolitanoPuntaje = normalizarNumero(fila[11]);
+      const copaDoblasPosicion = normalizarTexto(celda("copaDoblasPosicion"));
+      const copaDoblasPuntaje = normalizarNumero(celda("copaDoblasPuntaje"));
 
-      const puntajeTotal = normalizarNumero(fila[12]);
+      const metropolitanoPosicion = normalizarTexto(
+        celda("metropolitanoPosicion")
+      );
+      const metropolitanoPuntaje = normalizarNumero(
+        celda("metropolitanoPuntaje")
+      );
 
-      const fotoDriveUrl = normalizarFotoDrive(fila[13]);
+      const puntajeTotal = normalizarNumero(celda("puntajeTotal"));
 
-      const ranking = normalizarNumero(fila[14]);
+      const fotoDriveUrl = normalizarFotoDrive(celda("foto"));
 
-      const peso = normalizarNumero(fila[15]);
-const sexo = normalizarSexo(fila[16]);
+      const ranking = normalizarNumero(celda("ranking"));
 
-      /*
-        DNI obligatorio.
-      */
+      const peso = normalizarNumero(celda("peso"));
+      const sexo = normalizarSexo(celda("sexo"));
+
       if (!dni) {
         omitidasSinDni++;
 
@@ -181,10 +326,6 @@ const sexo = normalizarSexo(fila[16]);
         continue;
       }
 
-      /*
-        CATEGORÍA obligatoria para poder diferenciar
-        las distintas participaciones de una persona.
-      */
       if (!categoria) {
         errores.push({
           fila: numeroFilaReal,
@@ -195,17 +336,8 @@ const sexo = normalizarSexo(fila[16]);
         continue;
       }
 
-      /*
-        IDENTIFICADOR DEL REGISTRO:
-
-        DNI + categoría
-      */
       const claveRegistro = `${dni}|${categoria.toLowerCase()}`;
 
-      /*
-        Si aparece exactamente el mismo DNI + categoría
-        dos veces en la misma planilla, ahí sí es duplicado.
-      */
       if (registrosProcesados.has(claveRegistro)) {
         erroresDuplicados++;
 
@@ -221,19 +353,6 @@ const sexo = normalizarSexo(fila[16]);
 
       registrosProcesados.add(claveRegistro);
 
-      /*
-        BUSCAMOS POR DNI + CATEGORÍA.
-
-        Esto permite:
-
-        MJ2809472 + J15M-60
-
-        y
-
-        MJ2809472 + J15M-66
-
-        como dos documentos diferentes.
-      */
       const usuarioExistente = await RankingUsuario.findOne({
         dni,
         categoria,
@@ -254,6 +373,11 @@ const sexo = normalizarSexo(fila[16]);
         abiertoCiudad2026: {
           posicion: abiertoPosicion,
           puntaje: abiertoPuntaje,
+        },
+
+        juegosPortenos2026: {
+          posicion: juegosPosicion,
+          puntaje: juegosPuntaje,
         },
 
         copaDoblas2026: {
@@ -283,6 +407,9 @@ const sexo = normalizarSexo(fila[16]);
           abiertoPosicion,
           abiertoPuntaje,
 
+          juegosPosicion,
+          juegosPuntaje,
+
           copaDoblasPosicion,
           copaDoblasPuntaje,
 
@@ -293,7 +420,6 @@ const sexo = normalizarSexo(fila[16]);
 
           ranking,
 
-
           fotoDriveUrl,
 
           peso,
@@ -301,15 +427,8 @@ const sexo = normalizarSexo(fila[16]);
         },
       };
 
-      const cambioDatos = hayCambios(
-        usuarioExistente,
-        datosNuevos
-      );
+      const cambioDatos = hayCambios(usuarioExistente, datosNuevos);
 
-      /*
-        Si existe exactamente el mismo DNI + categoría
-        y no cambió nada, no hacemos nada.
-      */
       if (usuarioExistente && !cambioDatos) {
         sinCambios++;
         continue;
@@ -318,27 +437,15 @@ const sexo = normalizarSexo(fila[16]);
       /*
         FOTO
 
-        La foto pertenece a la persona.
-
-        Si el usuario de esa categoría ya tiene foto,
-        la conservamos.
-
-        Si hay una nueva foto de Drive,
-        la subimos/reemplazamos en Cloudinary.
+        Si ya tiene foto, se conserva.
+        Si hay una nueva foto de Drive, se sube a Cloudinary.
       */
+      let foto = usuarioExistente?.foto || FOTO_INCOGNITO;
 
-      let foto =
-        usuarioExistente?.foto ||
-        FOTO_INCOGNITO;
-
-      let fotoPublicId =
-        usuarioExistente?.fotoPublicId ||
-        "";
+      let fotoPublicId = usuarioExistente?.fotoPublicId || "";
 
       if (fotoDriveUrl) {
-        const fotoDriveId = extraerDriveId(
-          fotoDriveUrl
-        );
+        const fotoDriveId = extraerDriveId(fotoDriveUrl);
 
         if (!fotoDriveId) {
           console.warn(
@@ -351,26 +458,19 @@ const sexo = normalizarSexo(fila[16]);
               `Descargando foto del DNI ${dni} desde Drive. ID: ${fotoDriveId}`
             );
 
-            const imagenBuffer =
-              await descargarArchivoDrive(
-                fotoDriveId
-              );
+            const imagenBuffer = await descargarArchivoDrive(fotoDriveId);
 
             console.log(
               `Foto descargada correctamente para DNI ${dni}. Subiendo a Cloudinary...`
             );
 
-            const resultadoCloudinary =
-              await subirBufferACloudinary(
-                imagenBuffer,
-                dni
-              );
+            const resultadoCloudinary = await subirBufferACloudinary(
+              imagenBuffer,
+              dni
+            );
 
-            foto =
-              resultadoCloudinary.secure_url;
-
-            fotoPublicId =
-              resultadoCloudinary.public_id;
+            foto = resultadoCloudinary.secure_url;
+            fotoPublicId = resultadoCloudinary.public_id;
 
             console.log(
               `Foto subida correctamente a Cloudinary para DNI ${dni}:`,
@@ -382,32 +482,12 @@ const sexo = normalizarSexo(fila[16]);
               errorFoto.message
             );
 
-            /*
-              Si ya tenía foto, conserva la anterior.
-              Si no tenía, queda incógnito.
-            */
-            foto =
-              usuarioExistente?.foto ||
-              FOTO_INCOGNITO;
-
-            fotoPublicId =
-              usuarioExistente?.fotoPublicId ||
-              "";
+            foto = usuarioExistente?.foto || FOTO_INCOGNITO;
+            fotoPublicId = usuarioExistente?.fotoPublicId || "";
           }
         }
       }
 
-      /*
-        ACTUALIZAMOS POR:
-
-        DNI + CATEGORÍA
-
-        Si existe:
-        UPDATE
-
-        Si no existe:
-        CREATE
-      */
       await RankingUsuario.findOneAndUpdate(
         {
           dni,
@@ -461,19 +541,14 @@ const sexo = normalizarSexo(fila[16]);
   También es utilizado por Postman
   y puede ser utilizado por el cron.
 */
-export async function importarRankingDesdeSheets(
-  req,
-  res
-) {
+export async function importarRankingDesdeSheets(req, res) {
   try {
-    const resultado =
-      await ejecutarImportacionRanking();
+    const resultado = await ejecutarImportacionRanking();
 
     return res.status(200).json(resultado);
   } catch (error) {
     return res.status(500).json({
-      mensaje:
-        "Error importando ranking desde Google Sheets",
+      mensaje: "Error importando ranking desde Google Sheets",
       error: error.message,
     });
   }

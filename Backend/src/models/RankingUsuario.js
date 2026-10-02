@@ -18,6 +18,11 @@ const rankingUsuarioSchema = new mongoose.Schema(
       puntaje: { type: Number, default: 0 },
     },
 
+    juegosPortenos2026: {
+  posicion: { type: String },
+  puntaje: { type: Number, default: 0 },
+},
+
     copaDoblas2026: {
       posicion: { type: String },
       puntaje: { type: Number, default: 0 },

@@ -1,4 +1,6 @@
 const API_RANKING = "/api/ranking";
+const FOTO_INCOGNITO = "/assets/imagenes/incognito.png";
+const TOTAL_COLUMNAS = 10;
 
 let rankingUsuarios = [];
 let ordenActual = "desc";
@@ -12,34 +14,32 @@ export async function cargarRankingUsuarios() {
 
   tbody.innerHTML = `
     <tr>
-      <td colspan="9">Cargando ranking...</td>
+      <td colspan="${TOTAL_COLUMNAS}">Cargando ranking...</td>
     </tr>
   `;
 
   try {
     const response = await fetch(API_RANKING);
-    const usuarios = await response.json();
-    console.log("RANKING RECIBIDO:", usuarios);
-    console.log("PRIMER USUARIO:", usuarios[0]);
-console.log("PROPIEDADES:", Object.keys(usuarios[0]));
 
     if (!response.ok) {
       throw new Error("Error al obtener ranking");
     }
 
+    const usuarios = await response.json();
+
     if (!Array.isArray(usuarios)) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9">Error en el formato del ranking.</td>
+          <td colspan="${TOTAL_COLUMNAS}">Error en el formato del ranking.</td>
         </tr>
       `;
       return;
     }
 
-   rankingUsuarios = usuarios.map((usuario) => ({
-  ...usuario,
-  puntos: Number(usuario.puntajeTotal ?? 0),
-}));
+    rankingUsuarios = usuarios.map((usuario) => ({
+      ...usuario,
+      puntos: Number(usuario.puntajeTotal ?? 0),
+    }));
 
     cargarCategoriasRanking();
     inicializarEventosRanking();
@@ -49,13 +49,11 @@ console.log("PROPIEDADES:", Object.keys(usuarios[0]));
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="9">Error al cargar ranking.</td>
+        <td colspan="${TOTAL_COLUMNAS}">Error al cargar ranking.</td>
       </tr>
     `;
   }
 }
-
-const FOTO_INCOGNITO = "/assets/imagenes/incognito.png";
 
 function obtenerFotoUsuario(usuario) {
   const foto = String(usuario?.foto || "").trim();
@@ -65,10 +63,7 @@ function obtenerFotoUsuario(usuario) {
   }
 
   // Cloudinary o cualquier URL externa
-  if (
-    foto.startsWith("http://") ||
-    foto.startsWith("https://")
-  ) {
+  if (foto.startsWith("http://") || foto.startsWith("https://")) {
     return foto;
   }
 
@@ -195,37 +190,34 @@ function cargarCategoriasRanking() {
   });
 }
 
-
-
 function inicializarEventosRanking() {
   const searchInput = document.getElementById("searchInput");
   const filtroCategoria = document.getElementById("filtroCategoria");
   const sortDesc = document.getElementById("sortDesc");
   const sortAsc = document.getElementById("sortAsc");
   const botonesPeso = document.querySelectorAll(".peso-btn");
-  const botonesCategoria = document.querySelectorAll(".categoria-filtro-btn");
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
   searchInput?.addEventListener("input", aplicarFiltrosRanking);
   filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
 
   sortDesc?.addEventListener("click", () => {
-  ordenActual = "desc";
+    ordenActual = "desc";
 
-  sortDesc.classList.add("active");
-  sortAsc?.classList.remove("active");
+    sortDesc.classList.add("active");
+    sortAsc?.classList.remove("active");
 
-  aplicarFiltrosRanking();
-});
+    aplicarFiltrosRanking();
+  });
 
-sortAsc?.addEventListener("click", () => {
-  ordenActual = "asc";
+  sortAsc?.addEventListener("click", () => {
+    ordenActual = "asc";
 
-  sortAsc.classList.add("active");
-  sortDesc?.classList.remove("active");
+    sortAsc.classList.add("active");
+    sortDesc?.classList.remove("active");
 
-  aplicarFiltrosRanking();
-});
+    aplicarFiltrosRanking();
+  });
 
   botonesPeso.forEach((boton) => {
     boton.addEventListener("click", () => {
@@ -236,56 +228,25 @@ sortAsc?.addEventListener("click", () => {
       boton.classList.add("active");
 
       aplicarFiltrosRanking();
-
-        botonesCategoria.forEach((boton) => {
-    boton.addEventListener("click", () => {
-      const categoria = boton.dataset.categoria || "";
-
-      const filtroCategoria = document.getElementById("filtroCategoria");
-      const searchInput = document.getElementById("searchInput");
-
-      if (filtroCategoria) {
-        filtroCategoria.value = categoria;
-      }
-
-      if (searchInput) {
-        searchInput.value = "";
-      }
-
-      aplicarFiltrosRanking();
-
-      btnLimpiarFiltros?.addEventListener("click", () => {
-  const searchInput = document.getElementById("searchInput");
-  const filtroCategoria = document.getElementById("filtroCategoria");
-
-  if (searchInput) {
-    searchInput.value = "";
-  }
-
-  if (filtroCategoria) {
-    filtroCategoria.value = "";
-  }
-
-  sexoSeleccionado = "";
-  pesoSeleccionado = "";
-
-  ordenActual = "desc";
-
-  sortDesc?.classList.add("active");
-  sortAsc?.classList.remove("active");
-
-  botonesPeso.forEach((btn) => {
-    btn.classList.remove("active");
-  });
-
-  aplicarFiltrosRanking();
-});
     });
   });
-    });
+
+  btnLimpiarFiltros?.addEventListener("click", () => {
+    if (searchInput) searchInput.value = "";
+    if (filtroCategoria) filtroCategoria.value = "";
+
+    sexoSeleccionado = "";
+    pesoSeleccionado = "";
+    ordenActual = "desc";
+
+    sortDesc?.classList.add("active");
+    sortAsc?.classList.remove("active");
+
+    botonesPeso.forEach((btn) => btn.classList.remove("active"));
+
+    aplicarFiltrosRanking();
   });
 }
-
 
 function aplicarFiltrosRanking() {
   const searchInput = document.getElementById("searchInput");
@@ -347,16 +308,16 @@ function aplicarFiltrosRanking() {
   }
 
   usuariosFiltrados.sort((a, b) => {
-  const rankingA = Number(a.ranking);
-  const rankingB = Number(b.ranking);
+    const rankingA = Number(a.ranking);
+    const rankingB = Number(b.ranking);
 
-  if (Number.isNaN(rankingA)) return 1;
-  if (Number.isNaN(rankingB)) return -1;
+    if (Number.isNaN(rankingA)) return 1;
+    if (Number.isNaN(rankingB)) return -1;
 
-  return ordenActual === "asc"
-    ? rankingB - rankingA
-    : rankingA - rankingB;
-});
+    return ordenActual === "asc"
+      ? rankingB - rankingA
+      : rankingA - rankingB;
+  });
 
   renderizarRanking(usuariosFiltrados);
 }
@@ -369,7 +330,7 @@ function renderizarRanking(usuarios) {
   if (!usuarios.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="9">
+        <td colspan="${TOTAL_COLUMNAS}">
           No hay usuarios para mostrar.
         </td>
       </tr>
@@ -380,28 +341,27 @@ function renderizarRanking(usuarios) {
   tbody.innerHTML = "";
 
   usuarios.forEach((usuario) => {
-
     const fila = document.createElement("tr");
     const foto = obtenerFotoUsuario(usuario);
 
     fila.innerHTML = `
-     <td class="fw-bold">
-  ${usuario.ranking ?? "-"}
-</td>
+      <td class="fw-bold">
+        ${usuario.ranking ?? "-"}
+      </td>
 
       <td>
-        <img 
-          src="${foto}" 
-          alt="${usuario.nombre || "Usuario"}" 
+        <img
+          src="${foto}"
+          alt="${usuario.nombre || "Usuario"}"
           class="ranking-foto"
           onerror="this.onerror=null; this.src='/assets/imagenes/incognito.png';"
           style="
-            width: 85px; 
-            height: 85px; 
-            object-fit: cover; 
-            border-radius: 50%; 
-            border: 3px solid #b30000; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #b30000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
           "
         >
       </td>
@@ -411,14 +371,14 @@ function renderizarRanking(usuarios) {
       </td>
 
       <td>
-  <button
-    type="button"
-    class="categoria-filtro-btn"
-    data-categoria="${usuario.categoria || ""}"
-  >
-    ${usuario.categoria || "-"}
-  </button>
-</td>
+        <button
+          type="button"
+          class="categoria-filtro-btn"
+          data-categoria="${usuario.categoria || ""}"
+        >
+          ${usuario.categoria || "-"}
+        </button>
+      </td>
 
       <td>
         ${usuario.institucion || "-"}
@@ -433,6 +393,18 @@ function renderizarRanking(usuarios) {
         <small class="text-muted">
           Puntaje:
           ${usuario.abiertoCiudad2026?.puntaje ?? 0}
+        </small>
+      </td>
+
+      <td>
+        <div class="fw-semibold">
+          Posición:
+          ${usuario.juegosPortenos2026?.posicion || "-"}
+        </div>
+
+        <small class="text-muted">
+          Puntaje:
+          ${usuario.juegosPortenos2026?.puntaje ?? 0}
         </small>
       </td>
 
@@ -465,7 +437,7 @@ function renderizarRanking(usuarios) {
       </td>
     `;
 
-        tbody.appendChild(fila);
+    tbody.appendChild(fila);
 
     const botonCategoria = fila.querySelector(".categoria-filtro-btn");
 
