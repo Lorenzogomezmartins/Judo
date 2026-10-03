@@ -1,6 +1,7 @@
 import Torneo from "../../models/Torneo.js";
 import { crearEventoCalendario } from "../../config/google.js";
 import { crearCarpetaResultadoTorneo } from "../../config/ftp.js";
+import { subirBufferACloudinary } from "../../config/cloudinary.js"; // <-- NUEVO
 
 function generarSlug(nombre = "") {
   return nombre
@@ -67,7 +68,18 @@ const crearTorneo = async (req, res) => {
     const transmisiones = parsearTransmisiones(req.body.transmisiones);
     const slug = await generarSlugUnico(req.body.nombre);
 
-   const torneo = new Torneo({
+    // NUEVO: subir foto a Cloudinary
+    let fotos = [];
+    if (req.file) {
+      const resultadoFoto = await subirBufferACloudinary(
+        req.file.buffer,
+        `torneo_${Date.now()}`,
+        "fmj/torneos"
+      );
+      fotos = [resultadoFoto.secure_url];
+    }
+
+    const torneo = new Torneo({
       nombre: req.body.nombre,
       tipo: req.body.tipo || "torneo",
       slug,
@@ -77,8 +89,8 @@ const crearTorneo = async (req, res) => {
       reglas: req.body.reglas || "",
       categorias,
       transmisiones,
-      fotos: req.file ? [req.file.path] : [],
-      tieneResultados: true, // <--- Agrégalo aquí para que el frontend active el botón automáticamente
+      fotos, // <-- CAMBIADO
+      tieneResultados: true,
     });
 
     const guardado = await torneo.save();

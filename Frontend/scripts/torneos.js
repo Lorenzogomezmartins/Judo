@@ -29,7 +29,7 @@ function obtenerImagenTorneo(torneo) {
     return torneo.imagen;
   }
 
-  return "../assets/Logos/Logo1.png";
+  return "/assets/imagenes/default.png";
 }
 
 function formatearCategorias(categorias) {
@@ -167,7 +167,7 @@ function crearCardTorneo(torneo, esAnterior = false) {
       <img
         src="${obtenerImagenTorneo(torneo)}"
         alt="${torneo.nombre || "Evento"}"
-        onerror="this.src='../assets/Logos/Logo1.png'"
+        onerror="this.onerror=null; this.src='/assets/imagenes/default.png'"
       >
 
       <div class="torneo-card-body">
@@ -304,7 +304,7 @@ function renderCarousel(torneos) {
     contenedor.innerHTML = `
       <div class="carousel-item active">
         <img
-          src="../assets/Logos/Logo1.png"
+          src="/assets/imagenes/default.png"
           class="d-block mx-auto"
           alt="Sin eventos"
           style="max-height: 300px; object-fit: contain;"

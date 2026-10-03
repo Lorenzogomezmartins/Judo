@@ -1,5 +1,6 @@
 import Torneo from "../../models/Torneo.js";
 import { actualizarEventoCalendario } from "../../config/google.js";
+import { subirBufferACloudinary } from "../../config/cloudinary.js"; // <-- NUEVO
 
 function generarSlug(nombre = "") {
   return nombre
@@ -68,7 +69,6 @@ function parsearTransmisiones(transmisiones) {
 const actualizarTorneo = async (req, res) => {
   try {
     const data = {};
-    
 
     if (req.body.nombre) {
       data.nombre = req.body.nombre;
@@ -88,8 +88,14 @@ const actualizarTorneo = async (req, res) => {
       data.transmisiones = parsearTransmisiones(req.body.transmisiones);
     }
 
+    // NUEVO: subir foto a Cloudinary
     if (req.file) {
-      data.fotos = [req.file.path];
+      const resultadoFoto = await subirBufferACloudinary(
+        req.file.buffer,
+        `torneo_${Date.now()}`,
+        "fmj/torneos"
+      );
+      data.fotos = [resultadoFoto.secure_url];
     }
 
     const torneo = await Torneo.findByIdAndUpdate(req.params.id, data, {
