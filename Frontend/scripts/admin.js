@@ -1464,6 +1464,8 @@ async function guardarTorneo(e) {
     const url = id ? `${API_TORNEOS}/${id}` : API_TORNEOS;
     const method = id ? "PUT" : "POST";
 
+
+
     console.log("Transmisiones texto:", transmisionesTexto);
     console.log("Transmisiones parseadas:", transmisiones);
 
@@ -1482,12 +1484,11 @@ async function guardarTorneo(e) {
       );
     }
 
-    const slugReal = (typeof data !== "undefined" && data?.torneo?.slug) || slug;
+    const slugReal = resultado?.torneo?.slug || "";
 
 alert(
-  `${id ? "Torneo actualizado correctamente" : "Torneo creado correctamente"}\n\n` +
-  `Ruta para subir resultados:\n` +
-  `/resultados/${slugReal}/`
+  `${id ? "Torneo actualizado correctamente" : "Torneo creado correctamente"}` +
+  (slugReal ? `\n\nRuta para subir resultados:\n/resultados/${slugReal}/` : "")
 );
 
     document.getElementById("formTorneo").reset();

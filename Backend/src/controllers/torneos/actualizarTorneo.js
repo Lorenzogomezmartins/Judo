@@ -68,6 +68,7 @@ function parsearTransmisiones(transmisiones) {
 const actualizarTorneo = async (req, res) => {
   try {
     const data = {};
+    
 
     if (req.body.nombre) {
       data.nombre = req.body.nombre;

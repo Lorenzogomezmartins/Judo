@@ -1,6 +1,14 @@
-// models/Club.js
-
 import mongoose from "mongoose";
+
+const resultadoSchema = new mongoose.Schema(
+  {
+    oro: { type: Number, default: 0 },
+    plata: { type: Number, default: 0 },
+    bronce: { type: Number, default: 0 },
+    quinto: { type: Number, default: 0 },
+  },
+  { _id: false }
+);
 
 const clubSchema = new mongoose.Schema(
   {
@@ -20,44 +28,59 @@ const clubSchema = new mongoose.Schema(
       default: "",
     },
 
-    ubicacion: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
     telefono: {
       type: String,
       default: "",
-      trim: true,
+    },
+
+    direccion: {
+      type: String,
+      default: "",
+    },
+
+    sitioWeb: {
+      type: String,
+      default: "",
     },
 
     email: {
       type: String,
       default: "",
-      trim: true,
-      lowercase: true,
     },
 
     facebook: {
       type: String,
       default: "",
-      trim: true,
     },
 
     instagram: {
       type: String,
       default: "",
-      trim: true,
     },
 
-    // =========================
-    // RANKING
-    // =========================
+    abiertoCiudad2026: {
+      type: resultadoSchema,
+      default: () => ({}),
+    },
 
-    puntajeTotal: {
-      type: Number,
-      default: 0,
+    juegosPortenos2026: {
+      type: resultadoSchema,
+      default: () => ({}),
+    },
+
+    copaDoblas2026: {
+      type: resultadoSchema,
+      default: () => ({}),
+    },
+
+    torneoMetropolitano2026: {
+      type: resultadoSchema,
+      default: () => ({}),
+    },
+
+    medalleroGlobal: {
+      type: resultadoSchema,
+      default: () => ({}),
     },
 
     ranking: {
@@ -65,60 +88,14 @@ const clubSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // =========================
-    // DATOS DE IMPORTACIÓN
-    // =========================
-
     filaGoogleSheet: {
       type: Number,
       default: null,
     },
 
     datosOriginales: {
-      nombre: {
-        type: String,
-        default: "",
-      },
-
-      logoDriveUrl: {
-        type: String,
-        default: "",
-      },
-
-      ubicacion: {
-        type: String,
-        default: "",
-      },
-
-      telefono: {
-        type: String,
-        default: "",
-      },
-
-      email: {
-        type: String,
-        default: "",
-      },
-
-      facebook: {
-        type: String,
-        default: "",
-      },
-
-      instagram: {
-        type: String,
-        default: "",
-      },
-
-      puntajeTotal: {
-        type: Number,
-        default: 0,
-      },
-
-      ranking: {
-        type: Number,
-        default: 0,
-      },
+      institucion: String,
+      fotoDriveUrl: String,
     },
   },
   {
@@ -126,7 +103,6 @@ const clubSchema = new mongoose.Schema(
   }
 );
 
-// Evita tener dos clubes con exactamente el mismo nombre.
 clubSchema.index(
   { nombre: 1 },
   {
@@ -138,7 +114,6 @@ clubSchema.index(
   }
 );
 
-// Facilita ordenar el ranking.
-clubSchema.index({ puntajeTotal: -1 });
+clubSchema.index({ ranking: 1 });
 
 export default mongoose.model("Club", clubSchema);
