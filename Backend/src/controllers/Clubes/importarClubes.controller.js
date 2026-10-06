@@ -1,4 +1,4 @@
-import Club from "../../models/club.js";
+import Club from "../../models/Club.js";
 
 import {
   obtenerFilasClubes,
@@ -6,286 +6,373 @@ import {
   extraerDriveId,
 } from "../../config/google.js";
 
-import { subirBufferACloudinary } from "../../config/cloudinary.js";
+import {
+  subirBufferACloudinary,
+} from "../../config/cloudinary.js";
+
+/*
+========================================
+NORMALIZADORES
+========================================
+*/
 
 function normalizarTexto(valor = "") {
   return String(valor ?? "").trim();
 }
 
 function normalizarNumero(valor = "") {
-  const limpio = String(valor ?? "")
+  const texto = String(valor ?? "")
     .replace(",", ".")
     .trim();
 
-  const numero = Number(limpio);
+  if (!texto) {
+    return 0;
+  }
 
-  return Number.isNaN(numero) ? 0 : numero;
+  const numero = Number(texto);
+
+  return Number.isNaN(numero)
+    ? 0
+    : numero;
 }
-
-function normalizarUrl(valor = "") {
-  const texto = normalizarTexto(valor);
-
-  if (!texto) return "";
-
-  return texto;
-}
-
-function normalizarLogoDrive(valor = "") {
-  const logo = normalizarTexto(valor);
-
-  if (!logo) return "";
-
-  return logo;
-}
-
-function normalizarNombreClub(valor = "") {
-  return normalizarTexto(valor);
-}
-
-function hayCambios(clubExistente, datosNuevos) {
-  if (!clubExistente) return true;
-
-  return (
-    clubExistente.nombre !== datosNuevos.nombre ||
-
-    clubExistente.ubicacion !== datosNuevos.ubicacion ||
-
-    clubExistente.telefono !== datosNuevos.telefono ||
-
-    clubExistente.email !== datosNuevos.email ||
-
-    clubExistente.facebook !== datosNuevos.facebook ||
-
-    clubExistente.instagram !== datosNuevos.instagram ||
-
-    Number(clubExistente.puntajeTotal || 0) !==
-      Number(datosNuevos.puntajeTotal || 0) ||
-
-    Number(clubExistente.ranking || 0) !==
-      Number(datosNuevos.ranking || 0) ||
-
-    clubExistente.datosOriginales?.logoDriveUrl !==
-      datosNuevos.datosOriginales?.logoDriveUrl
-  );
-}
-
 
 /*
-=========================================================
-IMPORTACIÓN DE CLUBES
-=========================================================
+========================================
+RESULTADO DE COMPETENCIA
+========================================
 
-Por ahora usamos estas columnas:
+inicio:
 
-A = Nombre
-B = Logo
-C = Ubicación
-D = Teléfono
-E = Email
-F = Facebook
-G = Instagram
-H = Puntaje total
-I = Ranking
+1  = B:E
+5  = F:I
+9  = J:M
+13 = N:Q
+17 = R:U
+*/
 
-Cuando tengamos el Excel definitivo,
-si las columnas son diferentes solamente
-cambiamos estas posiciones.
-=========================================================
+function obtenerResultado(
+  fila,
+  inicio
+) {
+  return {
+    oro: normalizarNumero(
+      fila[inicio]
+    ),
+
+    plata: normalizarNumero(
+      fila[inicio + 1]
+    ),
+
+    bronce: normalizarNumero(
+      fila[inicio + 2]
+    ),
+
+    quinto: normalizarNumero(
+      fila[inicio + 3]
+    ),
+  };
+}
+
+/*
+========================================
+IMPORTAR CLUBES
+========================================
 */
 
 export async function ejecutarImportacionClubes() {
-  const filas = await obtenerFilasClubes();
+  const filas =
+    await obtenerFilasClubes();
 
   if (!filas.length) {
-    throw new Error("La planilla de clubes está vacía");
+    throw new Error(
+      "La planilla de clubes está vacía."
+    );
   }
 
   /*
-    Igual que con el ranking de judokas,
-    asumimos que las primeras filas contienen
-    encabezados.
+    FILA 1:
+    nombres de competencias
 
-    Esto después lo podemos ajustar al Excel real.
+    FILA 2:
+    Oro / Plata / Bronce / Quinto
+
+    FILA 3 EN ADELANTE:
+    clubes
   */
-  const filasDatos = filas.slice(1);
+
+  const filasDatos =
+    filas.slice(2);
 
   let creados = 0;
   let actualizados = 0;
   let sinCambios = 0;
-  let omitidosSinNombre = 0;
-  let erroresDuplicados = 0;
+  let omitidos = 0;
 
   const errores = [];
 
-  const clubesProcesados = new Set();
+  /*
+  Evita importar dos veces
+  la misma institución dentro
+  de la misma ejecución.
+  */
 
-  for (let i = 0; i < filasDatos.length; i++) {
+  const institucionesProcesadas =
+    new Set();
+
+  for (
+    let i = 0;
+    i < filasDatos.length;
+    i++
+  ) {
     const fila = filasDatos[i];
 
-    const numeroFilaReal = i + 2;
+    /*
+      Google Sheets empieza la información
+      real en la fila 3.
+    */
+
+    const numeroFilaReal = i + 3;
 
     try {
       /*
-      =========================================
-      DATOS DEL CLUB
-      =========================================
+      ====================================
+      COLUMNAS DEL EXCEL
+      ====================================
+
+      A   = 0  Institución
+
+      B:E = 1-4   Abierto Ciudad
+      F:I = 5-8   Juegos Porteños
+      J:M = 9-12  Copa Doblas
+      N:Q = 13-16 Metropolitano
+      R:U = 17-20 Medallero Global
+
+      V   = 21 Logo
+      W   = 22 Ubicación
+      X   = 23 Teléfono
+      Y   = 24 Email
+      Z   = 25 Facebook
+      AA  = 26 Instagram
+      AB  = 27 Ubicación Maps
+      AC  = 28 Ranking
       */
 
-      const nombre = normalizarNombreClub(fila[0]);
-
-      const logoDriveUrl =
-        normalizarLogoDrive(fila[1]);
-
-      const ubicacion =
-        normalizarTexto(fila[2]);
-
-      const telefono =
-        normalizarTexto(fila[3]);
-
-      const email =
-        normalizarTexto(fila[4]);
-
-      const facebook =
-        normalizarUrl(fila[5]);
-
-      const instagram =
-        normalizarUrl(fila[6]);
-
-      const puntajeTotal =
-        normalizarNumero(fila[7]);
-
-      const ranking =
-        normalizarNumero(fila[8]);
-
+      const nombre =
+        normalizarTexto(
+          fila[0]
+        );
 
       /*
-      =========================================
-      NOMBRE OBLIGATORIO
-      =========================================
+      ------------------------------------
+      FILAS VACÍAS
+      ------------------------------------
       */
 
       if (!nombre) {
-        omitidosSinNombre++;
-
-        errores.push({
-          fila: numeroFilaReal,
-          error: "No se importó porque no tiene nombre de institución",
-        });
-
+        omitidos++;
         continue;
       }
 
-
       /*
-      =========================================
-      CONTROL DE DUPLICADOS
-      =========================================
-
-      El nombre identifica al club.
-      =========================================
+      ------------------------------------
+      DUPLICADOS DENTRO DEL EXCEL
+      ------------------------------------
       */
 
-      const claveClub = nombre.toLowerCase();
+      const nombreNormalizado =
+        nombre.toLowerCase();
 
-      if (clubesProcesados.has(claveClub)) {
-        erroresDuplicados++;
-
+      if (
+        institucionesProcesadas.has(
+          nombreNormalizado
+        )
+      ) {
         errores.push({
           fila: numeroFilaReal,
-          nombre,
-          error: "Institución repetida dentro de la planilla",
+          institucion: nombre,
+          error:
+            "Institución repetida dentro de la planilla.",
         });
 
         continue;
       }
 
-      clubesProcesados.add(claveClub);
-
+      institucionesProcesadas.add(
+        nombreNormalizado
+      );
 
       /*
-      =========================================
+      ------------------------------------
+      COMPETENCIAS
+      ------------------------------------
+      */
+
+      const abiertoCiudad2026 =
+        obtenerResultado(
+          fila,
+          1
+        );
+
+      const juegosPortenos2026 =
+        obtenerResultado(
+          fila,
+          5
+        );
+
+      const copaDoblas2026 =
+        obtenerResultado(
+          fila,
+          9
+        );
+
+      const torneoMetropolitano2026 =
+        obtenerResultado(
+          fila,
+          13
+        );
+
+      const medalleroGlobal =
+        obtenerResultado(
+          fila,
+          17
+        );
+
+      /*
+      ------------------------------------
+      INFORMACIÓN DEL CLUB
+      ------------------------------------
+      */
+
+      const logoDriveUrl =
+        normalizarTexto(
+          fila[21]
+        );
+
+      const ubicacion =
+        normalizarTexto(
+          fila[22]
+        );
+
+      const telefono =
+        normalizarTexto(
+          fila[23]
+        );
+
+      const email =
+        normalizarTexto(
+          fila[24]
+        );
+
+      const facebook =
+        normalizarTexto(
+          fila[25]
+        );
+
+      const instagram =
+        normalizarTexto(
+          fila[26]
+        );
+
+      const ubicacionMaps =
+        normalizarTexto(
+          fila[27]
+        );
+
+      /*
+      ------------------------------------
+      RANKING
+      ------------------------------------
+      */
+
+      const ranking =
+        normalizarNumero(
+          fila[28]
+        );
+
+      /*
+      ------------------------------------
+      BUSCAR CLUB
+      ------------------------------------
+      */
+
+      const clubExistente =
+        await Club.findOne({
+          nombre: {
+            $regex:
+              `^${nombre.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              )}$`,
+            $options: "i",
+          },
+        });
+
+      /*
+      ------------------------------------
       DATOS NUEVOS
-      =========================================
+      ------------------------------------
       */
 
       const datosNuevos = {
         nombre,
 
+        abiertoCiudad2026,
+
+        juegosPortenos2026,
+
+        copaDoblas2026,
+
+        torneoMetropolitano2026,
+
+        medalleroGlobal,
+
         ubicacion,
+
         telefono,
+
         email,
+
         facebook,
+
         instagram,
 
-        puntajeTotal,
+        ubicacionMaps,
+
         ranking,
 
-        filaGoogleSheet: numeroFilaReal,
+        filaGoogleSheet:
+          numeroFilaReal,
 
         datosOriginales: {
-          nombre,
+          institucion: nombre,
+
           logoDriveUrl,
 
           ubicacion,
+
           telefono,
+
           email,
 
           facebook,
+
           instagram,
 
-          puntajeTotal,
-          ranking,
+          ubicacionMaps,
         },
       };
 
-
       /*
-      =========================================
-      BUSCAR CLUB EXISTENTE
-      =========================================
-      */
+      ------------------------------------
+      FOTO
+      ------------------------------------
 
-      const clubExistente =
-        await Club.findOne({
-          nombre,
-        });
+      Si no viene logo nuevo:
+      conservamos el anterior.
 
-
-      /*
-      =========================================
-      VERIFICAR CAMBIOS
-      =========================================
-      */
-
-      const cambioDatos =
-        hayCambios(
-          clubExistente,
-          datosNuevos
-        );
-
-
-      if (
-        clubExistente &&
-        !cambioDatos
-      ) {
-        sinCambios++;
-        continue;
-      }
-
-
-      /*
-      =========================================
-      LOGO
-      =========================================
-
-      Si hay logo en Drive:
-      - lo descargamos
-      - lo subimos a Cloudinary
-      - guardamos URL + publicId
-
-      Si no hay logo:
-      - conservamos el anterior.
-      =========================================
+      Si viene logo:
+      intentamos descargarlo de Drive
+      y subirlo a Cloudinary.
       */
 
       let logo =
@@ -296,94 +383,235 @@ export async function ejecutarImportacionClubes() {
         clubExistente?.logoPublicId ||
         "";
 
-
       if (logoDriveUrl) {
-        const logoDriveId =
-          extraerDriveId(
-            logoDriveUrl
-          );
+        /*
+          Si ya es Cloudinary,
+          no hace falta descargarlo.
+        */
 
-        if (!logoDriveId) {
-          console.warn(
-            `No se pudo extraer el ID de Drive del club "${nombre}"`
-          );
+        if (
+          logoDriveUrl.includes(
+            "cloudinary.com"
+          )
+        ) {
+          logo =
+            logoDriveUrl;
         } else {
-          try {
-            console.log(
-              `Descargando logo de "${nombre}" desde Drive...`
+          const driveId =
+            extraerDriveId(
+              logoDriveUrl
             );
 
-            const logoBuffer =
-              await descargarArchivoDrive(
-                logoDriveId
+          if (driveId) {
+            try {
+              console.log(
+                `Descargando logo de ${nombre} desde Google Drive...`
               );
 
+              const buffer =
+                await descargarArchivoDrive(
+                  driveId
+                );
 
-            console.log(
-              `Logo descargado. Subiendo "${nombre}" a Cloudinary...`
-            );
-
-
-            const resultadoCloudinary =
-              await subirBufferACloudinary(
-                logoBuffer,
-                `club_${nombre
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/gi, "_")}`,
-                "fmj/clubes"
+              console.log(
+                `Subiendo logo de ${nombre} a Cloudinary...`
               );
 
+              const resultado =
+                await subirBufferACloudinary(
+                  buffer,
 
-            logo =
-              resultadoCloudinary.secure_url;
+                  /*
+                    Usamos el ID del club
+                    si existe.
 
-            logoPublicId =
-              resultadoCloudinary.public_id;
+                    Para clubes nuevos usamos
+                    un nombre temporal.
+                  */
+                  clubExistente?._id
+                    ? `club_${clubExistente._id}`
+                    : `club_${nombreNormalizado
+                        .replace(
+                          /[^a-z0-9]+/g,
+                          "_"
+                        )
+                        .replace(
+                          /^_+|_+$/g,
+                          ""
+                        )}`,
 
+                  "fmj/clubes"
+                );
 
-            console.log(
-              `Logo de "${nombre}" subido correctamente`
-            );
+              logo =
+                resultado.secure_url;
 
-          } catch (errorLogo) {
-            console.error(
-              `Error procesando logo de "${nombre}":`,
-              errorLogo.message
-            );
+              logoPublicId =
+                resultado.public_id;
+            } catch (errorFoto) {
+              console.error(
+                `Error procesando logo de ${nombre}:`,
+                errorFoto.message
+              );
 
+              /*
+                Si falla la foto nueva,
+                mantenemos la anterior.
+              */
+            }
+          } else {
             /*
-              Si ya tenía logo,
-              conservamos el anterior.
-            */
-            logo =
-              clubExistente?.logo ||
-              "";
+              Si no es un link de Drive válido,
+              guardamos el valor igualmente.
 
-            logoPublicId =
-              clubExistente?.logoPublicId ||
-              "";
+              Así no perdemos el dato del Excel.
+            */
+
+            logo =
+              logoDriveUrl;
           }
         }
       }
 
+      /*
+      ------------------------------------
+      DATOS COMPLETOS PARA MONGODB
+      ------------------------------------
+      */
+
+      const datosGuardar = {
+        ...datosNuevos,
+
+        logo,
+
+        logoPublicId,
+      };
 
       /*
-      =========================================
-      GUARDAR
-      =========================================
+      ------------------------------------
+      COMPARACIÓN
+      ------------------------------------
+      */
+
+      if (clubExistente) {
+        const datosActuales =
+          clubExistente.toObject();
+
+        const actual =
+          JSON.stringify({
+            nombre:
+              datosActuales.nombre,
+
+            abiertoCiudad2026:
+              datosActuales.abiertoCiudad2026,
+
+            juegosPortenos2026:
+              datosActuales.juegosPortenos2026,
+
+            copaDoblas2026:
+              datosActuales.copaDoblas2026,
+
+            torneoMetropolitano2026:
+              datosActuales.torneoMetropolitano2026,
+
+            medalleroGlobal:
+              datosActuales.medalleroGlobal,
+
+            logo:
+              datosActuales.logo,
+
+            ubicacion:
+              datosActuales.ubicacion,
+
+            telefono:
+              datosActuales.telefono,
+
+            email:
+              datosActuales.email,
+
+            facebook:
+              datosActuales.facebook,
+
+            instagram:
+              datosActuales.instagram,
+
+            ubicacionMaps:
+              datosActuales.ubicacionMaps,
+
+            ranking:
+              datosActuales.ranking,
+          });
+
+        const nuevo =
+          JSON.stringify({
+            nombre:
+              datosGuardar.nombre,
+
+            abiertoCiudad2026:
+              datosGuardar.abiertoCiudad2026,
+
+            juegosPortenos2026:
+              datosGuardar.juegosPortenos2026,
+
+            copaDoblas2026:
+              datosGuardar.copaDoblas2026,
+
+            torneoMetropolitano2026:
+              datosGuardar.torneoMetropolitano2026,
+
+            medalleroGlobal:
+              datosGuardar.medalleroGlobal,
+
+            logo:
+              datosGuardar.logo,
+
+            ubicacion:
+              datosGuardar.ubicacion,
+
+            telefono:
+              datosGuardar.telefono,
+
+            email:
+              datosGuardar.email,
+
+            facebook:
+              datosGuardar.facebook,
+
+            instagram:
+              datosGuardar.instagram,
+
+            ubicacionMaps:
+              datosGuardar.ubicacionMaps,
+
+            ranking:
+              datosGuardar.ranking,
+          });
+
+        if (actual === nuevo) {
+          sinCambios++;
+          continue;
+        }
+      }
+
+      /*
+      ------------------------------------
+      UPSERT
+      ------------------------------------
       */
 
       await Club.findOneAndUpdate(
         {
-          nombre,
+          nombre: {
+            $regex:
+              `^${nombre.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              )}$`,
+            $options: "i",
+          },
         },
 
-        {
-          ...datosNuevos,
-
-          logo,
-          logoPublicId,
-        },
+        datosGuardar,
 
         {
           upsert: true,
@@ -393,14 +621,17 @@ export async function ejecutarImportacionClubes() {
         }
       );
 
-
       if (clubExistente) {
         actualizados++;
       } else {
         creados++;
       }
-
     } catch (error) {
+      console.error(
+        `Error procesando fila ${numeroFilaReal}:`,
+        error
+      );
+
       errores.push({
         fila: numeroFilaReal,
         error: error.message,
@@ -408,27 +639,29 @@ export async function ejecutarImportacionClubes() {
     }
   }
 
-
   return {
     mensaje:
-      "Importación de clubes finalizada",
+      "Importación de clubes finalizada.",
 
     creados,
+
     actualizados,
+
     sinCambios,
 
-    omitidosSinNombre,
-    erroresDuplicados,
+    omitidos,
+
+    totalProcesados:
+      filasDatos.length,
 
     errores,
   };
 }
 
-
 /*
-=========================================================
+========================================
 ENDPOINT MANUAL
-=========================================================
+========================================
 */
 
 export async function importarClubesDesdeSheets(
@@ -439,19 +672,21 @@ export async function importarClubesDesdeSheets(
     const resultado =
       await ejecutarImportacionClubes();
 
-    return res
-      .status(200)
-      .json(resultado);
-
+    return res.status(200).json(
+      resultado
+    );
   } catch (error) {
+    console.error(
+      "Error importando clubes:",
+      error
+    );
 
-    return res
-      .status(500)
-      .json({
-        mensaje:
-          "Error importando clubes desde Google Sheets",
+    return res.status(500).json({
+      mensaje:
+        "Error importando clubes desde Google Sheets.",
 
-        error: error.message,
-      });
+      error:
+        error.message,
+    });
   }
 }

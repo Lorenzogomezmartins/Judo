@@ -1,4 +1,4 @@
-const API_URL = "/api/clubes";
+const API_CLUBES = "/api/clubes";
 const API_PATROCINADORES = "/api/patrocinadores";
 const API_TORNEOS = "/api/torneos";
 const BACKEND_URL = "";
@@ -293,6 +293,10 @@ if (filtroGaleria) {
 ============================= */
 
 
+/* ===============================
+   IMPORTAR CLUBES DESDE SHEETS
+================================ */
+
 async function importarClubesSheets() {
   if (!confirm("¿Querés importar los clubes desde Google Sheets?")) {
     return;
@@ -326,14 +330,13 @@ async function importarClubesSheets() {
       );
     }
 
-    let mensaje = `${resultado.mensaje}\n\n`;
+    let mensaje = `${resultado.mensaje || "Importación finalizada"}\n\n`;
 
     mensaje += `Creados: ${resultado.creados ?? 0}\n`;
     mensaje += `Actualizados: ${resultado.actualizados ?? 0}\n`;
     mensaje += `Sin cambios: ${resultado.sinCambios ?? 0}\n`;
-    mensaje += `Sin nombre: ${resultado.omitidosSinNombre ?? 0}\n`;
-    mensaje += `Duplicados: ${resultado.erroresDuplicados ?? 0}\n`;
-    mensaje += `Errores: ${resultado.errores?.length ?? 0}`;
+    mensaje += `Filas vacías omitidas: ${resultado.omitidos ?? 0}\n`;
+mensaje += `Errores (incluye duplicados): ${resultado.errores?.length ?? 0}`;
 
     alert(mensaje);
 
@@ -353,21 +356,40 @@ async function importarClubesSheets() {
     }
   }
 }
-/* CARGAR CLUBES*/
-async function cargarClubesAdmin(filtroNombre = "") { 
+
+
+/* ===============================
+   CARGAR CLUBES
+================================ */
+
+async function cargarClubesAdmin(filtroNombre = "") {
   const container = document.getElementById("clubesGrid");
+
   if (!container) return;
 
   container.innerHTML = "<p>Cargando clubes...</p>";
 
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_CLUBES);
+
+    if (!response.ok) {
+      throw new Error("Error obteniendo clubes");
+    }
+
     let clubes = await response.json();
 
-    // Filtrar por nombre si hay texto
+    // Asegurar que siempre sea un array
+    if (!Array.isArray(clubes)) {
+      clubes = [];
+    }
+
+    // Filtrar por nombre
     if (filtroNombre) {
       const texto = filtroNombre.toLowerCase();
-      clubes = clubes.filter(c => c.nombre.toLowerCase().includes(texto));
+
+      clubes = clubes.filter((club) =>
+        (club.nombre || "").toLowerCase().includes(texto)
+      );
     }
 
     if (!clubes.length) {
@@ -377,41 +399,117 @@ async function cargarClubesAdmin(filtroNombre = "") {
 
     container.innerHTML = "";
 
-    clubes.forEach(club => {
-  const logoUrl = club.logo || "/assets/imagenes/default.png";
+    clubes.forEach((club) => {
+      const logoUrl =
+        club.logo || "/assets/imagenes/default.png";
 
-      const webOriginal = club.sitioWeb || "";
-      const webUrl = webOriginal
-        ? (webOriginal.startsWith("http") ? webOriginal : "https://" + webOriginal)
-        : null;
+      const nombre = club.nombre || "-";
+      const telefono = club.telefono || "-";
+      const ubicacion = club.ubicacion || club.direccion || "-";
+      const email = club.email || "-";
+      const facebook = club.facebook || "";
+      const instagram = club.instagram || "";
+      const ubicacionMaps = club.ubicacionMaps || "";
 
       const row = document.createElement("div");
+
       row.classList.add("club-admin-row");
 
       row.innerHTML = `
         <div class="club-admin-logo">
-          <img src="${logoUrl}" alt="${club.nombre}">
+          <img
+            src="${logoUrl}"
+            alt="${nombre}"
+            onerror="this.src='/assets/imagenes/default.png'"
+          >
         </div>
 
-        <div class="club-col">${club.nombre || "-"}</div>
-        <div class="club-col">${club.telefono || "-"}</div>
-        <div class="club-col">${club.direccion || "-"}</div>
         <div class="club-col">
-          ${webUrl ? `<a href="${webUrl}" target="_blank" rel="noopener noreferrer">${webOriginal}</a>` : "-"}
+          ${nombre}
+        </div>
+
+        <div class="club-col">
+          ${telefono}
+        </div>
+
+        <div class="club-col">
+          ${ubicacion}
+        </div>
+
+        <div class="club-col">
+          ${
+            email !== "-"
+              ? `<a href="mailto:${email}">${email}</a>`
+              : "-"
+          }
         </div>
 
         <div class="club-admin-actions d-flex gap-2 align-items-center">
-          <button 
+
+          ${
+            ubicacionMaps
+              ? `
+                <a
+                  href="${ubicacionMaps}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-success btn-sm"
+                  title="Ver ubicación"
+                >
+                  <i class="bi bi-geo-alt"></i>
+                </a>
+              `
+              : ""
+          }
+
+          ${
+            facebook
+              ? `
+                <a
+                  href="${facebook}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-primary btn-sm"
+                  title="Facebook"
+                >
+                  <i class="bi bi-facebook"></i>
+                </a>
+              `
+              : ""
+          }
+
+          ${
+            instagram
+              ? `
+                <a
+                  href="${instagram}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-danger btn-sm"
+                  title="Instagram"
+                >
+                  <i class="bi bi-instagram"></i>
+                </a>
+              `
+              : ""
+          }
+
+          <button
             class="btn btn-outline-primary btn-sm"
-            onclick="editarClub('${club._id}')">
+            onclick="editarClub('${club._id}')"
+            title="Editar"
+          >
             <i class="bi bi-pencil"></i>
           </button>
 
-          <button 
-            class="btn btn-outline-danger btn-sm" 
-            onclick="eliminarClub('${club._id}')">
+          <button
+            class="btn btn-outline-danger btn-sm"
+            onclick="eliminarClub('${club._id}')"
+            title="Eliminar"
+          >
             <i class="bi bi-trash"></i>
           </button>
+
         </div>
       `;
 
@@ -424,22 +522,35 @@ async function cargarClubesAdmin(filtroNombre = "") {
   }
 }
 
-/* ELIMINAR CLUBES*/
+
+/* ===============================
+   ELIMINAR CLUB
+================================ */
+
 async function eliminarClub(id) {
-  if (!confirm("¿Seguro que querés eliminar este club?")) return;
+  if (!confirm("¿Seguro que querés eliminar este club?")) {
+    return;
+  }
 
   try {
-    const response = await fetchProtegido(`${API_URL}/${id}`, {
-      method: "DELETE"
-    });
+    const response = await fetchProtegido(
+      `${API_CLUBES}/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const resultado = await response.json();
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.mensaje || "Error al eliminar");
+      throw new Error(
+        resultado.mensaje || "Error al eliminar el club"
+      );
     }
 
     alert("Club eliminado correctamente");
-    cargarClubesAdmin();
+
+    await cargarClubesAdmin();
 
   } catch (error) {
     console.error("Error eliminando club:", error);
@@ -447,69 +558,152 @@ async function eliminarClub(id) {
   }
 }
 
-/* CARGAR CLUBES*/
+
+/* ===============================
+   ABRIR FORMULARIO
+================================ */
+
 function abrirFormulario() {
   const container = document.getElementById("formClubContainer");
+
+  if (!container) return;
+
   container.style.display = "block";
-  container.scrollIntoView({ behavior: "smooth" });
-  document.getElementById("formClub").reset();
-  document.getElementById("clubId").value = "";
+
+  container.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+
+  const form = document.getElementById("formClub");
+
+  if (form) {
+    form.reset();
+  }
+
+  const clubId = document.getElementById("clubId");
+
+  if (clubId) {
+    clubId.value = "";
+  }
 }
+
+
+/* ===============================
+   CERRAR FORMULARIO
+================================ */
 
 function cerrarFormulario() {
   const container = document.getElementById("formClubContainer");
+
+  if (!container) return;
+
   container.style.display = "none";
 }
 
-/* GUARDAR CLUBES*/
+
+/* ===============================
+   GUARDAR CLUB
+================================ */
+
 async function guardarClub(e) {
   e.preventDefault();
 
-  const id = document.getElementById("clubId").value.trim();
-  const nombre = document.getElementById("clubNombre").value.trim();
-  const telefono = document.getElementById("clubTelefono").value.trim();
-  const direccion = document.getElementById("clubDireccion").value.trim();
-  const sitioWeb = document.getElementById("clubWeb").value.trim();
-  const logoInput = document.getElementById("clubLogo");
+  const id =
+    document.getElementById("clubId")?.value.trim() || "";
+
+  const nombre =
+    document.getElementById("clubNombre")?.value.trim() || "";
+
+  const telefono =
+    document.getElementById("clubTelefono")?.value.trim() || "";
+
+  const direccion =
+    document.getElementById("clubDireccion")?.value.trim() || "";
+
+  const sitioWeb =
+    document.getElementById("clubWeb")?.value.trim() || "";
+
+  const logoInput =
+    document.getElementById("clubLogo");
 
   const formData = new FormData();
+
   formData.append("nombre", nombre);
   formData.append("telefono", telefono);
+
+  /*
+    El backend actual puede seguir aceptando
+    "direccion" para mantener compatibilidad
+    con el formulario anterior.
+  */
   formData.append("direccion", direccion);
+
+  /*
+    sitioWeb no viene del Excel, pero lo mantenemos
+    para no romper el formulario administrativo
+    existente.
+  */
   formData.append("sitioWeb", sitioWeb);
 
-  if (logoInput.files.length > 0) {
-    formData.append("logo", logoInput.files[0]);
+  if (
+    logoInput &&
+    logoInput.files &&
+    logoInput.files.length > 0
+  ) {
+    formData.append(
+      "logo",
+      logoInput.files[0]
+    );
   }
 
   try {
     let response;
 
     if (id) {
-      response = await fetchProtegido(`${API_URL}/${id}`, {
-        method: "PUT",
-        body: formData
-      });
+      response = await fetchProtegido(
+        `${API_CLUBES}/${id}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
     } else {
-      response = await fetchProtegido(API_URL, {
-        method: "POST",
-        body: formData
-      });
+      response = await fetchProtegido(
+        API_CLUBES,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
     }
 
     const resultado = await response.json();
 
     if (!response.ok) {
-      throw new Error(resultado.mensaje || "Error guardando club");
+      throw new Error(
+        resultado.mensaje ||
+        resultado.error ||
+        "Error guardando club"
+      );
     }
 
-    document.getElementById("clubId").value = "";
-
     const form = document.getElementById("formClub");
-    if (form) form.reset();
+
+    if (form) {
+      form.reset();
+    }
+
+    const clubId =
+      document.getElementById("clubId");
+
+    if (clubId) {
+      clubId.value = "";
+    }
 
     cerrarFormulario();
-    cargarClubesAdmin();
+
+    await cargarClubesAdmin();
 
   } catch (error) {
     console.error("Error guardando club:", error);
@@ -517,13 +711,23 @@ async function guardarClub(e) {
   }
 }
 
-/* EDITAR CLUBES*/
+
+/* ===============================
+   EDITAR CLUB
+================================ */
+
 async function editarClub(id) {
   try {
-    const response = await fetch(`${API_URL}`);
-    const clubes = await response.json();
+    const response = await fetch(
+      `${API_CLUBES}/${id}`
+    );
 
-    const club = clubes.find(c => c._id === id);
+    if (!response.ok) {
+      throw new Error("No se pudo obtener el club");
+    }
+
+    const club = await response.json();
+
     if (!club) {
       alert("Club no encontrado");
       return;
@@ -531,14 +735,32 @@ async function editarClub(id) {
 
     abrirFormulario();
 
-    document.getElementById("clubId").value = club._id;
-    document.getElementById("clubNombre").value = club.nombre || "";
-    document.getElementById("clubTelefono").value = club.telefono || "";
-    document.getElementById("clubDireccion").value = club.direccion || "";
-    document.getElementById("clubWeb").value = club.sitioWeb || "";
+    document.getElementById("clubId").value =
+      club._id || "";
+
+    document.getElementById("clubNombre").value =
+      club.nombre || "";
+
+    document.getElementById("clubTelefono").value =
+      club.telefono || "";
+
+    document.getElementById("clubDireccion").value =
+      club.ubicacion ||
+      club.direccion ||
+      "";
+
+    document.getElementById("clubWeb").value =
+      club.sitioWeb || "";
 
   } catch (error) {
-    console.error("Error cargando club para editar:", error);
+    console.error(
+      "Error cargando club para editar:",
+      error
+    );
+
+    alert(
+      "No se pudo cargar el club para editar."
+    );
   }
 }
 

@@ -19,46 +19,25 @@
       </h1>
 
       <p class="ranking-description">
-        Consultá la posición, categoría, institución y puntaje actualizado
-        de cada judoka participante.
+        Consultá la posición y el puntaje actualizado de cada judoka
+        participante y el medallero de cada institución.
       </p>
 
       <div class="ranking-hero-info">
 
         <div class="ranking-info-item">
           <span class="ranking-info-icon">
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.9"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="8" r="4"></circle>
               <path d="M4 21a8 8 0 0 1 16 0"></path>
             </svg>
           </span>
-
-          <span>
-            Judokas federados
-          </span>
+          <span>Judokas federados</span>
         </div>
 
         <div class="ranking-info-item">
           <span class="ranking-info-icon">
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.9"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 21h8"></path>
               <path d="M12 17v4"></path>
               <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
@@ -66,34 +45,19 @@
               <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
             </svg>
           </span>
-
-          <span>
-            Ranking competitivo
-          </span>
+          <span>Ranking competitivo</span>
         </div>
 
         <div class="ranking-info-item">
           <span class="ranking-info-icon">
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.9"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 19V9"></path>
               <path d="M10 19V5"></path>
               <path d="M16 19v-7"></path>
               <path d="M22 19H2"></path>
             </svg>
           </span>
-
-          <span>
-            Puntajes actualizados
-          </span>
+          <span>Puntajes actualizados</span>
         </div>
 
       </div>
@@ -108,379 +72,520 @@
 
 
   <!-- =========================================
-       INTRODUCCIÓN
+       SELECTOR GRANDE: JUDOKAS / CLUBES
+       (por defecto: Judokas)
   ========================================== -->
-  <section class="ranking-intro">
+  <nav
+    class="ranking-switch"
+    role="tablist"
+    aria-label="Elegir tipo de ranking"
+  >
 
-    <div class="ranking-intro-copy">
-
-      <span class="ranking-section-label">
-        Clasificación deportiva
+    <button
+      id="tabJudokas"
+      class="ranking-switch-btn active"
+      type="button"
+      role="tab"
+      aria-selected="true"
+      aria-controls="panelJudokas"
+      data-ranking="judokas"
+    >
+      <span class="ranking-switch-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21a8 8 0 0 1 16 0"></path>
+        </svg>
       </span>
 
-      <h2>
-        Seguimiento oficial de competidores
-      </h2>
+      <span class="ranking-switch-text">
+        <strong>Ranking de Judokas</strong>
+        <small>Puntaje individual por categoría</small>
+      </span>
+    </button>
 
-      <p>
-        Filtrá por categoría, buscá un judoka por nombre o DNI y ordená
-        el ranking según el puntaje total obtenido.
-      </p>
+    <button
+      id="tabClubes"
+      class="ranking-switch-btn"
+      type="button"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panelClubes"
+      data-ranking="clubes"
+    >
+      <span class="ranking-switch-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18"></path>
+          <path d="M5 21V7l7-4 7 4v14"></path>
+          <path d="M9 21v-6h6v6"></path>
+          <path d="M9 10h.01"></path>
+          <path d="M15 10h.01"></path>
+        </svg>
+      </span>
 
-    </div>
+      <span class="ranking-switch-text">
+        <strong>Ranking de Clubes</strong>
+        <small>Medallero por institución</small>
+      </span>
+    </button>
 
-    <div class="ranking-intro-icon" aria-hidden="true">
-      <svg
-        viewBox="0 0 24 24"
-        width="34"
-        height="34"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M8 21h8"></path>
-        <path d="M12 17v4"></path>
-        <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
-        <path d="M5 6H3v2a4 4 0 0 0 4 4"></path>
-        <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
-      </svg>
-    </div>
+  </nav>
+
+
+  <!-- =========================================
+       PANEL: RANKING DE JUDOKAS
+  ========================================== -->
+  <section
+    id="panelJudokas"
+    class="ranking-panel"
+    role="tabpanel"
+    aria-labelledby="tabJudokas"
+  >
+
+    <!-- INTRODUCCIÓN -->
+    <section class="ranking-intro">
+
+      <div class="ranking-intro-copy">
+        <span class="ranking-section-label">Clasificación deportiva</span>
+
+        <h2>Seguimiento oficial de competidores</h2>
+
+        <p>
+          Filtrá por categoría, buscá un judoka por nombre o DNI y ordená
+          el ranking según el puntaje total obtenido.
+        </p>
+      </div>
+
+      <div class="ranking-intro-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 21h8"></path>
+          <path d="M12 17v4"></path>
+          <path d="M7 4h10v5a5 5 0 0 1-10 0Z"></path>
+          <path d="M5 6H3v2a4 4 0 0 0 4 4"></path>
+          <path d="M19 6h2v2a4 4 0 0 1-4 4"></path>
+        </svg>
+      </div>
+
+    </section>
+
+    <section class="ranking-layout">
+
+      <main class="ranking-main">
+
+        <!-- FILTROS JUDOKAS -->
+        <section class="ranking-filters">
+
+          <div class="ranking-filters-header">
+            <div>
+              <span class="ranking-filters-eyebrow">Buscar competidores</span>
+              <h3>Filtros del ranking</h3>
+            </div>
+
+            <span class="ranking-filter-status">Ranking oficial</span>
+          </div>
+
+          <div class="ranking-filters-grid">
+
+            <!-- LIMPIAR FILTROS -->
+            <div class="ranking-field ranking-clear-field">
+              <label>Limpiar filtros</label>
+
+              <button id="btnLimpiarFiltros" class="ranking-clear-btn" type="button">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+                  <path d="M3 4v5h5"></path>
+                </svg>
+                Limpiar
+              </button>
+            </div>
+
+            <!-- CATEGORÍA -->
+            <div class="ranking-field">
+              <label for="filtroCategoria">Categoría</label>
+
+              <div class="ranking-input-wrapper">
+                <span class="ranking-input-icon">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 5h6v6H4z"></path>
+                    <path d="M14 5h6v6h-6z"></path>
+                    <path d="M4 15h6v4H4z"></path>
+                    <path d="M14 15h6v4h-6z"></path>
+                  </svg>
+                </span>
+
+                <select id="filtroCategoria">
+                  <option value="">Todas las categorías</option>
+                </select>
+
+                <span class="ranking-select-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <!-- BUSCADOR -->
+            <div class="ranking-field ranking-search-field">
+              <label for="searchInput">Buscar judoka</label>
+
+              <div class="ranking-input-wrapper">
+                <span class="ranking-input-icon">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-3.5-3.5"></path>
+                  </svg>
+                </span>
+
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar por nombre, apellido o DNI..."
+                  autocomplete="off"
+                >
+              </div>
+            </div>
+
+            <!-- ORDEN -->
+            <div class="ranking-field ranking-order-field">
+              <label>Ordenar puntaje</label>
+
+              <div class="ranking-order-buttons">
+
+                <button id="sortDesc" class="ranking-sort-btn active" type="button">
+                  <span class="ranking-sort-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 6h10"></path>
+                      <path d="M8 12h7"></path>
+                      <path d="M8 18h4"></path>
+                      <path d="m3 15 2 2 2-2"></path>
+                      <path d="M5 17V5"></path>
+                    </svg>
+                  </span>
+                  Mayor
+                </button>
+
+                <button id="sortAsc" class="ranking-sort-btn" type="button">
+                  <span class="ranking-sort-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 6h4"></path>
+                      <path d="M8 12h7"></path>
+                      <path d="M8 18h10"></path>
+                      <path d="m3 9 2-2 2 2"></path>
+                      <path d="M5 7v12"></path>
+                    </svg>
+                  </span>
+                  Menor
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- TABLA JUDOKAS -->
+        <section class="ranking-card">
+
+          <div class="ranking-card-header">
+
+            <div class="ranking-card-title">
+
+              <span class="ranking-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19V9"></path>
+                  <path d="M10 19V5"></path>
+                  <path d="M16 19v-7"></path>
+                  <path d="M22 19H2"></path>
+                </svg>
+              </span>
+
+              <div>
+                <span class="ranking-card-eyebrow">Clasificación actual</span>
+                <h3>Listado de judokas</h3>
+                <p>Ranking ordenado según el puntaje acumulado en torneos oficiales.</p>
+              </div>
+
+            </div>
+
+            <div class="ranking-card-badge">
+              <span class="ranking-live-dot"></span>
+              Actualizado
+            </div>
+
+          </div>
+
+          <div class="ranking-table-wrapper">
+
+            <table class="ranking-table">
+
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Foto</th>
+                  <th>Judoka</th>
+                  <th>Cat.</th>
+                  <th>Club</th>
+                  <th>Abierto Ciudad</th>
+                  <th>Juegos Porteños</th>
+                  <th>Copa Doblas</th>
+                  <th>Metropolitano</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+
+              <tbody id="rankingBody">
+                <tr class="ranking-loading-row">
+                  <td colspan="10">
+                    <div class="ranking-loading">
+                      <span class="ranking-loading-spinner"></span>
+                      <div>
+                        <strong>Cargando ranking</strong>
+                        <p>Estamos obteniendo la clasificación actual.</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </section>
 
   </section>
 
 
   <!-- =========================================
-       CONTENIDO PRINCIPAL
+       PANEL: RANKING DE CLUBES
+       (oculto por defecto)
   ========================================== -->
-  <section class="ranking-layout">
-
-    <main class="ranking-main">
-
-      <!-- =====================================
-           FILTROS
-      ====================================== -->
-      <section class="ranking-filters">
-
-        <div class="ranking-filters-header">
-
-          <div>
-            <span class="ranking-filters-eyebrow">
-              Buscar competidores
-            </span>
-
-            <h3>
-              Filtros del ranking
-            </h3>
-          </div>
-
-          <span class="ranking-filter-status">
-            Ranking oficial
-          </span>
-
-        </div>
-
-
-        <div class="ranking-filters-grid">
-
-          <!-- LIMPIAR FILTROS -->
-<div class="ranking-field ranking-clear-field">
-
-  <label>
-    Limpiar filtros
-  </label>
-
-  <button
-    id="btnLimpiarFiltros"
-    class="ranking-clear-btn"
-    type="button"
+  <section
+    id="panelClubes"
+    class="ranking-panel"
+    role="tabpanel"
+    aria-labelledby="tabClubes"
+    hidden
   >
-    <svg
-      viewBox="0 0 24 24"
-      width="18"
-      height="18"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M3 12a9 9 0 1 0 3-6.7"></path>
-      <path d="M3 4v5h5"></path>
-    </svg>
 
-    Limpiar
-  </button>
+    <!-- INTRODUCCIÓN -->
+    <section class="ranking-intro">
 
-</div>
+      <div class="ranking-intro-copy">
+        <span class="ranking-section-label">Clasificación institucional</span>
 
-          <!-- CATEGORÍA -->
-          <div class="ranking-field">
+        <h2>Medallero oficial de instituciones</h2>
 
-            <label for="filtroCategoria">
-              Categoría
-            </label>
+        <p>
+          Consultá el desempeño de cada club en las competencias oficiales
+          y buscá una institución por nombre.
+        </p>
+      </div>
 
-            <div class="ranking-input-wrapper">
+      <div class="ranking-intro-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18"></path>
+          <path d="M5 21V7l7-4 7 4v14"></path>
+          <path d="M9 21v-6h6v6"></path>
+        </svg>
+      </div>
 
-              <span class="ranking-input-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.9"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M4 5h6v6H4z"></path>
-                  <path d="M14 5h6v6h-6z"></path>
-                  <path d="M4 15h6v4H4z"></path>
-                  <path d="M14 15h6v4h-6z"></path>
-                </svg>
-              </span>
+    </section>
 
-              <select id="filtroCategoria">
-                <option value="">
-                  Todas las categorías
-                </option>
-              </select>
+    <section class="ranking-layout">
 
-              <span class="ranking-select-arrow" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="m6 9 6 6 6-6"></path>
-                </svg>
-              </span>
+      <main class="ranking-main">
 
-            </div>
+        <!-- FILTROS CLUBES -->
+        <section class="ranking-filters">
 
-          </div>
-
-
-          <!-- BUSCADOR -->
-          <div class="ranking-field ranking-search-field">
-
-            <label for="searchInput">
-              Buscar judoka
-            </label>
-
-            <div class="ranking-input-wrapper">
-
-              <span class="ranking-input-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.9"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="11" cy="11" r="7"></circle>
-                  <path d="m20 20-3.5-3.5"></path>
-                </svg>
-              </span>
-
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscar por nombre, apellido o DNI..."
-                autocomplete="off"
-              >
-
-            </div>
-
-          </div>
-
-
-          <!-- ORDEN -->
-          <div class="ranking-field ranking-order-field">
-
-            <label>
-              Ordenar puntaje
-            </label>
-
-            <div class="ranking-order-buttons">
-
-              <button
-                id="sortDesc"
-                class="ranking-sort-btn active"
-                type="button"
-              >
-                <span class="ranking-sort-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M8 6h10"></path>
-                    <path d="M8 12h7"></path>
-                    <path d="M8 18h4"></path>
-                    <path d="m3 15 2 2 2-2"></path>
-                    <path d="M5 17V5"></path>
-                  </svg>
-                </span>
-
-                Mayor
-              </button>
-
-              <button
-                id="sortAsc"
-                class="ranking-sort-btn"
-                type="button"
-              >
-                <span class="ranking-sort-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M8 6h4"></path>
-                    <path d="M8 12h7"></path>
-                    <path d="M8 18h10"></path>
-                    <path d="m3 9 2-2 2 2"></path>
-                    <path d="M5 7v12"></path>
-                  </svg>
-                </span>
-
-                Menor
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================
-           TABLA DE RANKING
-      ====================================== -->
-      <section class="ranking-card">
-
-        <div class="ranking-card-header">
-
-          <div class="ranking-card-title">
-
-            <span class="ranking-card-icon" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                width="23"
-                height="23"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.9"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M4 19V9"></path>
-                <path d="M10 19V5"></path>
-                <path d="M16 19v-7"></path>
-                <path d="M22 19H2"></path>
-              </svg>
-            </span>
-
+          <div class="ranking-filters-header">
             <div>
-              <span class="ranking-card-eyebrow">
-                Clasificación actual
-              </span>
+              <span class="ranking-filters-eyebrow">Buscar instituciones</span>
+              <h3>Filtros del ranking de clubes</h3>
+            </div>
 
-              <h3>
-                Listado de judokas
-              </h3>
+            <span class="ranking-filter-status">Ranking oficial</span>
+          </div>
 
-              <p>
-                Ranking ordenado según el puntaje acumulado en torneos oficiales.
-              </p>
+          <div class="ranking-filters-grid">
+
+            <!-- LIMPIAR -->
+            <div class="ranking-field ranking-clear-field">
+              <label>Limpiar filtros</label>
+
+              <button id="btnLimpiarFiltrosClubes" class="ranking-clear-btn" type="button">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+                  <path d="M3 4v5h5"></path>
+                </svg>
+                Limpiar
+              </button>
+            </div>
+
+            <!-- BUSCADOR -->
+            <div class="ranking-field ranking-search-field">
+              <label for="searchClubInput">Buscar club</label>
+
+              <div class="ranking-input-wrapper">
+                <span class="ranking-input-icon">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-3.5-3.5"></path>
+                  </svg>
+                </span>
+
+                <input
+                  type="text"
+                  id="searchClubInput"
+                  placeholder="Buscar por nombre del club..."
+                  autocomplete="off"
+                >
+              </div>
+            </div>
+
+            <!-- ORDEN -->
+            <div class="ranking-field ranking-order-field">
+              <label>Ordenar posición</label>
+
+              <div class="ranking-order-buttons">
+
+                <button id="sortClubAsc" class="ranking-sort-btn active" type="button">
+                  <span class="ranking-sort-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 6h4"></path>
+                      <path d="M8 12h7"></path>
+                      <path d="M8 18h10"></path>
+                      <path d="m3 9 2-2 2 2"></path>
+                      <path d="M5 7v12"></path>
+                    </svg>
+                  </span>
+                  1° al último
+                </button>
+
+                <button id="sortClubDesc" class="ranking-sort-btn" type="button">
+                  <span class="ranking-sort-icon">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 6h10"></path>
+                      <path d="M8 12h7"></path>
+                      <path d="M8 18h4"></path>
+                      <path d="m3 15 2 2 2-2"></path>
+                      <path d="M5 17V5"></path>
+                    </svg>
+                  </span>
+                  Último al 1°
+                </button>
+
+              </div>
             </div>
 
           </div>
 
-          <div class="ranking-card-badge">
-            <span class="ranking-live-dot"></span>
-            Actualizado
+        </section>
+
+
+        <!-- TABLA CLUBES -->
+        <section class="ranking-card">
+
+          <div class="ranking-card-header">
+
+            <div class="ranking-card-title">
+
+              <span class="ranking-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 21h18"></path>
+                  <path d="M5 21V7l7-4 7 4v14"></path>
+                  <path d="M9 21v-6h6v6"></path>
+                </svg>
+              </span>
+
+              <div>
+                <span class="ranking-card-eyebrow">Clasificación actual</span>
+                <h3>Listado de clubes</h3>
+                <p>Medallas obtenidas por cada institución en las competencias oficiales.</p>
+              </div>
+
+            </div>
+
+            <div class="ranking-card-badge">
+              <span class="ranking-live-dot"></span>
+              Actualizado
+            </div>
+
           </div>
 
-        </div>
+          <div class="ranking-table-wrapper">
 
+            <table class="ranking-table ranking-table-clubes">
 
-        <div class="ranking-table-wrapper">
+              <thead>
+                <tr class="ranking-group-row">
+                  <th rowspan="2">Pos.</th>
+                  <th rowspan="2">Logo</th>
+                  <th rowspan="2">Club</th>
+                  <th colspan="4" class="ranking-group-start">Abierto de la Ciudad 2026</th>
+                  <th colspan="4" class="ranking-group-start">Juegos Porteños 2026</th>
+                  <th colspan="4" class="ranking-group-start">Copa Doblas 2026</th>
+                  <th colspan="4" class="ranking-group-start">Torneo Metropolitano 2026</th>
+                  <th colspan="4" class="ranking-group-start ranking-group-global">Medallero Global</th>
+                </tr>
+                <tr class="ranking-medal-row">
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
 
-          <table class="ranking-table">
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
 
-            <thead>
-              <tr>
-                <th>Pos.</th>
-<th>Foto</th>
-<th>Judoka</th>
-<th>Cat.</th>
-<th>Club</th>
-<th>Abierto Ciudad</th>
-<th>Juegos Porteños</th>
-<th>Copa Doblas</th>
-<th>Metropolitano</th>
-<th>Total</th>
-              </tr>
-            </thead>
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
 
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
 
-            <tbody id="rankingBody">
+                  <th class="ranking-group-start ranking-group-global">Oro</th>
+                  <th class="ranking-group-global">Plata</th>
+                  <th class="ranking-group-global">Bronce</th>
+                  <th class="ranking-group-global">Quinto</th>
+                </tr>
+              </thead>
 
-              <tr class="ranking-loading-row">
-                <td colspan="9">
-
-                  <div class="ranking-loading">
-
-                    <span class="ranking-loading-spinner"></span>
-
-                    <div>
-                      <strong>
-                        Cargando ranking
-                      </strong>
-
-                      <p>
-                        Estamos obteniendo la clasificación actual.
-                      </p>
+              <tbody id="rankingClubesBody">
+                <tr class="ranking-loading-row">
+                  <td colspan="23">
+                    <div class="ranking-loading">
+                      <span class="ranking-loading-spinner"></span>
+                      <div>
+                        <strong>Cargando clubes</strong>
+                        <p>Estamos obteniendo el medallero actual.</p>
+                      </div>
                     </div>
+                  </td>
+                </tr>
+              </tbody>
 
-                  </div>
+            </table>
 
-                </td>
-              </tr>
+          </div>
 
-            </tbody>
+        </section>
 
-          </table>
+      </main>
 
-        </div>
-
-      </section>
-
-    </main>
+    </section>
 
   </section>
 
@@ -491,16 +596,7 @@
   <section class="ranking-help">
 
     <span class="ranking-help-icon">
-      <svg
-        viewBox="0 0 24 24"
-        width="24"
-        height="24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.9"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="9"></circle>
         <path d="M12 11v5"></path>
         <path d="M12 8h.01"></path>
@@ -508,13 +604,11 @@
     </span>
 
     <div>
-      <strong>
-        Información del ranking
-      </strong>
+      <strong>Información del ranking</strong>
 
       <p>
-        Los puntajes son administrados por la Federación Metropolitana de Judo
-        y pueden actualizarse luego de cada torneo oficial.
+        Los puntajes y medalleros son administrados por la Federación
+        Metropolitana de Judo y pueden actualizarse luego de cada torneo oficial.
       </p>
     </div>
 

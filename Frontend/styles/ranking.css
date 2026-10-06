@@ -1520,7 +1520,563 @@
   }
 
 }
+/* =========================================================
+   RANKING FMJ - AGREGADO: SELECTOR + CLUBES
+   Pegar AL FINAL del CSS del ranking (después de todo lo
+   existente), porque algunas reglas pisan a las anteriores.
+========================================================= */
 
+/* =========================================================
+   PANELES (judokas / clubes)
+========================================================= */
+
+.ranking-panel[hidden] {
+  display: none !important;
+}
+
+.ranking-panel {
+  animation: rankingPanelIn 0.35s ease both;
+}
+
+@keyframes rankingPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   SELECTOR GRANDE: JUDOKAS / CLUBES
+========================================================= */
+
+.ranking-switch {
+  max-width: 1380px;
+  margin: 0 auto 34px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* El selector ".ranking-page .x" es necesario para ganarle a
+   ".ranking-page button { border: 0 }" */
+.ranking-page .ranking-switch-btn {
+  position: relative;
+  min-height: 118px;
+  padding: 22px 28px;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  border: 2px solid #e3e4e7;
+  border-radius: 24px;
+
+  color: #3b3f45;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--ranking-shadow-small);
+
+  text-align: left;
+  cursor: pointer;
+
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.ranking-page .ranking-switch-btn:hover {
+  transform: translateY(-3px);
+  border-color: rgba(169, 0, 0, 0.35);
+  box-shadow: var(--ranking-shadow-medium);
+}
+
+.ranking-switch-icon {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 68px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 20px;
+
+  color: var(--ranking-red);
+  background:
+    linear-gradient(
+      135deg,
+      var(--ranking-red-soft),
+      #ffffff
+    );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(169, 0, 0, 0.08),
+    0 10px 22px rgba(169, 0, 0, 0.08);
+
+  transition:
+    color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.ranking-switch-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ranking-switch-text strong {
+  font-size: clamp(19px, 2vw, 26px);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.ranking-switch-text small {
+  color: var(--ranking-text-soft);
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.22s ease;
+}
+
+/* ---------- Activo ---------- */
+
+.ranking-page .ranking-switch-btn.active {
+  color: #ffffff;
+  border-color: transparent;
+  background:
+    linear-gradient(
+      135deg,
+      var(--ranking-red),
+      var(--ranking-red-dark)
+    );
+  box-shadow:
+    0 22px 44px rgba(169, 0, 0, 0.28);
+}
+
+.ranking-switch-btn.active .ranking-switch-icon {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.ranking-switch-btn.active .ranking-switch-text small {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Triangulito que apunta al panel activo */
+.ranking-switch-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  width: 22px;
+  height: 22px;
+  background: var(--ranking-red-dark);
+  border-radius: 4px;
+  transform: translateX(-50%) rotate(45deg);
+  z-index: -1;
+}
+
+.ranking-page .ranking-switch-btn:focus-visible {
+  outline: 3px solid rgba(23, 105, 194, 0.35);
+  outline-offset: 4px;
+}
+
+.ranking-page .ranking-switch-btn:active {
+  transform: scale(0.985);
+}
+
+
+/* =========================================================
+   TABLA DE CLUBES - BASE
+========================================================= */
+
+.ranking-table-clubes {
+  min-width: 1700px;
+}
+
+/* Logo del club: más chico para que entre cómodo.
+   El JS pone el tamaño inline, por eso el !important. */
+.ranking-table-clubes .ranking-club-logo {
+  width: 64px !important;
+  height: 64px !important;
+  padding: 4px;
+  object-fit: contain !important;
+  background: #ffffff !important;
+}
+
+/* Sin zoom ni desplazamientos en esta tabla:
+   rompen las columnas fijas (sticky) */
+.ranking-table-clubes tbody tr {
+  animation: rankingFadeSoft 0.35s ease both;
+}
+
+.ranking-table-clubes tbody tr:hover {
+  transform: none;
+}
+
+@keyframes rankingFadeSoft {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   TABLA DE CLUBES - ENCABEZADO DE DOS FILAS
+========================================================= */
+
+.ranking-table-clubes thead th {
+  z-index: 4;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Fila 1: nombres de competencias */
+.ranking-table-clubes .ranking-group-row th {
+  top: 0;
+  height: 52px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
+/* Fila 2: Oro / Plata / Bronce / Quinto.
+   top = alto de la fila 1 */
+.ranking-table-clubes .ranking-medal-row th {
+  top: 52px;
+  height: 44px;
+  min-width: 64px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+/* Separador entre competencias */
+.ranking-table-clubes th.ranking-group-start {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Colores de cada medalla en el encabezado */
+.ranking-table-clubes .ranking-medal-row th:nth-child(4n + 1) {
+  color: #4a3500;
+  background: linear-gradient(180deg, #f6c23e, #d39a13);
+}
+
+.ranking-table-clubes .ranking-medal-row th:nth-child(4n + 2) {
+  color: #2f3540;
+  background: linear-gradient(180deg, #dfe3e8, #b9c0c9);
+}
+
+.ranking-table-clubes .ranking-medal-row th:nth-child(4n + 3) {
+  color: #ffffff;
+  background: linear-gradient(180deg, #c98550, #9c5f34);
+}
+
+.ranking-table-clubes .ranking-medal-row th:nth-child(4n) {
+  color: #ffffff;
+  background: linear-gradient(180deg, #2f7fd6, #1769c2);
+}
+
+/* Medallero global: encabezado rojo */
+.ranking-table-clubes th.ranking-group-global {
+  background:
+    linear-gradient(
+      180deg,
+      var(--ranking-red),
+      var(--ranking-red-dark)
+    );
+}
+
+.ranking-table-clubes .ranking-medal-row th.ranking-group-global {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      180deg,
+      #c01212,
+      var(--ranking-red-dark)
+    );
+}
+
+
+/* =========================================================
+   TABLA DE CLUBES - COLUMNAS FIJAS (Pos. / Logo / Club)
+========================================================= */
+
+/* Anchos */
+.ranking-table-clubes .ranking-group-row th:nth-child(1),
+.ranking-table-clubes tbody td:nth-child(1) {
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  left: 0;
+}
+
+.ranking-table-clubes .ranking-group-row th:nth-child(2),
+.ranking-table-clubes tbody td:nth-child(2) {
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+  left: 72px;
+}
+
+.ranking-table-clubes .ranking-group-row th:nth-child(3),
+.ranking-table-clubes tbody td:nth-child(3) {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  left: 168px;
+}
+
+/* Cuerpo: celdas fijas */
+.ranking-table-clubes tbody td:nth-child(-n + 3) {
+  position: sticky;
+  z-index: 3;
+  background: #ffffff;
+}
+
+/* Encabezado: esquina fija (arriba + izquierda) */
+.ranking-table-clubes .ranking-group-row th:nth-child(-n + 3) {
+  z-index: 6;
+}
+
+/* Sombra a la derecha de la última columna fija */
+.ranking-table-clubes tbody td:nth-child(3),
+.ranking-table-clubes .ranking-group-row th:nth-child(3) {
+  box-shadow: 10px 0 14px -10px rgba(15, 23, 42, 0.28);
+}
+
+.ranking-table-clubes tbody td {
+  padding: 14px 16px;
+}
+
+/* Fila resaltada al pasar el mouse (sin transform) */
+.ranking-table-clubes tbody tr:hover td {
+  background: #fff6f6;
+}
+
+.ranking-table-clubes tbody tr:hover td:nth-child(-n + 3) {
+  background: #fff6f6;
+}
+
+
+/* =========================================================
+   TABLA DE CLUBES - CELDA DEL CLUB
+========================================================= */
+
+.ranking-table-clubes tbody td:nth-child(3) .fw-semibold {
+  color: #171717;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.ranking-table-clubes tbody td:nth-child(3) small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ranking-club-links {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ranking-club-links a {
+  padding: 4px 10px;
+
+  border: 1px solid rgba(23, 105, 194, 0.16);
+  border-radius: 999px;
+
+  color: var(--ranking-blue);
+  background: var(--ranking-blue-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.ranking-club-links a:hover {
+  color: #ffffff;
+  background: var(--ranking-blue);
+}
+
+
+/* =========================================================
+   TABLA DE CLUBES - CELDAS DE MEDALLAS
+========================================================= */
+
+.ranking-table-clubes .ranking-medal-cell {
+  min-width: 64px;
+  padding: 14px 8px;
+
+  text-align: center;
+  font-size: 15px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.ranking-table-clubes td.ranking-group-start {
+  border-left: 2px solid #ececef;
+}
+
+/* Con medallas: color según tipo */
+.ranking-table-clubes .ranking-medal-cell-oro:not(.ranking-medal-zero) {
+  color: #8a6100;
+  background: var(--ranking-gold-soft);
+}
+
+.ranking-table-clubes .ranking-medal-cell-plata:not(.ranking-medal-zero) {
+  color: #4b5563;
+  background: #f1f3f5;
+}
+
+.ranking-table-clubes .ranking-medal-cell-bronce:not(.ranking-medal-zero) {
+  color: #8a4f27;
+  background: #fbeee4;
+}
+
+.ranking-table-clubes .ranking-medal-cell-quinto:not(.ranking-medal-zero) {
+  color: var(--ranking-blue);
+  background: var(--ranking-blue-soft);
+}
+
+/* En cero: se apagan para que resalten las que tienen medallas */
+.ranking-table-clubes .ranking-medal-zero {
+  color: #c4c7cc;
+  font-weight: 600;
+}
+
+/* Medallero global: un poco más grande */
+.ranking-table-clubes td.ranking-group-global {
+  font-size: 17px;
+}
+
+.ranking-table-clubes td.ranking-group-global.ranking-group-start {
+  border-left: 2px solid rgba(169, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .ranking-switch {
+    margin-bottom: 26px;
+    gap: 12px;
+  }
+
+  .ranking-page .ranking-switch-btn {
+    min-height: 0;
+    padding: 16px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .ranking-switch-icon {
+    width: 54px;
+    height: 54px;
+    flex-basis: 54px;
+    border-radius: 16px;
+  }
+
+  .ranking-switch-text {
+    align-items: center;
+  }
+
+  .ranking-switch-text strong {
+    font-size: 16px;
+  }
+
+  .ranking-switch-text small {
+    font-size: 12px;
+  }
+
+  /* En celular no entran 3 columnas fijas:
+     queda fija Pos. y Club; el logo se desliza */
+  .ranking-table-clubes {
+    min-width: 1500px;
+  }
+
+  .ranking-table-clubes .ranking-group-row th:nth-child(1),
+  .ranking-table-clubes tbody td:nth-child(1) {
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    padding-inline: 8px;
+    text-align: center;
+  }
+
+  .ranking-table-clubes .ranking-group-row th:nth-child(2),
+  .ranking-table-clubes tbody td:nth-child(2) {
+    position: static;
+    width: 84px;
+    min-width: 84px;
+    max-width: 84px;
+    box-shadow: none;
+  }
+
+  .ranking-table-clubes .ranking-group-row th:nth-child(3),
+  .ranking-table-clubes tbody td:nth-child(3) {
+    width: 170px;
+    min-width: 170px;
+    max-width: 170px;
+    left: 52px;
+  }
+
+  /* El encabezado del logo no puede ser fijo en X,
+     pero sí debe seguir fijo arriba */
+  .ranking-table-clubes .ranking-group-row th:nth-child(2) {
+    position: sticky;
+    left: auto;
+    z-index: 4;
+  }
+
+  .ranking-table-clubes .ranking-club-logo {
+    width: 52px !important;
+    height: 52px !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .ranking-page .ranking-switch-btn {
+    padding: 14px 10px;
+  }
+
+  .ranking-switch-text small {
+    display: none;
+  }
+
+  .ranking-switch-btn.active::after {
+    bottom: -9px;
+    width: 18px;
+    height: 18px;
+  }
+}
 
 /* =========================================================
    ACCESIBILIDAD

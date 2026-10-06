@@ -246,20 +246,33 @@ export async function obtenerFilasClubes() {
     auth: client,
   });
 
-  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  // Planilla de CLUBES (distinta a la de inscripciones)
+  const spreadsheetId = process.env.GOOGLE_SHEET_CLUBES_ID;
 
-  /*
-    IMPORTANTE:
+  // gid de la pestaña con el medallero (sale de la URL: ...?gid=623548317)
+  const sheetGid = 623548317;
 
-    Por ahora dejamos preparada la función.
-    Cuando tengas el Excel / Google Sheet definitivo,
-    ajustamos solamente el nombre de la pestaña
-    y el rango si hace falta.
-  */
+  const spreadsheet = await sheets.spreadsheets.get({
+    spreadsheetId,
+    fields: "sheets(properties(sheetId,title))",
+  });
+
+  const hoja = spreadsheet.data.sheets?.find(
+    (sheet) => sheet.properties?.sheetId === sheetGid
+  );
+
+  if (!hoja) {
+    throw new Error(
+      `No se encontró la pestaña de clubes con gid ${sheetGid}`
+    );
+  }
+
+  // Si el nombre tuviera comillas simples, hay que duplicarlas
+  const nombreHoja = hoja.properties.title.replace(/'/g, "''");
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "'Clubes'!A:Z",
+    range: `'${nombreHoja}'!A:AC`,
   });
 
   return response.data.values || [];

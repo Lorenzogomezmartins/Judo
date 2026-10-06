@@ -1,62 +1,63 @@
 import mongoose from "mongoose";
 
+/*
+========================================
+RESULTADOS DE CADA COMPETENCIA
+========================================
+*/
+
 const resultadoSchema = new mongoose.Schema(
   {
-    oro: { type: Number, default: 0 },
-    plata: { type: Number, default: 0 },
-    bronce: { type: Number, default: 0 },
-    quinto: { type: Number, default: 0 },
+    oro: {
+      type: Number,
+      default: 0,
+    },
+
+    plata: {
+      type: Number,
+      default: 0,
+    },
+
+    bronce: {
+      type: Number,
+      default: 0,
+    },
+
+    quinto: {
+      type: Number,
+      default: 0,
+    },
   },
-  { _id: false }
+  {
+    _id: false,
+  }
 );
+
+/*
+========================================
+MODELO CLUB
+========================================
+*/
 
 const clubSchema = new mongoose.Schema(
   {
+    /*
+    ------------------------------------
+    IDENTIFICACIÓN
+    ------------------------------------
+    */
+
     nombre: {
       type: String,
       required: true,
       trim: true,
     },
 
-    logo: {
-      type: String,
-      default: "",
-    },
-
-    logoPublicId: {
-      type: String,
-      default: "",
-    },
-
-    telefono: {
-      type: String,
-      default: "",
-    },
-
-    direccion: {
-      type: String,
-      default: "",
-    },
-
-    sitioWeb: {
-      type: String,
-      default: "",
-    },
-
-    email: {
-      type: String,
-      default: "",
-    },
-
-    facebook: {
-      type: String,
-      default: "",
-    },
-
-    instagram: {
-      type: String,
-      default: "",
-    },
+    /*
+    ------------------------------------
+    COMPETENCIAS
+    ------------------------------------
+    */
 
     abiertoCiudad2026: {
       type: resultadoSchema,
@@ -83,19 +84,129 @@ const clubSchema = new mongoose.Schema(
       default: () => ({}),
     },
 
+    /*
+    ------------------------------------
+    INFORMACIÓN DEL CLUB
+    ------------------------------------
+    */
+
+    logo: {
+      type: String,
+      default: "",
+    },
+
+    logoPublicId: {
+      type: String,
+      default: "",
+    },
+
+    ubicacion: {
+      type: String,
+      default: "",
+    },
+
+    telefono: {
+      type: String,
+      default: "",
+    },
+
+    email: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    facebook: {
+      type: String,
+      default: "",
+    },
+
+    instagram: {
+      type: String,
+      default: "",
+    },
+
+    ubicacionMaps: {
+      type: String,
+      default: "",
+    },
+
+    /*
+    ------------------------------------
+    RANKING
+    ------------------------------------
+
+    Este valor viene directamente
+    de la columna AC del Excel.
+
+    NO calculamos el ranking nosotros.
+    */
+
     ranking: {
       type: Number,
       default: 0,
     },
+
+    /*
+    ------------------------------------
+    GOOGLE SHEETS
+    ------------------------------------
+    */
 
     filaGoogleSheet: {
       type: Number,
       default: null,
     },
 
+    /*
+    ------------------------------------
+    DATOS ORIGINALES
+    ------------------------------------
+
+    Sirve para conservar información
+    proveniente directamente de Sheets.
+    */
+
     datosOriginales: {
-      institucion: String,
-      fotoDriveUrl: String,
+      institucion: {
+        type: String,
+        default: "",
+      },
+
+      logoDriveUrl: {
+        type: String,
+        default: "",
+      },
+
+      ubicacion: {
+        type: String,
+        default: "",
+      },
+
+      telefono: {
+        type: String,
+        default: "",
+      },
+
+      email: {
+        type: String,
+        default: "",
+      },
+
+      facebook: {
+        type: String,
+        default: "",
+      },
+
+      instagram: {
+        type: String,
+        default: "",
+      },
+
+      ubicacionMaps: {
+        type: String,
+        default: "",
+      },
     },
   },
   {
@@ -103,8 +214,16 @@ const clubSchema = new mongoose.Schema(
   }
 );
 
+/*
+========================================
+ÍNDICES
+========================================
+*/
+
 clubSchema.index(
-  { nombre: 1 },
+  {
+    nombre: 1,
+  },
   {
     unique: true,
     collation: {
@@ -114,6 +233,15 @@ clubSchema.index(
   }
 );
 
-clubSchema.index({ ranking: 1 });
+clubSchema.index({
+  ranking: 1,
+});
 
-export default mongoose.model("Club", clubSchema);
+/*
+========================================
+EXPORT
+========================================
+*/
+
+export default mongoose.models.Club ||
+  mongoose.model("Club", clubSchema);

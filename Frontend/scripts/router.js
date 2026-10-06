@@ -7,6 +7,7 @@ import { cargarProfesores } from "./profesores.js";
 import { cargarPatrocinadores } from "./patrocinadores.js";
 import { iniciarLoginAdmin } from "./loginAdmin.js";
 import { cargarRankingUsuarios } from "./usuarios.js";
+import { inicializarSelectorRanking } from "./rankingClubes.js";
 import { inicializarHome } from "./home.js";
 import {
   cargarGaleria,
@@ -68,19 +69,18 @@ async function cargarVista(vista) {
     contenedor.innerHTML = html;
 
     switch (vistaFinal) {
-  case "home":
-  await inicializarHome();
-  await cargarGaleriaHome();
-  break;
+      case "home":
+        await inicializarHome();
+        await cargarGaleriaHome();
+        break;
 
-  case "galeria":
-    await cargarGaleria();
-    break;
+      case "galeria":
+        await cargarGaleria();
+        break;
 
-  case "calendario":
-    await inicializarCalendario();
-    break;
-        
+      case "calendario":
+        await inicializarCalendario();
+        break;
 
       case "clubes":
         await cargarClubes();
@@ -99,7 +99,11 @@ async function cargarVista(vista) {
         break;
 
       case "ranking":
+        // Judokas (vista por defecto)
         await cargarRankingUsuarios();
+
+        // Selector Judokas / Clubes (los clubes se cargan al tocar el botón)
+        inicializarSelectorRanking();
         break;
 
       case "torneos":
@@ -112,14 +116,14 @@ async function cargarVista(vista) {
         break;
     }
   } catch (error) {
-  console.error("Error cargando vista:", error);
+    console.error("Error cargando vista:", error);
 
-  contenedor.innerHTML = `
-    <div class="alert alert-danger text-center">
-      Error al cargar la sección
-    </div>
-  `;
-}
+    contenedor.innerHTML = `
+      <div class="alert alert-danger text-center">
+        Error al cargar la sección
+      </div>
+    `;
+  }
 }
 
 // ================= ROUTER =================

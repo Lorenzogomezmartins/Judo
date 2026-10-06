@@ -1,48 +1,53 @@
 import Club from "../../models/club.js";
 
+import multer from "multer";
+
 import {
   subirBufferACloudinary,
 } from "../../config/cloudinary.js";
 
-
-function normalizarTexto(valor = "") {
-  return String(valor ?? "").trim();
-}
-
-
-function normalizarNumero(valor = "") {
-  const numero = Number(
-    String(valor ?? "")
-      .replace(",", ".")
-      .trim()
-  );
-
-  return Number.isNaN(numero)
-    ? 0
-    : numero;
-}
-
-
 /*
-=========================================================
-GET - LISTAR CLUBES
-=========================================================
+========================================
+MULTER
+========================================
 */
 
-export async function obtenerClubes(req, res) {
+const storage =
+  multer.memoryStorage();
+
+export const uploadClubLogo =
+  multer({
+    storage,
+
+    limits: {
+      fileSize:
+        5 * 1024 * 1024,
+    },
+  }).single("logo");
+
+/*
+========================================
+OBTENER TODOS LOS CLUBES
+========================================
+*/
+
+export async function obtenerClubes(
+  req,
+  res
+) {
   try {
-
     const clubes =
-      await Club.find()
+      await Club.find({})
         .sort({
-          puntajeTotal: -1,
+          ranking: 1,
           nombre: 1,
-        });
+        })
+        .lean();
 
-    return res.json(clubes);
-
+    return res.json(
+      clubes
+    );
   } catch (error) {
-
     console.error(
       "Error obteniendo clubes:",
       error
@@ -50,22 +55,25 @@ export async function obtenerClubes(req, res) {
 
     return res.status(500).json({
       mensaje:
-        "Error obteniendo clubes",
-      error: error.message,
+        "Error al obtener clubes.",
+
+      error:
+        error.message,
     });
   }
 }
 
-
 /*
-=========================================================
-GET - OBTENER CLUB POR ID
-=========================================================
+========================================
+OBTENER CLUB POR ID
+========================================
 */
 
-export async function obtenerClubPorId(req, res) {
+export async function obtenerClubPorId(
+  req,
+  res
+) {
   try {
-
     const club =
       await Club.findById(
         req.params.id
@@ -73,14 +81,15 @@ export async function obtenerClubPorId(req, res) {
 
     if (!club) {
       return res.status(404).json({
-        mensaje: "Club no encontrado",
+        mensaje:
+          "Club no encontrado.",
       });
     }
 
-    return res.json(club);
-
+    return res.json(
+      club
+    );
   } catch (error) {
-
     console.error(
       "Error obteniendo club:",
       error
@@ -88,126 +97,174 @@ export async function obtenerClubPorId(req, res) {
 
     return res.status(500).json({
       mensaje:
-        "Error obteniendo club",
-      error: error.message,
+        "Error al obtener el club.",
+
+      error:
+        error.message,
     });
   }
 }
 
-
 /*
-=========================================================
-POST - AGREGAR CLUB
-=========================================================
+========================================
+CREAR CLUB
+========================================
 */
 
-export async function crearClub(req, res) {
+export async function crearClub(
+  req,
+  res
+) {
   try {
-
-    const nombre =
-      normalizarTexto(
-        req.body.nombre
-      );
-
-    if (!nombre) {
-      return res.status(400).json({
-        mensaje:
-          "El nombre de la institución es obligatorio",
-      });
-    }
-
-
-    const clubExistente =
-      await Club.findOne({
-        nombre,
-      });
-
-
-    if (clubExistente) {
-      return res.status(409).json({
-        mensaje:
-          "Ya existe una institución con ese nombre",
-      });
-    }
-
-
-    let logo = "";
-    let logoPublicId = "";
-
+    const {
+      nombre,
+      telefono,
+      direccion,
+      ubicacion,
+      sitioWeb,
+      email,
+      facebook,
+      instagram,
+      ubicacionMaps,
+      ranking,
+    } = req.body;
 
     /*
-      Si llegó un archivo,
-      lo subimos a Cloudinary.
+    ------------------------------------
+    VALIDACIÓN
+    ------------------------------------
+    */
+
+    if (
+      !nombre ||
+      !nombre.trim()
+    ) {
+      return res.status(400).json({
+        mensaje:
+          "El nombre del club es obligatorio.",
+      });
+    }
+
+    /*
+    ------------------------------------
+    BUSCAR DUPLICADO
+    ------------------------------------
+    */
+
+    const existe =
+      await Club.findOne({
+        nombre: {
+          $regex:
+            `^${nombre
+              .trim()
+              .replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              )}$`,
+          $options: "i",
+        },
+      });
+
+    if (existe) {
+      return res.status(400).json({
+        mensaje:
+          "Ya existe un club con ese nombre.",
+      });
+    }
+
+    /*
+    ------------------------------------
+    CREAR
+    ------------------------------------
+    */
+
+    const club =
+      new Club({
+        nombre:
+          nombre.trim(),
+
+        telefono:
+          telefono?.trim() ||
+          "",
+
+        /*
+          Soportamos ambos nombres:
+          direccion
+          y ubicacion
+
+          La planilla usa "ubicacion".
+        */
+
+        ubicacion:
+          ubicacion?.trim() ||
+          direccion?.trim() ||
+          "",
+
+        sitioWeb:
+          sitioWeb?.trim() ||
+          "",
+
+        email:
+          email?.trim() ||
+          "",
+
+        facebook:
+          facebook?.trim() ||
+          "",
+
+        instagram:
+          instagram?.trim() ||
+          "",
+
+        ubicacionMaps:
+          ubicacionMaps?.trim() ||
+          "",
+
+        ranking:
+          normalizarRanking(
+            ranking
+          ),
+      });
+
+    /*
+    ------------------------------------
+    LOGO
+    ------------------------------------
     */
 
     if (req.file) {
+      try {
+        const resultado =
+          await subirBufferACloudinary(
+            req.file.buffer,
 
-      const resultado =
-        await subirBufferACloudinary(
-          req.file.buffer,
-          `club_${Date.now()}`,
-          "fmj/clubes"
+            `club_${club._id}`,
+
+            "fmj/clubes"
+          );
+
+        club.logo =
+          resultado.secure_url;
+
+        club.logoPublicId =
+          resultado.public_id;
+      } catch (errorFoto) {
+        console.error(
+          "Error subiendo logo:",
+          errorFoto
         );
-
-      logo =
-        resultado.secure_url;
-
-      logoPublicId =
-        resultado.public_id;
+      }
     }
 
+    await club.save();
 
-    const club =
-      await Club.create({
+    return res.status(201).json({
+      mensaje:
+        "Club creado correctamente.",
 
-        nombre,
-
-        logo,
-        logoPublicId,
-
-        ubicacion:
-          normalizarTexto(
-            req.body.ubicacion
-          ),
-
-        telefono:
-          normalizarTexto(
-            req.body.telefono
-          ),
-
-        email:
-          normalizarTexto(
-            req.body.email
-          ),
-
-        facebook:
-          normalizarTexto(
-            req.body.facebook
-          ),
-
-        instagram:
-          normalizarTexto(
-            req.body.instagram
-          ),
-
-        puntajeTotal:
-          normalizarNumero(
-            req.body.puntajeTotal
-          ),
-
-        ranking:
-          normalizarNumero(
-            req.body.ranking
-          ),
-      });
-
-
-    return res
-      .status(201)
-      .json(club);
-
+      club,
+    });
   } catch (error) {
-
     console.error(
       "Error creando club:",
       error
@@ -215,22 +272,25 @@ export async function crearClub(req, res) {
 
     return res.status(500).json({
       mensaje:
-        "Error creando club",
-      error: error.message,
+        "Error al crear el club.",
+
+      error:
+        error.message,
     });
   }
 }
 
-
 /*
-=========================================================
-PUT - ACTUALIZAR CLUB
-=========================================================
+========================================
+ACTUALIZAR CLUB
+========================================
 */
 
-export async function actualizarClub(req, res) {
+export async function actualizarClub(
+  req,
+  res
+) {
   try {
-
     const club =
       await Club.findById(
         req.params.id
@@ -239,125 +299,184 @@ export async function actualizarClub(req, res) {
     if (!club) {
       return res.status(404).json({
         mensaje:
-          "Club no encontrado",
+          "Club no encontrado.",
       });
     }
 
-
-    const nombre =
-      normalizarTexto(
-        req.body.nombre
-      );
-
-
-    if (!nombre) {
-      return res.status(400).json({
-        mensaje:
-          "El nombre de la institución es obligatorio",
-      });
-    }
-
+    const {
+      nombre,
+      telefono,
+      direccion,
+      ubicacion,
+      sitioWeb,
+      email,
+      facebook,
+      instagram,
+      ubicacionMaps,
+      ranking,
+    } = req.body;
 
     /*
-      Si se cambia el nombre,
-      verificamos que no choque
-      con otro club.
+    ------------------------------------
+    NOMBRE
+    ------------------------------------
     */
 
-    const otroClub =
-      await Club.findOne({
-        nombre,
-        _id: {
-          $ne: club._id,
-        },
-      });
+    if (
+      nombre &&
+      nombre.trim()
+    ) {
+      const otroClub =
+        await Club.findOne({
+          _id: {
+            $ne: club._id,
+          },
 
+          nombre: {
+            $regex:
+              `^${nombre
+                .trim()
+                .replace(
+                  /[.*+?^${}()|[\]\\]/g,
+                  "\\$&"
+                )}$`,
 
-    if (otroClub) {
-      return res.status(409).json({
-        mensaje:
-          "Ya existe otra institución con ese nombre",
-      });
+            $options: "i",
+          },
+        });
+
+      if (otroClub) {
+        return res.status(400).json({
+          mensaje:
+            "Ya existe otro club con ese nombre.",
+        });
+      }
+
+      club.nombre =
+        nombre.trim();
     }
 
-
     /*
-      Actualizamos los datos.
+    ------------------------------------
+    DATOS
+    ------------------------------------
     */
 
-    club.nombre =
-      nombre;
+    if (
+      telefono !== undefined
+    ) {
+      club.telefono =
+        String(
+          telefono
+        ).trim();
+    }
 
-    club.ubicacion =
-      normalizarTexto(
-        req.body.ubicacion
-      );
+    if (
+      ubicacion !== undefined ||
+      direccion !== undefined
+    ) {
+      club.ubicacion =
+        String(
+          ubicacion ??
+            direccion ??
+            ""
+        ).trim();
+    }
 
-    club.telefono =
-      normalizarTexto(
-        req.body.telefono
-      );
+    if (
+      sitioWeb !== undefined
+    ) {
+      club.sitioWeb =
+        String(
+          sitioWeb
+        ).trim();
+    }
 
-    club.email =
-      normalizarTexto(
-        req.body.email
-      );
+    if (
+      email !== undefined
+    ) {
+      club.email =
+        String(
+          email
+        ).trim();
+    }
 
-    club.facebook =
-      normalizarTexto(
-        req.body.facebook
-      );
+    if (
+      facebook !== undefined
+    ) {
+      club.facebook =
+        String(
+          facebook
+        ).trim();
+    }
 
-    club.instagram =
-      normalizarTexto(
-        req.body.instagram
-      );
+    if (
+      instagram !== undefined
+    ) {
+      club.instagram =
+        String(
+          instagram
+        ).trim();
+    }
 
-    club.puntajeTotal =
-      normalizarNumero(
-        req.body.puntajeTotal
-      );
+    if (
+      ubicacionMaps !==
+      undefined
+    ) {
+      club.ubicacionMaps =
+        String(
+          ubicacionMaps
+        ).trim();
+    }
 
-    club.ranking =
-      normalizarNumero(
-        req.body.ranking
-      );
-
+    if (
+      ranking !== undefined
+    ) {
+      club.ranking =
+        normalizarRanking(
+          ranking
+        );
+    }
 
     /*
-      Si se subió un nuevo logo,
-      reemplazamos el anterior.
+    ------------------------------------
+    NUEVO LOGO
+    ------------------------------------
     */
 
     if (req.file) {
+      try {
+        const resultado =
+          await subirBufferACloudinary(
+            req.file.buffer,
 
-      const resultado =
-        await subirBufferACloudinary(
-          req.file.buffer,
-          `club_${club._id}`,
-          "fmj/clubes"
+            `club_${club._id}`,
+
+            "fmj/clubes"
+          );
+
+        club.logo =
+          resultado.secure_url;
+
+        club.logoPublicId =
+          resultado.public_id;
+      } catch (errorFoto) {
+        console.error(
+          "Error subiendo nuevo logo:",
+          errorFoto
         );
-
-      club.logo =
-        resultado.secure_url;
-
-      club.logoPublicId =
-        resultado.public_id;
+      }
     }
-
 
     await club.save();
 
-
     return res.json({
       mensaje:
-        "Club actualizado correctamente",
+        "Club actualizado correctamente.",
 
       club,
     });
-
   } catch (error) {
-
     console.error(
       "Error actualizando club:",
       error
@@ -365,23 +484,25 @@ export async function actualizarClub(req, res) {
 
     return res.status(500).json({
       mensaje:
-        "Error actualizando club",
+        "Error al actualizar el club.",
 
-      error: error.message,
+      error:
+        error.message,
     });
   }
 }
 
-
 /*
-=========================================================
-DELETE - ELIMINAR CLUB
-=========================================================
+========================================
+ELIMINAR CLUB
+========================================
 */
 
-export async function eliminarClub(req, res) {
+export async function eliminarClub(
+  req,
+  res
+) {
   try {
-
     const club =
       await Club.findById(
         req.params.id
@@ -390,23 +511,19 @@ export async function eliminarClub(req, res) {
     if (!club) {
       return res.status(404).json({
         mensaje:
-          "Club no encontrado",
+          "Club no encontrado.",
       });
     }
-
 
     await Club.findByIdAndDelete(
       req.params.id
     );
 
-
     return res.json({
       mensaje:
-        "Club eliminado correctamente",
+        "Club eliminado correctamente.",
     });
-
   } catch (error) {
-
     console.error(
       "Error eliminando club:",
       error
@@ -414,9 +531,35 @@ export async function eliminarClub(req, res) {
 
     return res.status(500).json({
       mensaje:
-        "Error eliminando club",
+        "Error al eliminar el club.",
 
-      error: error.message,
+      error:
+        error.message,
     });
   }
+}
+
+/*
+========================================
+NORMALIZAR RANKING
+========================================
+*/
+
+function normalizarRanking(
+  valor
+) {
+  const numero =
+    Number(
+      String(
+        valor ?? ""
+      )
+        .replace(",", ".")
+        .trim()
+    );
+
+  return Number.isNaN(
+    numero
+  )
+    ? 0
+    : numero;
 }
