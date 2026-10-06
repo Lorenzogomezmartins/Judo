@@ -35,7 +35,7 @@ function esUrlSegura(url = "") {
 function obtenerLogoClub(club) {
   const logo = String(club?.logo || "").trim();
 
-  if (!logo) return LOGO_DEFAULT;
+  if (!logo) return "";
 
   if (logo.startsWith("http://") || logo.startsWith("https://")) {
     return logo;
@@ -45,7 +45,6 @@ function obtenerLogoClub(club) {
 
   return `/${logo.replace(/^\.?\//, "")}`;
 }
-
 function obtenerPosicionClub(club) {
   const ranking = Number(club?.ranking);
 
@@ -326,12 +325,15 @@ function renderizarRankingClubes(clubes) {
         ${posicion ?? "-"}
       </td>
 
-      <td>
+     <td>
+  ${
+    logo
+      ? `
         <img
           src="${logo}"
           alt="${nombre}"
           class="ranking-foto ranking-club-logo"
-          onerror="this.onerror=null; this.src='${LOGO_DEFAULT}';"
+          onerror="this.onerror=null; this.style.display='none';"
           style="
             width: 85px;
             height: 85px;
@@ -342,7 +344,10 @@ function renderizarRankingClubes(clubes) {
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
           "
         >
-      </td>
+      `
+      : ""
+  }
+</td>
 
       <td>
         <div class="fw-semibold">${nombre}</div>
