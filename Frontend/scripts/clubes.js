@@ -1,6 +1,7 @@
 /* ============================================
    CLUBES (público)
-   - Grilla con solo el logo de cada club
+   - Grilla con el logo de cada club
+     (solo clubes que completaron el logo, en orden alfabético)
    - Al tocar un logo se abre una tarjeta con sus datos
    - Los datos que no existen NO se muestran
 ============================================ */
@@ -29,18 +30,76 @@ function esUrlHttp(url = "") {
   return /^https?:\/\//i.test(texto(url));
 }
 
-/* Iniciales para cuando el club no tiene logo (o falla la imagen) */
-function obtenerIniciales(nombre = "") {
-  const palabras = texto(nombre)
-    .split(/\s+/)
-    .filter((palabra) => /[A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(palabra));
+/*
+  Devuelve una URL válida (con https://) o "" si no hay.
+  Acepta links de Google Maps completos, cortos (maps.app.goo.gl)
+  y también si vienen sin el "https://" delante.
+*/
+function normalizarUrl(valor) {
+  const original = texto(valor);
 
-  if (!palabras.length) return "?";
+  if (!original) return "";
 
-  return palabras
-    .slice(0, 2)
-    .map((palabra) => palabra[0].toUpperCase())
-    .join("");
+  if (esUrlHttp(original)) return original;
+
+  // Sin protocolo: "www.google.com/maps/...", "maps.app.goo.gl/..."
+  if (/^(www\.|[a-z0-9-]+\.[a-z]{2,})(\/|$)/i.test(original) && !/\s/.test(original)) {
+    return `https://${original}`;
+  }
+
+  return "";
+}
+
+/*
+  Arma la URL para mostrar el mapa dentro de la tarjeta (iframe).
+  Un link normal de Google Maps no se puede incrustar tal cual, así que
+  se extrae de él el lugar y se usa el formato "embed".
+
+  Orden de prioridad:
+    1) coordenadas exactas del pin  (...!3d-34.63!4d-58.42...)
+    2) nombre del lugar             (/maps/place/Parque+Chacabuco,...)
+    3) coordenadas de la vista      (/@-34.63,-58.43,17z)
+    4) la dirección escrita en la planilla
+       (sirve para links cortos tipo maps.app.goo.gl, que no se pueden leer)
+*/
+function obtenerUrlMapaEmbebido(urlMapa, ubicacion = "") {
+  const url = texto(urlMapa);
+
+  let consulta = "";
+
+  const pin = url.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+
+  if (pin) {
+    consulta = `${pin[1]},${pin[2]}`;
+  }
+
+  if (!consulta) {
+    const lugar = url.match(/\/maps\/place\/([^/@?]+)/);
+
+    if (lugar) {
+      try {
+        consulta = decodeURIComponent(lugar[1].replace(/\+/g, " ")).trim();
+      } catch {
+        consulta = "";
+      }
+    }
+  }
+
+  if (!consulta) {
+    const vista = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+
+    if (vista) {
+      consulta = `${vista[1]},${vista[2]}`;
+    }
+  }
+
+  if (!consulta) {
+    consulta = texto(ubicacion);
+  }
+
+  if (!consulta) return "";
+
+  return `https://www.google.com/maps?q=${encodeURIComponent(consulta)}&z=16&output=embed`;
 }
 
 /*
@@ -88,6 +147,13 @@ const ICONOS = {
       <circle cx="12" cy="10" r="2.5"></circle>
     </svg>
   `,
+  mapa: `
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4Z"></path>
+      <path d="M9 4v13"></path>
+      <path d="M15 6.5v13"></path>
+    </svg>
+  `,
   telefono: `
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"></path>
@@ -117,33 +183,19 @@ const ICONOS = {
    GRILLA DE LOGOS
 ============================================ */
 
-function crearFallbackLogo(nombre) {
-  const fallback = document.createElement("div");
-
-  fallback.className = "club-logo-fallback";
-  fallback.textContent = obtenerIniciales(nombre);
-  fallback.setAttribute("aria-hidden", "true");
-
-  return fallback;
-}
-
-function crearLogoGrilla(club) {
-  const logo = texto(club.logo);
-
-  if (!logo) return crearFallbackLogo(club.nombre);
-
-  const img = document.createElement("img");
-
-  img.src = logo;
-  img.alt = "";
-  img.loading = "lazy";
-
-  // Si la imagen no carga, mostramos las iniciales
-  img.addEventListener("error", () => {
-    img.replaceWith(crearFallbackLogo(club.nombre));
-  });
-
-  return img;
+/*
+  Solo se muestran los clubes que completaron el logo,
+  ordenados alfabéticamente por nombre.
+*/
+function prepararClubes(clubes) {
+  return clubes
+    .filter((club) => texto(club?.logo) && texto(club?.nombre))
+    .sort((a, b) =>
+      texto(a.nombre).localeCompare(texto(b.nombre), "es", {
+        sensitivity: "base",
+        numeric: true,
+      })
+    );
 }
 
 export async function cargarClubes() {
@@ -160,18 +212,24 @@ export async function cargarClubes() {
       throw new Error("Error al obtener clubes");
     }
 
-    const clubes = await res.json();
+    const datos = await res.json();
 
-    if (!Array.isArray(clubes) || !clubes.length) {
-      grid.innerHTML = "<p>Todavía no hay clubes cargados.</p>";
+    if (!Array.isArray(datos)) {
+      throw new Error("Formato de clubes inválido");
+    }
+
+    // Esta lista es la que usa la tarjeta, así los índices coinciden
+    clubesCargados = prepararClubes(datos);
+
+    if (!clubesCargados.length) {
+      grid.innerHTML = "<p>Todavía no hay clubes con logo cargado.</p>";
       return;
     }
 
-    clubesCargados = clubes;
     grid.innerHTML = "";
 
-    clubes.forEach((club, indice) => {
-      const nombre = texto(club.nombre) || "Club";
+    clubesCargados.forEach((club, indice) => {
+      const nombre = texto(club.nombre);
 
       const boton = document.createElement("button");
 
@@ -180,8 +238,16 @@ export async function cargarClubes() {
       boton.title = nombre;
       boton.setAttribute("aria-label", `Ver datos de ${nombre}`);
 
-      boton.appendChild(crearLogoGrilla(club));
+      const img = document.createElement("img");
 
+      img.src = texto(club.logo);
+      img.alt = "";
+      img.loading = "lazy";
+
+      // Si la imagen no carga, el club se quita de la grilla
+      img.addEventListener("error", () => boton.remove());
+
+      boton.appendChild(img);
       boton.addEventListener("click", () => abrirClub(indice));
 
       grid.appendChild(boton);
@@ -196,8 +262,8 @@ export async function cargarClubes() {
    TARJETA DEL CLUB
 ============================================ */
 
-/* Una fila de dato: ícono + etiqueta + contenido */
-function filaDato(icono, etiqueta, contenidoHtml) {
+/* Una fila de dato: ícono + etiqueta + contenido (+ bloque extra opcional) */
+function filaDato(icono, etiqueta, contenidoHtml, extraHtml = "") {
   return `
     <li class="club-dato">
       <span class="club-dato-icono">${icono}</span>
@@ -206,6 +272,8 @@ function filaDato(icono, etiqueta, contenidoHtml) {
         <small>${etiqueta}</small>
         ${contenidoHtml}
       </span>
+
+      ${extraHtml ? `<div class="club-dato-extra">${extraHtml}</div>` : ""}
     </li>
   `;
 }
@@ -215,16 +283,65 @@ function construirDatos(club) {
   const filas = [];
 
   const ubicacion = texto(club.ubicacion || club.direccion);
-  const ubicacionMaps = texto(club.ubicacionMaps);
+  const urlMapa = normalizarUrl(club.ubicacionMaps);
   const telefono = texto(club.telefono);
   const email = texto(club.email);
 
-  if (ubicacion) {
-    const contenido = esUrlHttp(ubicacionMaps)
-      ? `<a href="${escaparHtml(ubicacionMaps)}" target="_blank" rel="noopener noreferrer">${escaparHtml(ubicacion)}</a>`
-      : `<span>${escaparHtml(ubicacion)}</span>`;
+  /*
+    UBICACIÓN
+    - Si hay dirección: se muestra el texto.
+    - Si hay link de Google Maps (columna AB): se muestra el mapa
+      chiquito dentro de la tarjeta, aunque no haya dirección escrita.
+    - Si no se puede armar el mapa, queda un botón "Ver mapa".
+  */
+  if (ubicacion || urlMapa) {
+    const nombre = texto(club.nombre) || "Club";
 
-    filas.push(filaDato(ICONOS.ubicacion, "Ubicación", contenido));
+    const textoUbicacion = ubicacion
+      ? `<span>${escaparHtml(ubicacion)}</span>`
+      : "";
+
+    const urlEmbebido = urlMapa
+      ? obtenerUrlMapaEmbebido(urlMapa, ubicacion)
+      : "";
+
+    const mapaHtml = urlEmbebido
+      ? `
+        <div class="club-mapa-embed">
+          <iframe
+            src="${escaparHtml(urlEmbebido)}"
+            title="Mapa de ${escaparHtml(nombre)}"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      `
+      : "";
+
+    const botonMapa =
+      !urlEmbebido && urlMapa
+        ? `
+          <a
+            href="${escaparHtml(urlMapa)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="club-mapa-link"
+          >
+            ${ICONOS.mapa}
+            Ver mapa
+          </a>
+        `
+        : "";
+
+    filas.push(
+      filaDato(
+        ICONOS.ubicacion,
+        "Ubicación",
+        textoUbicacion + botonMapa,
+        mapaHtml
+      )
+    );
   }
 
   if (telefono) {
@@ -302,7 +419,7 @@ function abrirClub(indice) {
 
   const logoHtml = logo
     ? `<img src="${escaparHtml(logo)}" alt="Logo de ${escaparHtml(nombre)}" class="modal-logo">`
-    : `<div class="modal-logo-fallback" aria-hidden="true">${escaparHtml(obtenerIniciales(nombre))}</div>`;
+    : "";
 
   const sinDatos = !filas.length && !redes.length;
 
@@ -346,18 +463,10 @@ function abrirClub(indice) {
     </div>
   `;
 
-  // Si el logo no carga, lo reemplazamos por las iniciales
+  // Si el logo no carga, simplemente no se muestra
   const imgLogo = overlay.querySelector(".modal-logo");
 
-  imgLogo?.addEventListener("error", () => {
-    const fallback = document.createElement("div");
-
-    fallback.className = "modal-logo-fallback";
-    fallback.textContent = obtenerIniciales(nombre);
-    fallback.setAttribute("aria-hidden", "true");
-
-    imgLogo.replaceWith(fallback);
-  });
+  imgLogo?.addEventListener("error", () => imgLogo.remove());
 
   document.body.appendChild(overlay);
   document.body.classList.add("club-modal-abierto");

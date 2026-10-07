@@ -268,31 +268,6 @@ function renderizarCeldasMedallas(resultado, esGlobal = false) {
     .join("");
 }
 
-function renderizarEnlacesClub(club) {
-  const enlaces = [];
-
-  if (esUrlSegura(club.ubicacionMaps)) {
-    enlaces.push(
-      `<a href="${escaparHtml(club.ubicacionMaps)}" target="_blank" rel="noopener noreferrer">Mapa</a>`
-    );
-  }
-
-  if (esUrlSegura(club.instagram)) {
-    enlaces.push(
-      `<a href="${escaparHtml(club.instagram)}" target="_blank" rel="noopener noreferrer">Instagram</a>`
-    );
-  }
-
-  if (esUrlSegura(club.facebook)) {
-    enlaces.push(
-      `<a href="${escaparHtml(club.facebook)}" target="_blank" rel="noopener noreferrer">Facebook</a>`
-    );
-  }
-
-  if (!enlaces.length) return "";
-
-  return `<div class="ranking-club-links">${enlaces.join("")}</div>`;
-}
 
 function renderizarRankingClubes(clubes) {
   const tbody = document.getElementById("rankingClubesBody");
@@ -318,7 +293,6 @@ function renderizarRankingClubes(clubes) {
     const posicion = obtenerPosicionClub(club);
     const logo = escaparHtml(obtenerLogoClub(club));
     const nombre = escaparHtml(club.nombre || "-");
-    const ubicacion = escaparHtml(club.ubicacion || "");
 
     fila.innerHTML = `
       <td class="fw-bold">
@@ -351,14 +325,9 @@ function renderizarRankingClubes(clubes) {
 
       <td>
         <div class="fw-semibold">${nombre}</div>
-
-        ${
-          ubicacion
-            ? `<small class="text-muted">${ubicacion}</small>`
-            : ""
-        }
-
-        ${renderizarEnlacesClub(club)}
+        
+      
+        
       </td>
 
       ${renderizarCeldasMedallas(club.abiertoCiudad2026)}

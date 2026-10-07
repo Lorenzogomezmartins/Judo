@@ -1861,67 +1861,39 @@
   padding: 14px 16px;
 }
 
-/* Fila resaltada al pasar el mouse (sin transform) */
-.ranking-table-clubes tbody tr:hover td {
-  background: #fff6f6;
-}
-
-.ranking-table-clubes tbody tr:hover td:nth-child(-n + 3) {
+/* Fila resaltada al pasar el mouse (sin transform).
+   Solo las celdas que NO son de medallas: las de medallas
+   conservan siempre el color de su columna. */
+.ranking-table-clubes tbody tr:hover td:not(.ranking-medal-cell) {
   background: #fff6f6;
 }
 
 
 /* =========================================================
-   TABLA DE CLUBES - CELDA DEL CLUB
+   TABLA DE CLUBES - CELDAS DE LA IZQUIERDA (Pos. / Logo / Club)
+   La columna Club solo muestra el nombre.
 ========================================================= */
 
-.ranking-table-clubes tbody td:nth-child(3) .fw-semibold {
+.ranking-table-clubes .ranking-club-pos {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.ranking-table-clubes .ranking-club-name-cell {
   color: #171717;
   font-size: 15px;
   font-weight: 900;
   line-height: 1.25;
 }
 
-.ranking-table-clubes tbody td:nth-child(3) small {
-  display: block;
-  margin-top: 3px;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.ranking-club-links {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.ranking-club-links a {
-  padding: 4px 10px;
-
-  border: 1px solid rgba(23, 105, 194, 0.16);
-  border-radius: 999px;
-
-  color: var(--ranking-blue);
-  background: var(--ranking-blue-soft);
-
-  font-size: 11px;
-  font-weight: 800;
-  text-decoration: none;
-
-  transition:
-    color 0.2s ease,
-    background 0.2s ease;
-}
-
-.ranking-club-links a:hover {
-  color: #ffffff;
-  background: var(--ranking-blue);
-}
-
 
 /* =========================================================
    TABLA DE CLUBES - CELDAS DE MEDALLAS
+
+   Regla: cada columna tiene SIEMPRE su color, sin importar si
+   el club tiene 0, 1 o 15 medallas. Lo único que cambia con el
+   cero es que el número se ve más apagado (del mismo tono).
 ========================================================= */
 
 .ranking-table-clubes .ranking-medal-cell {
@@ -1938,31 +1910,53 @@
   border-left: 2px solid #ececef;
 }
 
-/* Con medallas: color según tipo */
-.ranking-table-clubes .ranking-medal-cell-oro:not(.ranking-medal-zero) {
+/* ---------- Color de cada columna (SIEMPRE) ---------- */
+
+.ranking-table-clubes .ranking-medal-cell-oro {
   color: #8a6100;
   background: var(--ranking-gold-soft);
 }
 
-.ranking-table-clubes .ranking-medal-cell-plata:not(.ranking-medal-zero) {
+.ranking-table-clubes .ranking-medal-cell-plata {
   color: #4b5563;
   background: #f1f3f5;
 }
 
-.ranking-table-clubes .ranking-medal-cell-bronce:not(.ranking-medal-zero) {
+.ranking-table-clubes .ranking-medal-cell-bronce {
   color: #8a4f27;
   background: #fbeee4;
 }
 
-.ranking-table-clubes .ranking-medal-cell-quinto:not(.ranking-medal-zero) {
+.ranking-table-clubes .ranking-medal-cell-quinto {
   color: var(--ranking-blue);
   background: var(--ranking-blue-soft);
 }
 
-/* En cero: se apagan para que resalten las que tienen medallas */
-.ranking-table-clubes .ranking-medal-zero {
-  color: #c4c7cc;
+/* ---------- En cero: mismo fondo, número más apagado ---------- */
+
+.ranking-table-clubes .ranking-medal-cell-oro.ranking-medal-zero {
+  color: #d2bb86;
   font-weight: 600;
+}
+
+.ranking-table-clubes .ranking-medal-cell-plata.ranking-medal-zero {
+  color: #b3bac3;
+  font-weight: 600;
+}
+
+.ranking-table-clubes .ranking-medal-cell-bronce.ranking-medal-zero {
+  color: #d3b199;
+  font-weight: 600;
+}
+
+.ranking-table-clubes .ranking-medal-cell-quinto.ranking-medal-zero {
+  color: #93b8e2;
+  font-weight: 600;
+}
+
+/* Al pasar el mouse: se oscurece un poco, sin perder el color */
+.ranking-table-clubes tbody tr:hover td.ranking-medal-cell {
+  filter: brightness(0.96);
 }
 
 /* Medallero global: un poco más grande */
@@ -1972,6 +1966,44 @@
 
 .ranking-table-clubes td.ranking-group-global.ranking-group-start {
   border-left: 2px solid rgba(169, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   BARRA DE DESPLAZAMIENTO SUPERIOR (tablas)
+   La crea el JS y queda sincronizada con la de abajo.
+========================================================= */
+
+.ranking-scroll-top {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid #ececec;
+  background: #fafafa;
+}
+
+.ranking-scroll-top[hidden] {
+  display: none;
+}
+
+.ranking-scroll-top-inner {
+  height: 1px;
+}
+
+.ranking-scroll-top::-webkit-scrollbar {
+  height: 10px;
+}
+
+.ranking-scroll-top::-webkit-scrollbar-track {
+  background: #f2f2f2;
+}
+
+.ranking-scroll-top::-webkit-scrollbar-thumb {
+  background: #c6c6c6;
+  border-radius: 999px;
+}
+
+.ranking-scroll-top::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 
@@ -2078,6 +2110,7 @@
   }
 }
 
+
 /* =========================================================
    ACCESIBILIDAD
 ========================================================= */
@@ -2085,21 +2118,15 @@
 .ranking-sort-btn:focus-visible,
 .ranking-input-wrapper input:focus-visible,
 .ranking-input-wrapper select:focus-visible {
-
-  outline: 3px solid rgba(23,105,194,.28);
-
+  outline: 3px solid rgba(23, 105, 194, 0.28);
   outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce) {
 
-  .ranking-page *{
-
-    animation:none !important;
-
-    transition:none !important;
-
-    scroll-behavior:auto !important;
+  .ranking-page * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
-
 }

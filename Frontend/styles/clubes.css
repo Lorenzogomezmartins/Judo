@@ -81,21 +81,6 @@
   border-radius: 16px;
 }
 
-/* Club sin logo (o con logo roto): iniciales */
-.club-logo-fallback {
-  width: 150px;
-  height: 150px;
-  display: grid;
-  place-items: center;
-  border: 3px dashed #d3d5d9;
-  border-radius: 50%;
-  color: #8d9198;
-  background: #f6f6f7;
-  font-size: 2.6rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
 /* =========================
    MODAL OVERLAY
 ========================= */
@@ -175,21 +160,6 @@ body.club-modal-abierto {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-.modal-logo-fallback {
-  width: 84px;
-  height: 84px;
-  margin: 0 auto 14px;
-  display: grid;
-  place-items: center;
-  border: 2px dashed #d3d5d9;
-  border-radius: 50%;
-  color: #8d9198;
-  background: #f6f6f7;
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
 .club-modal h3 {
   margin: 0;
   color: #171717;
@@ -262,6 +232,56 @@ body.club-modal-abierto {
 .club-dato-texto a:hover {
   color: #a90000;
   text-decoration: underline;
+}
+
+/* Botón "Ver en Google Maps" dentro de la ubicación */
+.club-mapa-link {
+  margin-top: 6px;
+  padding: 6px 14px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(23, 105, 194, 0.18);
+  border-radius: 999px;
+  color: #1769c2 !important;
+  background: #edf5ff;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.club-mapa-link:hover {
+  color: #ffffff !important;
+  background: #1769c2;
+  box-shadow: 0 8px 18px rgba(23, 105, 194, 0.25);
+}
+
+/* Mapa chiquito dentro de la tarjeta */
+.club-dato {
+  flex-wrap: wrap;
+}
+
+.club-dato-extra {
+  flex: 0 0 100%;
+}
+
+.club-mapa-embed {
+  width: 100%;
+  height: 150px;
+  margin-top: 2px;
+  overflow: hidden;
+  border: 1px solid #e5e5e8;
+  border-radius: 12px;
+  background: #eceef1;
+}
+
+.club-mapa-embed iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
 }
 
 /* =========================
@@ -386,12 +406,6 @@ body.club-modal-abierto {
   .club-logo-container {
     width: 150px;
     height: 150px;
-  }
-
-  .club-logo-fallback {
-    width: 130px;
-    height: 130px;
-    font-size: 2.2rem;
   }
 
   .club-modal {
