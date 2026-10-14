@@ -315,17 +315,23 @@ function aplicarFiltrosRanking() {
     });
   }
 
-  usuariosFiltrados.sort((a, b) => {
-    const rankingA = Number(a.ranking);
-    const rankingB = Number(b.ranking);
+ 
+usuariosFiltrados.sort((a, b) => {
+  const rankingA = Number(a.ranking);
+  const rankingB = Number(b.ranking);
 
+  // Primero, ordenar por posición del Excel
+  if (rankingA !== rankingB) {
     if (Number.isNaN(rankingA)) return 1;
     if (Number.isNaN(rankingB)) return -1;
 
-    return ordenActual === "asc"
-      ? rankingB - rankingA
-      : rankingA - rankingB;
-  });
+    return rankingA - rankingB;
+  }
+
+  // Si tienen la misma posición, ordenar por puntaje total
+  return Number(b.puntos) - Number(a.puntos);
+});
+;
 
   renderizarRanking(usuariosFiltrados);
 }
