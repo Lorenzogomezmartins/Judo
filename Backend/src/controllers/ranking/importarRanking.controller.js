@@ -123,7 +123,10 @@ const ALIAS_COLUMNAS = {
   abiertoPuntaje: ["abierto de la ciudad 2026|puntaje"],
 
   juegosPosicion: ["juegos porteños 2026|pos"],
-  juegosPuntaje: ["juegos porteños 2026|puntaje"],
+juegosPuntaje: ["juegos porteños 2026|puntaje"],
+
+juegosUFedemPosicion: ["juegos ufedem 2026|pos"],
+juegosUFedemPuntaje: ["juegos ufedem 2026|puntaje"],
 
   copaDoblasPosicion: ["copa doblas 2026|pos"],
   copaDoblasPuntaje: ["copa doblas 2026|puntaje"],
@@ -213,6 +216,12 @@ function hayCambios(usuarioExistente, datosNuevos) {
     Number(usuarioExistente.juegosPortenos2026?.puntaje || 0) !==
       Number(datosNuevos.juegosPortenos2026.puntaje || 0) ||
 
+      usuarioExistente.juegosUFedem2026?.posicion !==
+  datosNuevos.juegosUFedem2026.posicion ||
+
+Number(usuarioExistente.juegosUFedem2026?.puntaje || 0) !==
+  Number(datosNuevos.juegosUFedem2026.puntaje || 0) ||
+
     usuarioExistente.copaDoblas2026?.posicion !==
       datosNuevos.copaDoblas2026.posicion ||
 
@@ -294,7 +303,14 @@ export async function ejecutarImportacionRanking() {
       const abiertoPuntaje = normalizarNumero(celda("abiertoPuntaje"));
 
       const juegosPosicion = normalizarTexto(celda("juegosPosicion"));
-      const juegosPuntaje = normalizarNumero(celda("juegosPuntaje"));
+const juegosPuntaje = normalizarNumero(celda("juegosPuntaje"));
+
+const juegosUFedemPosicion = normalizarTexto(
+  celda("juegosUFedemPosicion")
+);
+const juegosUFedemPuntaje = normalizarNumero(
+  celda("juegosUFedemPuntaje")
+);
 
       const copaDoblasPosicion = normalizarTexto(celda("copaDoblasPosicion"));
       const copaDoblasPuntaje = normalizarNumero(celda("copaDoblasPuntaje"));
@@ -380,6 +396,11 @@ export async function ejecutarImportacionRanking() {
           puntaje: juegosPuntaje,
         },
 
+        juegosUFedem2026: {
+  posicion: juegosUFedemPosicion,
+  puntaje: juegosUFedemPuntaje,
+},
+
         copaDoblas2026: {
           posicion: copaDoblasPosicion,
           puntaje: copaDoblasPuntaje,
@@ -408,7 +429,10 @@ export async function ejecutarImportacionRanking() {
           abiertoPuntaje,
 
           juegosPosicion,
-          juegosPuntaje,
+juegosPuntaje,
+
+juegosUFedemPosicion,
+juegosUFedemPuntaje,
 
           copaDoblasPosicion,
           copaDoblasPuntaje,

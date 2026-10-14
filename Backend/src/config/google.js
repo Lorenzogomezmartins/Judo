@@ -48,7 +48,7 @@ export async function obtenerFilasInscripciones() {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "'Para Ranking -- FINAL'!A:Q",
+    range: "'Para Ranking -- FINAL'!A:S",
   });
 
   return response.data.values || [];
@@ -272,7 +272,7 @@ export async function obtenerFilasClubes() {
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `'${nombreHoja}'!A:AC`,
+    range: `'${nombreHoja}'!A:AG`,
   });
 
   return response.data.values || [];

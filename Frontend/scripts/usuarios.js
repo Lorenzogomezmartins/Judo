@@ -1,6 +1,14 @@
 const API_RANKING = "/api/ranking";
 const FOTO_INCOGNITO = "/assets/imagenes/incognito.png";
-const TOTAL_COLUMNAS = 10;
+
+/*
+  Columnas de la tabla:
+  Pos, Foto, Judoka, Cat., Club,
+  Abierto Ciudad, Juegos Porteños, Copa Doblas, Juegos UFeDeM, Metropolitano,
+  Total
+  = 11
+*/
+const TOTAL_COLUMNAS = 11;
 
 let rankingUsuarios = [];
 let ordenActual = "desc";
@@ -322,6 +330,29 @@ function aplicarFiltrosRanking() {
   renderizarRanking(usuariosFiltrados);
 }
 
+/*
+  Celda de un torneo: posición + puntaje.
+  Se usa para los 5 torneos, así no se repite el mismo HTML cinco veces.
+*/
+function renderizarCeldaTorneo(resultado) {
+  const posicion = resultado?.posicion || "-";
+  const puntaje = resultado?.puntaje ?? 0;
+
+  return `
+      <td>
+        <div class="fw-semibold">
+          Posición:
+          ${posicion}
+        </div>
+
+        <small class="text-muted">
+          Puntaje:
+          ${puntaje}
+        </small>
+      </td>
+  `;
+}
+
 function renderizarRanking(usuarios) {
   const tbody = document.getElementById("rankingBody");
 
@@ -384,57 +415,15 @@ function renderizarRanking(usuarios) {
         ${usuario.institucion || "-"}
       </td>
 
-      <td>
-        <div class="fw-semibold">
-          Posición:
-          ${usuario.abiertoCiudad2026?.posicion || "-"}
-        </div>
-
-        <small class="text-muted">
-          Puntaje:
-          ${usuario.abiertoCiudad2026?.puntaje ?? 0}
-        </small>
-      </td>
-
-      <td>
-        <div class="fw-semibold">
-          Posición:
-          ${usuario.juegosPortenos2026?.posicion || "-"}
-        </div>
-
-        <small class="text-muted">
-          Puntaje:
-          ${usuario.juegosPortenos2026?.puntaje ?? 0}
-        </small>
-      </td>
-
-      <td>
-        <div class="fw-semibold">
-          Posición:
-          ${usuario.copaDoblas2026?.posicion || "-"}
-        </div>
-
-        <small class="text-muted">
-          Puntaje:
-          ${usuario.copaDoblas2026?.puntaje ?? 0}
-        </small>
-      </td>
-
-      <td>
-        <div class="fw-semibold">
-          Posición:
-          ${usuario.torneoMetropolitano2026?.posicion || "-"}
-        </div>
-
-        <small class="text-muted">
-          Puntaje:
-          ${usuario.torneoMetropolitano2026?.puntaje ?? 0}
-        </small>
-      </td>
-
       <td class="fw-bold text-danger">
         ${usuario.puntos}
       </td>
+
+      ${renderizarCeldaTorneo(usuario.abiertoCiudad2026)}
+      ${renderizarCeldaTorneo(usuario.juegosPortenos2026)}
+      ${renderizarCeldaTorneo(usuario.copaDoblas2026)}
+      ${renderizarCeldaTorneo(usuario.juegosUFedem2026)}
+      ${renderizarCeldaTorneo(usuario.torneoMetropolitano2026)}
     `;
 
     tbody.appendChild(fila);
@@ -459,3 +448,8 @@ function renderizarRanking(usuarios) {
     });
   });
 }
+
+
+
+
+

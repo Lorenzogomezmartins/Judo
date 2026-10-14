@@ -4,8 +4,8 @@ export async function listarRanking(req, res) {
   try {
     const ranking = await RankingUsuario.find()
       .select(
-        "dni apellido nombre institucion categoria peso sexo foto fotoPublicId abiertoCiudad2026 juegosPortenos2026 copaDoblas2026 torneoMetropolitano2026 puntajeTotal ranking"
-      )
+  "dni apellido nombre institucion categoria peso sexo foto fotoPublicId abiertoCiudad2026 juegosPortenos2026 copaDoblas2026 juegosUFedem2026 torneoMetropolitano2026 puntajeTotal ranking"
+)
       .sort({
         ranking: 1,
       });

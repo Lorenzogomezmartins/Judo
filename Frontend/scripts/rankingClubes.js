@@ -1,6 +1,6 @@
 const API_CLUBES = "/api/clubes";
 const LOGO_DEFAULT = "/assets/imagenes/default.png";
-const TOTAL_COLUMNAS_CLUBES = 23; // Pos + Logo + Club + 5 grupos x 4 medallas
+const TOTAL_COLUMNAS_CLUBES = 27; // Posición + Logo + Club + 6 grupos x 4 medallas // Pos + Logo + Club + 5 grupos x 4 medallas
 
 let rankingClubes = [];
 let ordenClubes = "asc"; // asc = 1° al último
@@ -330,11 +330,13 @@ function renderizarRankingClubes(clubes) {
         
       </td>
 
+      ${renderizarCeldasMedallas(club.medalleroGlobal, true)}
       ${renderizarCeldasMedallas(club.abiertoCiudad2026)}
       ${renderizarCeldasMedallas(club.juegosPortenos2026)}
       ${renderizarCeldasMedallas(club.copaDoblas2026)}
+      ${renderizarCeldasMedallas(club.juegosUFedem2026)}
       ${renderizarCeldasMedallas(club.torneoMetropolitano2026)}
-      ${renderizarCeldasMedallas(club.medalleroGlobal, true)}
+      
     `;
 
     tbody.appendChild(fila);

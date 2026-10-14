@@ -1700,8 +1700,12 @@
    TABLA DE CLUBES - BASE
 ========================================================= */
 
+/* =========================================================
+   TABLA DE CLUBES - BASE
+========================================================= */
+
 .ranking-table-clubes {
-  min-width: 1700px;
+  min-width: 2000px;
 }
 
 /* Logo del club: más chico para que entre cómodo.
@@ -1791,70 +1795,150 @@
 
 /* Medallero global: encabezado rojo */
 .ranking-table-clubes th.ranking-group-global {
-  background:
-    linear-gradient(
-      180deg,
-      var(--ranking-red),
-      var(--ranking-red-dark)
-    );
+  background: linear-gradient(135deg, #b30000, #7f0000);
+  color: #fff;
+  border-color: #7f0000;
 }
 
 .ranking-table-clubes .ranking-medal-row th.ranking-group-global {
-  color: #ffffff;
-  background:
-    linear-gradient(
-      180deg,
-      #c01212,
-      var(--ranking-red-dark)
-    );
+  background: linear-gradient(135deg, #b30000, #7f0000);
+  color: #fff;
+}
+
+.ranking-table-clubes td.ranking-group-global {
+  border-left: 2px solid #b30000;
 }
 
 
 /* =========================================================
-   TABLA DE CLUBES - COLUMNAS FIJAS (Pos. / Logo / Club)
+   TABLA DE CLUBES - COLUMNAS FIJAS
+   Fijas a la izquierda: Pos. / Logo / Club / Medallero Global
+   Se desliza: los torneos
 ========================================================= */
 
-/* Anchos */
+/*
+  Medidas en un solo lugar.
+  Los "left" se calculan solos a partir de estos anchos:
+  si cambiás un ancho, se acomoda todo lo demás.
+*/
+.ranking-table-clubes {
+  --col-pos: 72px;
+  --col-logo: 96px;
+  --col-club: 260px;
+  --col-medal: 64px;
+
+  --left-logo: var(--col-pos);
+  --left-club: calc(var(--col-pos) + var(--col-logo));
+
+  --left-g1: calc(var(--left-club) + var(--col-club));
+  --left-g2: calc(var(--left-g1) + var(--col-medal));
+  --left-g3: calc(var(--left-g2) + var(--col-medal));
+  --left-g4: calc(var(--left-g3) + var(--col-medal));
+}
+
+
+/* ---------- Pos. ---------- */
+
 .ranking-table-clubes .ranking-group-row th:nth-child(1),
 .ranking-table-clubes tbody td:nth-child(1) {
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
+  width: var(--col-pos);
+  min-width: var(--col-pos);
+  max-width: var(--col-pos);
   left: 0;
 }
 
+/* ---------- Logo ---------- */
+
 .ranking-table-clubes .ranking-group-row th:nth-child(2),
 .ranking-table-clubes tbody td:nth-child(2) {
-  width: 96px;
-  min-width: 96px;
-  max-width: 96px;
-  left: 72px;
+  width: var(--col-logo);
+  min-width: var(--col-logo);
+  max-width: var(--col-logo);
+  left: var(--left-logo);
 }
+
+/* ---------- Club ---------- */
 
 .ranking-table-clubes .ranking-group-row th:nth-child(3),
 .ranking-table-clubes tbody td:nth-child(3) {
-  width: 260px;
-  min-width: 260px;
-  max-width: 260px;
-  left: 168px;
+  width: var(--col-club);
+  min-width: var(--col-club);
+  max-width: var(--col-club);
+  left: var(--left-club);
 }
 
-/* Cuerpo: celdas fijas */
-.ranking-table-clubes tbody td:nth-child(-n + 3) {
+/* ---------- Medallero Global: título del encabezado (4 columnas) ---------- */
+
+.ranking-table-clubes .ranking-group-row th:nth-child(4) {
+  width: calc(var(--col-medal) * 4);
+  min-width: calc(var(--col-medal) * 4);
+  max-width: calc(var(--col-medal) * 4);
+  left: var(--left-g1);
+}
+
+/* ---------- Medallero Global: Oro / Plata / Bronce / Quinto (encabezado) ---------- */
+
+.ranking-table-clubes .ranking-medal-row th:nth-child(1),
+.ranking-table-clubes .ranking-medal-row th:nth-child(2),
+.ranking-table-clubes .ranking-medal-row th:nth-child(3),
+.ranking-table-clubes .ranking-medal-row th:nth-child(4) {
+  position: sticky;
+  width: var(--col-medal);
+  min-width: var(--col-medal);
+  max-width: var(--col-medal);
+}
+
+.ranking-table-clubes .ranking-medal-row th:nth-child(1) { left: var(--left-g1); }
+.ranking-table-clubes .ranking-medal-row th:nth-child(2) { left: var(--left-g2); }
+.ranking-table-clubes .ranking-medal-row th:nth-child(3) { left: var(--left-g3); }
+.ranking-table-clubes .ranking-medal-row th:nth-child(4) { left: var(--left-g4); }
+
+/* ---------- Medallero Global: celdas del cuerpo ---------- */
+
+.ranking-table-clubes tbody td:nth-child(4),
+.ranking-table-clubes tbody td:nth-child(5),
+.ranking-table-clubes tbody td:nth-child(6),
+.ranking-table-clubes tbody td:nth-child(7) {
+  width: var(--col-medal);
+  min-width: var(--col-medal);
+  max-width: var(--col-medal);
+}
+
+.ranking-table-clubes tbody td:nth-child(4) { left: var(--left-g1); }
+.ranking-table-clubes tbody td:nth-child(5) { left: var(--left-g2); }
+.ranking-table-clubes tbody td:nth-child(6) { left: var(--left-g3); }
+.ranking-table-clubes tbody td:nth-child(7) { left: var(--left-g4); }
+
+/* ---------- Cuerpo: las 7 primeras celdas quedan fijas ---------- */
+
+.ranking-table-clubes tbody td:nth-child(-n + 7) {
   position: sticky;
   z-index: 3;
+}
+
+/* Pos., Logo y Club: fondo blanco (las de medallas ya traen su color) */
+.ranking-table-clubes tbody td:nth-child(-n + 3) {
   background: #ffffff;
 }
 
-/* Encabezado: esquina fija (arriba + izquierda) */
-.ranking-table-clubes .ranking-group-row th:nth-child(-n + 3) {
+/* ---------- Encabezado: capas ---------- */
+
+/* Esquina fija (arriba + izquierda): Pos., Logo, Club y título Medallero Global */
+.ranking-table-clubes .ranking-group-row th:nth-child(-n + 4) {
   z-index: 6;
 }
 
-/* Sombra a la derecha de la última columna fija */
-.ranking-table-clubes tbody td:nth-child(3),
-.ranking-table-clubes .ranking-group-row th:nth-child(3) {
-  box-shadow: 10px 0 14px -10px rgba(15, 23, 42, 0.28);
+/* Fila 2 del Medallero Global: fija arriba y a la izquierda */
+.ranking-table-clubes .ranking-medal-row th:nth-child(-n + 4) {
+  z-index: 5;
+}
+
+/* ---------- Sombra a la derecha de la última columna fija ---------- */
+
+.ranking-table-clubes tbody td:nth-child(7),
+.ranking-table-clubes .ranking-medal-row th:nth-child(4),
+.ranking-table-clubes .ranking-group-row th:nth-child(4) {
+  box-shadow: 10px 0 14px -10px rgba(15, 23, 42, 0.32);
 }
 
 .ranking-table-clubes tbody td {
@@ -2047,49 +2131,55 @@
     font-size: 12px;
   }
 
-  /* En celular no entran 3 columnas fijas:
-     queda fija Pos. y Club; el logo se desliza */
+  /*
+    Celular: no entran 7 columnas fijas, así que se achican.
+    - Pos. y Club quedan fijos
+    - el Logo se desliza (se esconde debajo del Club)
+    - el Medallero Global queda fijo, con columnas finitas
+  */
   .ranking-table-clubes {
+    --col-pos: 40px;
+    --col-logo: 56px;
+    --col-club: 104px;
+    --col-medal: 38px;
+
+    /* el Club se pega justo después de Pos. (el Logo no es fijo) */
+    --left-club: var(--col-pos);
+
     min-width: 1500px;
   }
 
   .ranking-table-clubes .ranking-group-row th:nth-child(1),
   .ranking-table-clubes tbody td:nth-child(1) {
-    width: 52px;
-    min-width: 52px;
-    max-width: 52px;
-    padding-inline: 8px;
+    padding-inline: 4px;
     text-align: center;
   }
 
-  .ranking-table-clubes .ranking-group-row th:nth-child(2),
+  /* Logo: no queda fijo, pero el encabezado sí sigue fijo arriba */
   .ranking-table-clubes tbody td:nth-child(2) {
     position: static;
-    width: 84px;
-    min-width: 84px;
-    max-width: 84px;
     box-shadow: none;
   }
 
-  .ranking-table-clubes .ranking-group-row th:nth-child(3),
-  .ranking-table-clubes tbody td:nth-child(3) {
-    width: 170px;
-    min-width: 170px;
-    max-width: 170px;
-    left: 52px;
-  }
-
-  /* El encabezado del logo no puede ser fijo en X,
-     pero sí debe seguir fijo arriba */
   .ranking-table-clubes .ranking-group-row th:nth-child(2) {
     position: sticky;
     left: auto;
     z-index: 4;
   }
 
+  .ranking-table-clubes .ranking-medal-row th {
+    padding: 0 4px;
+    font-size: 9px;
+  }
+
+  .ranking-table-clubes tbody td:nth-child(n + 4):nth-child(-n + 7) {
+    padding: 14px 2px;
+    font-size: 14px;
+  }
+
   .ranking-table-clubes .ranking-club-logo {
-    width: 52px !important;
-    height: 52px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
 }
 
@@ -2130,3 +2220,4 @@
     scroll-behavior: auto !important;
   }
 }
+

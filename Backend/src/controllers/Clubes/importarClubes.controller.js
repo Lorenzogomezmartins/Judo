@@ -135,27 +135,28 @@ export async function ejecutarImportacionClubes() {
 
     try {
       /*
-      ====================================
-      COLUMNAS DEL EXCEL
-      ====================================
+====================================
+COLUMNAS DEL EXCEL
+====================================
 
-      A   = 0  Institución
+A     = 0  Institución
 
-      B:E = 1-4   Abierto Ciudad
-      F:I = 5-8   Juegos Porteños
-      J:M = 9-12  Copa Doblas
-      N:Q = 13-16 Metropolitano
-      R:U = 17-20 Medallero Global
+B:E   = 1-4   Abierto de la Ciudad
+F:I   = 5-8   Juegos Porteños
+J:M   = 9-12  Copa Doblas
+N:Q   = 13-16 Juegos UFeDeM
+R:U   = 17-20 Torneo Metropolitano
+V:Y   = 21-24 Medallero Global
 
-      V   = 21 Logo
-      W   = 22 Ubicación
-      X   = 23 Teléfono
-      Y   = 24 Email
-      Z   = 25 Facebook
-      AA  = 26 Instagram
-      AB  = 27 Ubicación Maps
-      AC  = 28 Ranking
-      */
+Z     = 25 Logo
+AA    = 26 Ubicación
+AB    = 27 Teléfono
+AC    = 28 Email
+AD    = 29 Facebook
+AE    = 30 Instagram
+AF    = 31 Ubicación Maps
+AG    = 32 Ranking
+*/
 
       const nombre =
         normalizarTexto(
@@ -208,34 +209,22 @@ export async function ejecutarImportacionClubes() {
       */
 
       const abiertoCiudad2026 =
-        obtenerResultado(
-          fila,
-          1
-        );
+  obtenerResultado(fila, 1);
 
-      const juegosPortenos2026 =
-        obtenerResultado(
-          fila,
-          5
-        );
+const juegosPortenos2026 =
+  obtenerResultado(fila, 5);
 
-      const copaDoblas2026 =
-        obtenerResultado(
-          fila,
-          9
-        );
+const copaDoblas2026 =
+  obtenerResultado(fila, 9);
 
-      const torneoMetropolitano2026 =
-        obtenerResultado(
-          fila,
-          13
-        );
+const juegosUFedem2026 =
+  obtenerResultado(fila, 13);
 
-      const medalleroGlobal =
-        obtenerResultado(
-          fila,
-          17
-        );
+const torneoMetropolitano2026 =
+  obtenerResultado(fila, 17);
+
+const medalleroGlobal =
+  obtenerResultado(fila, 21);
 
       /*
       ------------------------------------
@@ -244,39 +233,25 @@ export async function ejecutarImportacionClubes() {
       */
 
       const logoDriveUrl =
-        normalizarTexto(
-          fila[21]
-        );
+  normalizarTexto(fila[25]);
 
-      const ubicacion =
-        normalizarTexto(
-          fila[22]
-        );
+const ubicacion =
+  normalizarTexto(fila[26]);
 
-      const telefono =
-        normalizarTexto(
-          fila[23]
-        );
+const telefono =
+  normalizarTexto(fila[27]);
 
-      const email =
-        normalizarTexto(
-          fila[24]
-        );
+const email =
+  normalizarTexto(fila[28]);
 
-      const facebook =
-        normalizarTexto(
-          fila[25]
-        );
+const facebook =
+  normalizarTexto(fila[29]);
 
-      const instagram =
-        normalizarTexto(
-          fila[26]
-        );
+const instagram =
+  normalizarTexto(fila[30]);
 
-      const ubicacionMaps =
-        normalizarTexto(
-          fila[27]
-        );
+const ubicacionMaps =
+  normalizarTexto(fila[31]);
 
       /*
       ------------------------------------
@@ -285,9 +260,9 @@ export async function ejecutarImportacionClubes() {
       */
 
       const ranking =
-        normalizarNumero(
-          fila[28]
-        );
+  normalizarNumero(
+    fila[32]
+  );
 
       /*
       ------------------------------------
@@ -321,6 +296,8 @@ export async function ejecutarImportacionClubes() {
         juegosPortenos2026,
 
         copaDoblas2026,
+
+        juegosUFedem2026,
 
         torneoMetropolitano2026,
 
@@ -511,6 +488,9 @@ export async function ejecutarImportacionClubes() {
             copaDoblas2026:
               datosActuales.copaDoblas2026,
 
+              juegosUFedem2026:
+  datosActuales.juegosUFedem2026,
+
             torneoMetropolitano2026:
               datosActuales.torneoMetropolitano2026,
 
@@ -555,6 +535,9 @@ export async function ejecutarImportacionClubes() {
 
             copaDoblas2026:
               datosGuardar.copaDoblas2026,
+
+              juegosUFedem2026:
+  datosGuardar.juegosUFedem2026,
 
             torneoMetropolitano2026:
               datosGuardar.torneoMetropolitano2026,

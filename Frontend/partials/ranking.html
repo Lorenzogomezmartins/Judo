@@ -320,20 +320,23 @@
 
             <table class="ranking-table">
 
-              <thead>
-                <tr>
-                  <th>Pos.</th>
-                  <th>Foto</th>
-                  <th>Judoka</th>
-                  <th>Cat.</th>
-                  <th>Club</th>
-                  <th>Abierto Ciudad</th>
-                  <th>Juegos Porteños</th>
-                  <th>Copa Doblas</th>
-                  <th>Metropolitano</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
+              
+<thead>
+  <tr>
+    <th>Pos.</th>
+    <th>Foto</th>
+    <th>Judoka</th>
+    <th>Cat.</th>
+    <th>Club</th>
+    <th class="ranking-group-start ranking-group-global">Total</th>
+    <th class="ranking-group-start">Abierto Ciudad</th>
+    <th>Juegos Porteños</th>
+    <th>Copa Doblas</th>
+    <th>Juegos UFeDeM</th>
+    <th>Metropolitano</th>
+  </tr>
+</thead>
+
 
               <tbody id="rankingBody">
                 <tr class="ranking-loading-row">
@@ -529,43 +532,59 @@
                   <th rowspan="2">Pos.</th>
                   <th rowspan="2">Logo</th>
                   <th rowspan="2">Club</th>
+
+                  <!-- MEDALLERO GLOBAL: va primero y queda fijo -->
+                  <th colspan="4" class="ranking-group-start ranking-group-global">Medallero Global</th>
+
+                  <!-- TORNEOS: esta parte es la que se desliza -->
                   <th colspan="4" class="ranking-group-start">Abierto de la Ciudad 2026</th>
                   <th colspan="4" class="ranking-group-start">Juegos Porteños 2026</th>
                   <th colspan="4" class="ranking-group-start">Copa Doblas 2026</th>
+                  <th colspan="4" class="ranking-group-start">Juegos UFeDeM</th>
                   <th colspan="4" class="ranking-group-start">Torneo Metropolitano 2026</th>
-                  <th colspan="4" class="ranking-group-start ranking-group-global">Medallero Global</th>
                 </tr>
                 <tr class="ranking-medal-row">
-                  <th class="ranking-group-start">Oro</th>
-                  <th>Plata</th>
-                  <th>Bronce</th>
-                  <th>Quinto</th>
-
-                  <th class="ranking-group-start">Oro</th>
-                  <th>Plata</th>
-                  <th>Bronce</th>
-                  <th>Quinto</th>
-
-                  <th class="ranking-group-start">Oro</th>
-                  <th>Plata</th>
-                  <th>Bronce</th>
-                  <th>Quinto</th>
-
-                  <th class="ranking-group-start">Oro</th>
-                  <th>Plata</th>
-                  <th>Bronce</th>
-                  <th>Quinto</th>
-
+                  <!-- Medallero Global -->
                   <th class="ranking-group-start ranking-group-global">Oro</th>
                   <th class="ranking-group-global">Plata</th>
                   <th class="ranking-group-global">Bronce</th>
                   <th class="ranking-group-global">Quinto</th>
+
+                  <!-- Abierto de la Ciudad 2026 -->
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
+
+                  <!-- Juegos Porteños 2026 -->
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
+
+                  <!-- Copa Doblas 2026 -->
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
+
+                  <!-- Juegos UFeDeM -->
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
+
+                  <!-- Torneo Metropolitano 2026 -->
+                  <th class="ranking-group-start">Oro</th>
+                  <th>Plata</th>
+                  <th>Bronce</th>
+                  <th>Quinto</th>
                 </tr>
               </thead>
 
               <tbody id="rankingClubesBody">
                 <tr class="ranking-loading-row">
-                  <td colspan="23">
+                  <td colspan="27">
                     <div class="ranking-loading">
                       <span class="ranking-loading-spinner"></span>
                       <div>

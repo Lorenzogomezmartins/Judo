@@ -74,6 +74,13 @@ const clubSchema = new mongoose.Schema(
       default: () => ({}),
     },
 
+    // NUEVO: Juegos UFeDeM
+    // (mismo nombre que en el ranking de judokas: juegosUFedem2026)
+    juegosUFedem2026: {
+      type: resultadoSchema,
+      default: () => ({}),
+    },
+
     torneoMetropolitano2026: {
       type: resultadoSchema,
       default: () => ({}),
@@ -134,12 +141,12 @@ const clubSchema = new mongoose.Schema(
     /*
     ------------------------------------
     RANKING
-    ------------------------------------
 
-    Este valor viene directamente
-    de la columna AC del Excel.
+    Este valor viene directamente de la
+    columna "Ranking" de la planilla.
 
     NO calculamos el ranking nosotros.
+    ------------------------------------
     */
 
     ranking: {
@@ -161,10 +168,10 @@ const clubSchema = new mongoose.Schema(
     /*
     ------------------------------------
     DATOS ORIGINALES
-    ------------------------------------
 
     Sirve para conservar información
     proveniente directamente de Sheets.
+    ------------------------------------
     */
 
     datosOriginales: {
