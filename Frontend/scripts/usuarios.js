@@ -14,6 +14,7 @@ let rankingUsuarios = [];
 let ordenActual = "desc";
 let sexoSeleccionado = "";
 let pesoSeleccionado = "";
+let clubSeleccionado = "";
 
 export async function cargarRankingUsuarios() {
   const tbody = document.getElementById("rankingBody");
@@ -50,6 +51,7 @@ export async function cargarRankingUsuarios() {
     }));
 
     cargarCategoriasRanking();
+    cargarClubesRanking();
     inicializarEventosRanking();
     aplicarFiltrosRanking();
   } catch (error) {
@@ -198,16 +200,46 @@ function cargarCategoriasRanking() {
   });
 }
 
+
+function cargarClubesRanking() {
+  const filtroClub = document.getElementById("filtroClub");
+
+  if (!filtroClub) return;
+
+  const clubes = [
+    ...new Set(
+      rankingUsuarios
+        .map((usuario) => String(usuario.institucion || "").trim())
+        .filter(Boolean)
+    ),
+  ];
+
+  clubes.sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+
+  filtroClub.innerHTML = `<option value="">Todos</option>`;
+
+  clubes.forEach((club) => {
+    const option = document.createElement("option");
+    option.value = club;
+    option.textContent = club;
+    filtroClub.appendChild(option);
+  });
+}
+
 function inicializarEventosRanking() {
   const searchInput = document.getElementById("searchInput");
   const filtroCategoria = document.getElementById("filtroCategoria");
+  const filtroClub = document.getElementById("filtroClub");
   const sortDesc = document.getElementById("sortDesc");
   const sortAsc = document.getElementById("sortAsc");
   const botonesPeso = document.querySelectorAll(".peso-btn");
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
   searchInput?.addEventListener("input", aplicarFiltrosRanking);
-  filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
+    filtroCategoria?.addEventListener("change", aplicarFiltrosRanking);
+  filtroClub?.addEventListener("change", aplicarFiltrosRanking);
 
   sortDesc?.addEventListener("click", () => {
     ordenActual = "desc";
@@ -241,7 +273,8 @@ function inicializarEventosRanking() {
 
   btnLimpiarFiltros?.addEventListener("click", () => {
     if (searchInput) searchInput.value = "";
-    if (filtroCategoria) filtroCategoria.value = "";
+        if (filtroCategoria) filtroCategoria.value = "";
+    if (filtroClub) filtroClub.value = "";
 
     sexoSeleccionado = "";
     pesoSeleccionado = "";
@@ -267,6 +300,8 @@ function aplicarFiltrosRanking() {
   const categoria = filtroCategoria
     ? filtroCategoria.value
     : "";
+      const filtroClub = document.getElementById("filtroClub");
+  const club = filtroClub ? filtroClub.value : "";
 
   let usuariosFiltrados = [...rankingUsuarios];
 
@@ -291,6 +326,12 @@ function aplicarFiltrosRanking() {
   if (categoria) {
     usuariosFiltrados = usuariosFiltrados.filter(
       (usuario) => usuario.categoria === categoria
+    );
+  }
+
+    if (club) {
+    usuariosFiltrados = usuariosFiltrados.filter(
+      (usuario) => String(usuario.institucion || "").trim() === club
     );
   }
 
@@ -417,8 +458,13 @@ function renderizarRanking(usuarios) {
         </button>
       </td>
 
-      <td>
-        ${usuario.institucion || "-"}
+            <td>
+        <button
+          type="button"
+          class="categoria-filtro-btn club-filtro-btn"
+        >
+          ${usuario.institucion || "-"}
+        </button>
       </td>
 
       <td class="fw-bold text-danger">
@@ -434,7 +480,7 @@ function renderizarRanking(usuarios) {
 
     tbody.appendChild(fila);
 
-    const botonCategoria = fila.querySelector(".categoria-filtro-btn");
+        const botonCategoria = fila.querySelector(".categoria-filtro-btn:not(.club-filtro-btn)");
 
     botonCategoria?.addEventListener("click", () => {
       const categoria = botonCategoria.dataset.categoria || "";
@@ -449,6 +495,23 @@ function renderizarRanking(usuarios) {
       if (searchInput) {
         searchInput.value = "";
       }
+
+      aplicarFiltrosRanking();
+    });
+
+    // ⬇️ NUEVO: club clickeable
+    const botonClub = fila.querySelector(".club-filtro-btn");
+
+    botonClub?.addEventListener("click", () => {
+      const club = String(usuario.institucion || "").trim();
+
+      if (!club) return;
+
+      const filtroClub = document.getElementById("filtroClub");
+      const searchInput = document.getElementById("searchInput");
+
+      if (filtroClub) filtroClub.value = club;
+      if (searchInput) searchInput.value = "";
 
       aplicarFiltrosRanking();
     });
