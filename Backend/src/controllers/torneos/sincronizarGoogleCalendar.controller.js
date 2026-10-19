@@ -68,7 +68,11 @@ export async function sincronizarGoogleCalendar(req, res) {
       };
 
       if (torneoExistente) {
-        await Torneo.findByIdAndUpdate(torneoExistente._id, data, {
+        // CAMBIO: no pisamos el "tipo" de documentos que ya existen,
+        // así se respeta el tipo elegido en el panel.
+        const { tipo, ...dataSinTipo } = data;
+
+        await Torneo.findByIdAndUpdate(torneoExistente._id, dataSinTipo, {
           new: true,
           runValidators: true,
         });
