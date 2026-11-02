@@ -53,6 +53,14 @@ const INDEX_RESPALDO = "index.html";     // versión normal
 const TIMEOUT_CHEQUEO_MS = 4000;         // máximo de espera al chequear
 const CACHE_CHEQUEO_MS = 30 * 1000;      // recordar el resultado 30 s
 
+// NUEVO: torneos cuyo botón "Ver resultados" NO va a index.html sino a otra ruta
+// dentro de la carpeta de resultados de Hostinger.
+//   clave = slug del torneo (en minúsculas, como figura en Mongo)
+//   valor = ruta relativa a RESULTADOS_BASE_URL (terminar con "/" si es una carpeta)
+const PORTADAS_ESPECIALES = {
+  "metropolitano-2026": "metropolitano-2026/fmj/",
+};
+
 const cacheChequeos = new Map(); // url -> { ok, hasta }
 
 // Detecta si quien visita está en un celular o tablet.
@@ -114,6 +122,15 @@ const servirResultadosFTP = async (req, res) => {
     // Express 5: el comodín (*archivo) llega como array -> lo unimos con "/"
     const p = req.params.archivo;
     let archivo = Array.isArray(p) ? p.join("/") : (p || INDEX_RESPALDO);
+
+    // NUEVO: si el torneo tiene portada especial, reemplaza al index.html
+    if (archivo === INDEX_RESPALDO && PORTADAS_ESPECIALES[slug]) {
+      const urlEspecial = `${RESULTADOS_BASE_URL}/${PORTADAS_ESPECIALES[slug]}`;
+
+      console.log("-> Portada especial, redirigiendo a:", urlEspecial);
+      res.set("Cache-Control", "no-store");
+      return res.redirect(302, urlEspecial);
+    }
 
     // 1) ¿Hay un Resultado sincronizado? (búsqueda exacta, sin regex)
     const resultadoDB = await Resultado.findOne({
@@ -185,6 +202,45 @@ const servirResultadosFTP = async (req, res) => {
 
 app.get('/resultados/:slug', servirResultadosFTP);
 app.get('/resultados/:slug/*archivo', servirResultadosFTP);
+
+// NUEVO: devuelve la lista de slugs de torneos que tienen resultados subidos
+// (es decir, que existe un index.html en su carpeta de Hostinger).
+// El frontend la usa para mostrar u ocultar el botón "Ver resultados".
+app.get('/api/resultados-disponibles', async (req, res) => {
+  try {
+    const torneos = await Torneo.find({ slug: { $exists: true, $ne: "" } })
+      .select("slug")
+      .lean();
+
+    const resultados = await Resultado.find({})
+      .select("torneoSlug carpetaFTP")
+      .lean();
+
+    const carpetaPorSlug = new Map(
+      resultados.map((r) => [r.torneoSlug, (r.carpetaFTP || "").trim()])
+    );
+
+    const chequeos = await Promise.all(
+      torneos.map(async (torneo) => {
+        // Torneos con portada especial: el botón siempre se muestra
+        if (PORTADAS_ESPECIALES[String(torneo.slug).toLowerCase()]) {
+          return torneo.slug;
+        }
+
+        const carpeta = carpetaPorSlug.get(torneo.slug) || torneo.slug;
+        const url = `${RESULTADOS_BASE_URL}/${encodeURIComponent(carpeta)}/${INDEX_RESPALDO}`;
+        const hay = await existeArchivoHTML(url);
+        return hay ? torneo.slug : null;
+      })
+    );
+
+    res.set("Cache-Control", "no-store");
+    return res.json(chequeos.filter(Boolean));
+  } catch (error) {
+    console.error("Error en /api/resultados-disponibles:", error);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 /* =========================
    VERIFICACIÓN RÁPIDA

@@ -1,8 +1,13 @@
 const API_URL = "/api/torneos";
+const API_RESULTADOS_URL = "/api/resultados-disponibles";
 
 let cacheTorneos = [];
 let tipoSeleccionado = "torneo";
 let textoBusquedaActual = "";
+
+// NUEVO: slugs de torneos que tienen resultados subidos.
+// null = no se pudo saber (en ese caso se muestran todos los botones, como antes).
+let slugsConResultados = null;
 
 // ============================
 // HELPERS
@@ -64,6 +69,16 @@ function generarSlugDesdeNombre(nombre = "") {
 
 function obtenerSlugResultado(torneo) {
   return torneo.slug || torneo.torneoSlug || generarSlugDesdeNombre(torneo.nombre);
+}
+
+// NUEVO: indica si hay que mostrar el botón "Ver resultados"
+function tieneResultados(slug) {
+  if (!slug) return false;
+
+  // Si no se pudo consultar el servidor, no ocultamos nada (comportamiento anterior)
+  if (slugsConResultados === null) return true;
+
+  return slugsConResultados.has(slug);
 }
 
 function obtenerNombreTipoPlural(tipo) {
@@ -148,9 +163,8 @@ function crearCardTorneo(torneo, esAnterior = false) {
         .join("")
     : "";
 
-  // Forzamos el botón para que aparezca en todos los torneos que tengan slug
- // Botón dinámico con ruta relativa limpia
-  const botonResultadosHtml = slug ? `
+  // CAMBIO: el botón solo aparece si el torneo tiene resultados subidos
+  const botonResultadosHtml = tieneResultados(slug) ? `
     <a
       href="/resultados/${slug}/index.html"
       target="_blank"
@@ -320,10 +334,9 @@ function renderCarousel(torneos) {
 
   contenedor.innerHTML = todos.slice(0, 5).map((torneo, index) => {
     const slug = obtenerSlugResultado(torneo);
-    
-    // Forzamos el botón en el carrusel tal como lo hicimos en las tarjetas
-    // Botón dinámico con ruta relativa limpia para el carrusel
-    const botonResultadosHtml = slug ? `
+
+    // CAMBIO: el botón solo aparece si el torneo tiene resultados subidos
+    const botonResultadosHtml = tieneResultados(slug) ? `
       <a
         href="/resultados/${slug}/index.html"
         target="_blank"
@@ -468,6 +481,32 @@ function actualizarTextosListado() {
 }
 
 // ============================
+// NUEVO: RESULTADOS DISPONIBLES
+// ============================
+
+async function cargarResultadosDisponibles() {
+  try {
+    const response = await fetch(API_RESULTADOS_URL);
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const slugs = await response.json();
+
+    if (!Array.isArray(slugs)) {
+      throw new Error("La respuesta no es una lista");
+    }
+
+    slugsConResultados = new Set(slugs);
+  } catch (error) {
+    // Si falla, no ocultamos nada: se muestran todos los botones como antes
+    console.warn("No se pudo consultar resultados disponibles:", error);
+    slugsConResultados = null;
+  }
+}
+
+// ============================
 // INIT
 // ============================
 
@@ -476,7 +515,11 @@ export async function initTorneos() {
   const contenedorAnteriores = document.getElementById("listaTorneosAnteriores");
 
   try {
-    const response = await fetch(API_URL);
+    // Se piden las dos cosas en paralelo para no demorar la carga
+    const [response] = await Promise.all([
+      fetch(API_URL),
+      cargarResultadosDisponibles(),
+    ]);
 
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
