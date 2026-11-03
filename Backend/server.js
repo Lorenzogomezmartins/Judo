@@ -50,6 +50,7 @@ const RESULTADOS_BASE_URL =
 // ---------------------------------------------------------------
 const INDEX_PREFERIDO = "index1.html";   // versión móvil
 const INDEX_RESPALDO = "index.html";     // versión normal
+const CARPETA_FMJ = "fmj";               // subcarpeta con el sistema nuevo dentro de cada torneo
 const TIMEOUT_CHEQUEO_MS = 4000;         // máximo de espera al chequear
 const CACHE_CHEQUEO_MS = 30 * 1000;      // recordar el resultado 30 s
 
@@ -115,6 +116,52 @@ async function existeArchivoHTML(url) {
   return ok;
 }
 
+// NUEVO: convierte un texto en slug conservando todas las palabras y el año
+// (ej: "Metropolitano 2026" -> "metropolitano-2026")
+function slugDesdeTexto(texto = "") {
+  return String(texto)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+// NUEVO: posibles nombres de la carpeta del torneo en Hostinger, por prioridad.
+// Sirve cuando el slug de Mongo no coincide con el nombre real de la carpeta.
+function candidatosCarpeta({ slug, nombre, carpetaFTP }) {
+  const lista = [carpetaFTP, slug, slugDesdeTexto(nombre)]
+    .map((x) => String(x || "").trim())
+    .filter(Boolean);
+
+  return [...new Set(lista)];
+}
+
+// NUEVO: true si la carpeta tiene alguna portada de resultados publicada
+async function carpetaTieneResultados(carpeta) {
+  const base = `${RESULTADOS_BASE_URL}/${encodeURIComponent(carpeta)}`;
+
+  return (
+    (await existeArchivoHTML(`${base}/${CARPETA_FMJ}/index.html`)) ||
+    (await existeArchivoHTML(`${base}/${INDEX_PREFERIDO}`)) ||
+    (await existeArchivoHTML(`${base}/${INDEX_RESPALDO}`))
+  );
+}
+
+// NUEVO: devuelve la primera carpeta candidata que realmente existe en Hostinger.
+// Si ninguna tiene resultados, devuelve la primera candidata con hay = false.
+async function resolverCarpeta(datos) {
+  const candidatos = candidatosCarpeta(datos);
+
+  for (const carpeta of candidatos) {
+    if (await carpetaTieneResultados(carpeta)) {
+      return { carpeta, hay: true };
+    }
+  }
+
+  return { carpeta: candidatos[0] || null, hay: false };
+}
+
 const servirResultadosFTP = async (req, res) => {
   try {
     const slug = String(req.params.slug || "").toLowerCase().trim();
@@ -140,33 +187,54 @@ const servirResultadosFTP = async (req, res) => {
       ]
     });
 
-    let carpeta = resultadoDB?.carpetaFTP?.trim();
+    // 2) Datos del torneo (por slug) para conocer también su nombre
+    const torneo = await Torneo.findOne({ slug });
 
-    // 2) Si no hay Resultado, usamos el slug del torneo
-    //    (es el mismo nombre con el que se creó la carpeta en el FTP)
+    if (!resultadoDB && !torneo) {
+      return res.status(404).send(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head><meta charset="UTF-8"><title>No encontrado</title></head>
+        <body style="background:#0f172a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;">
+            <div style="background:#1e293b;padding:2rem;border-radius:8px;text-align:center;">
+                <h1>Torneo no encontrado</h1>
+                <p>El torneo "${slug}" no existe.</p>
+            </div>
+        </body>
+        </html>
+      `);
+    }
+
+    // 3) NUEVO: buscamos la carpeta real en Hostinger probando el nombre guardado,
+    //    el slug y el nombre del torneo convertido a slug (con año).
+    const { carpeta } = await resolverCarpeta({
+      slug: torneo?.slug || slug,
+      nombre: torneo?.nombre,
+      carpetaFTP: resultadoDB?.carpetaFTP,
+    });
+
     if (!carpeta) {
-      const torneo = await Torneo.findOne({ slug });
-
-      if (!torneo) {
-        return res.status(404).send(`
-          <!DOCTYPE html>
-          <html lang="es">
-          <head><meta charset="UTF-8"><title>No encontrado</title></head>
-          <body style="background:#0f172a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;">
-              <div style="background:#1e293b;padding:2rem;border-radius:8px;text-align:center;">
-                  <h1>Torneo no encontrado</h1>
-                  <p>El torneo "${slug}" no existe.</p>
-              </div>
-          </body>
-          </html>
-        `);
-      }
-
-      carpeta = torneo.slug;
+      return res.status(404).send("No se encontró la carpeta de resultados.");
     }
 
     // NUEVO: solo cuando piden la portada (index.html) probamos primero index1.html.
     // Cualquier otro archivo (categorías, medallas, etc.) se redirige igual que antes.
+    // NUEVO: orden de prioridad para la portada de resultados:
+    //   1) <carpeta>/fmj/index.html   (todos los dispositivos)
+    //   2) <carpeta>/index1.html      (solo celulares)
+    //   3) <carpeta>/index.html       (respaldo)
+    if (archivo === INDEX_RESPALDO) {
+      const urlFmj =
+        `${RESULTADOS_BASE_URL}/${encodeURIComponent(carpeta)}/${CARPETA_FMJ}/index.html`;
+
+      if (await existeArchivoHTML(urlFmj)) {
+        console.log("-> Portada en carpeta fmj, redirigiendo a:", urlFmj);
+        res.set("Vary", "User-Agent, Sec-CH-UA-Mobile");
+        res.set("Cache-Control", "no-store");
+        return res.redirect(302, urlFmj);
+      }
+    }
+
     // Solo en celulares/tablets se intenta la versión móvil; en PC va index.html.
     if (archivo === INDEX_RESPALDO && esDispositivoMovil(req)) {
       const urlPreferida =
@@ -209,7 +277,7 @@ app.get('/resultados/:slug/*archivo', servirResultadosFTP);
 app.get('/api/resultados-disponibles', async (req, res) => {
   try {
     const torneos = await Torneo.find({ slug: { $exists: true, $ne: "" } })
-      .select("slug")
+      .select("slug nombre")
       .lean();
 
     const resultados = await Resultado.find({})
@@ -227,9 +295,12 @@ app.get('/api/resultados-disponibles', async (req, res) => {
           return torneo.slug;
         }
 
-        const carpeta = carpetaPorSlug.get(torneo.slug) || torneo.slug;
-        const url = `${RESULTADOS_BASE_URL}/${encodeURIComponent(carpeta)}/${INDEX_RESPALDO}`;
-        const hay = await existeArchivoHTML(url);
+        const { hay } = await resolverCarpeta({
+          slug: torneo.slug,
+          nombre: torneo.nombre,
+          carpetaFTP: carpetaPorSlug.get(torneo.slug),
+        });
+
         return hay ? torneo.slug : null;
       })
     );
