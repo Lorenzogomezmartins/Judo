@@ -123,10 +123,10 @@ const ALIAS_COLUMNAS = {
   abiertoPuntaje: ["abierto de la ciudad 2026|puntaje"],
 
   juegosPosicion: ["juegos porteños 2026|pos"],
-juegosPuntaje: ["juegos porteños 2026|puntaje"],
+  juegosPuntaje: ["juegos porteños 2026|puntaje"],
 
-juegosUFedemPosicion: ["juegos ufedem 2026|pos"],
-juegosUFedemPuntaje: ["juegos ufedem 2026|puntaje"],
+  juegosUFedemPosicion: ["juegos ufedem 2026|pos"],
+  juegosUFedemPuntaje: ["juegos ufedem 2026|puntaje"],
 
   copaDoblasPosicion: ["copa doblas 2026|pos"],
   copaDoblasPuntaje: ["copa doblas 2026|puntaje"],
@@ -216,11 +216,11 @@ function hayCambios(usuarioExistente, datosNuevos) {
     Number(usuarioExistente.juegosPortenos2026?.puntaje || 0) !==
       Number(datosNuevos.juegosPortenos2026.puntaje || 0) ||
 
-      usuarioExistente.juegosUFedem2026?.posicion !==
-  datosNuevos.juegosUFedem2026.posicion ||
+    usuarioExistente.juegosUFedem2026?.posicion !==
+      datosNuevos.juegosUFedem2026.posicion ||
 
-Number(usuarioExistente.juegosUFedem2026?.puntaje || 0) !==
-  Number(datosNuevos.juegosUFedem2026.puntaje || 0) ||
+    Number(usuarioExistente.juegosUFedem2026?.puntaje || 0) !==
+      Number(datosNuevos.juegosUFedem2026.puntaje || 0) ||
 
     usuarioExistente.copaDoblas2026?.posicion !==
       datosNuevos.copaDoblas2026.posicion ||
@@ -255,6 +255,9 @@ Number(usuarioExistente.juegosUFedem2026?.puntaje || 0) !==
 
   El ranking y el puntaje total se guardan TAL CUAL
   figuran en la planilla. No se calcula nada.
+
+  NUEVO: al terminar, se eliminan los registros que ya NO
+  figuran en la planilla (por ejemplo, un DNI que se corrigió).
 */
 
 export async function ejecutarImportacionRanking() {
@@ -277,6 +280,8 @@ export async function ejecutarImportacionRanking() {
   let sinCambios = 0;
   let omitidasSinDni = 0;
   let erroresDuplicados = 0;
+  let eliminadas = 0; // NUEVO
+  let avisoEliminacion = ""; // NUEVO
 
   const errores = [];
 
@@ -303,14 +308,14 @@ export async function ejecutarImportacionRanking() {
       const abiertoPuntaje = normalizarNumero(celda("abiertoPuntaje"));
 
       const juegosPosicion = normalizarTexto(celda("juegosPosicion"));
-const juegosPuntaje = normalizarNumero(celda("juegosPuntaje"));
+      const juegosPuntaje = normalizarNumero(celda("juegosPuntaje"));
 
-const juegosUFedemPosicion = normalizarTexto(
-  celda("juegosUFedemPosicion")
-);
-const juegosUFedemPuntaje = normalizarNumero(
-  celda("juegosUFedemPuntaje")
-);
+      const juegosUFedemPosicion = normalizarTexto(
+        celda("juegosUFedemPosicion")
+      );
+      const juegosUFedemPuntaje = normalizarNumero(
+        celda("juegosUFedemPuntaje")
+      );
 
       const copaDoblasPosicion = normalizarTexto(celda("copaDoblasPosicion"));
       const copaDoblasPuntaje = normalizarNumero(celda("copaDoblasPuntaje"));
@@ -397,9 +402,9 @@ const juegosUFedemPuntaje = normalizarNumero(
         },
 
         juegosUFedem2026: {
-  posicion: juegosUFedemPosicion,
-  puntaje: juegosUFedemPuntaje,
-},
+          posicion: juegosUFedemPosicion,
+          puntaje: juegosUFedemPuntaje,
+        },
 
         copaDoblas2026: {
           posicion: copaDoblasPosicion,
@@ -429,10 +434,10 @@ const juegosUFedemPuntaje = normalizarNumero(
           abiertoPuntaje,
 
           juegosPosicion,
-juegosPuntaje,
+          juegosPuntaje,
 
-juegosUFedemPosicion,
-juegosUFedemPuntaje,
+          juegosUFedemPosicion,
+          juegosUFedemPuntaje,
 
           copaDoblasPosicion,
           copaDoblasPuntaje,
@@ -545,15 +550,67 @@ juegosUFedemPuntaje,
     }
   }
 
+  /*
+    NUEVO: ELIMINAR REGISTROS QUE YA NO ESTÁN EN LA PLANILLA
+
+    Si se corrige un DNI (o se borra una fila), el registro viejo
+    quedaba en la base y aparecía duplicado en el ranking.
+
+    Protección: si la importación procesó muy pocas filas
+    (menos de la mitad de lo que hay en la base), NO se borra nada,
+    para evitar vaciar el ranking por una lectura incompleta de la planilla.
+  */
+  try {
+    const existentes = await RankingUsuario.find(
+      {},
+      { dni: 1, categoria: 1 }
+    ).lean();
+
+    const sobrantes = existentes.filter((usuario) => {
+      const clave = `${usuario.dni}|${String(
+        usuario.categoria || ""
+      ).toLowerCase()}`;
+
+      return !registrosProcesados.has(clave);
+    });
+
+    const minimoSeguro = Math.floor(existentes.length * 0.5);
+
+    if (
+      registrosProcesados.size === 0 ||
+      registrosProcesados.size < minimoSeguro
+    ) {
+      avisoEliminacion =
+        "No se eliminó nada: la planilla procesó muy pocas filas respecto de la base.";
+    } else if (sobrantes.length > 0) {
+      const resultadoBorrado = await RankingUsuario.deleteMany({
+        _id: { $in: sobrantes.map((usuario) => usuario._id) },
+      });
+
+      eliminadas = resultadoBorrado.deletedCount || 0;
+
+      console.log(
+        `Registros eliminados por no estar en la planilla (${eliminadas}):`,
+        sobrantes.map((usuario) => `${usuario.dni}|${usuario.categoria}`)
+      );
+    }
+  } catch (errorBorrado) {
+    avisoEliminacion = `Error al eliminar registros sobrantes: ${errorBorrado.message}`;
+    console.error(avisoEliminacion);
+  }
+
   return {
     mensaje: "Importación de ranking finalizada",
 
     creadas,
     actualizadas,
     sinCambios,
+    eliminadas,
 
     omitidasSinDni,
     erroresDuplicados,
+
+    avisoEliminacion,
 
     errores,
   };
